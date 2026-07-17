@@ -68,6 +68,7 @@ export default function ContactFormBlock({
   }, [formId]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadConfig();
   }, [loadConfig]);
 

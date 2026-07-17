@@ -11,10 +11,6 @@ export async function getCategories() {
   const session = await auth();
   requireCan(session, "read", "categories");
 
-  // Self-join to get parent name
-  const parent = db.$with("parent").as(
-    db.select({ id: categories.id, name: categories.name }).from(categories)
-  );
 
   const rows = await db
     .select({
@@ -47,6 +43,17 @@ export async function getCategoryById(id: string) {
     .select()
     .from(categories)
     .where(eq(categories.id, id))
+    .limit(1);
+
+  return category ?? null;
+}
+
+// For the public frontend — fetches a category by slug
+export async function getCategoryBySlug(slug: string) {
+  const [category] = await db
+    .select()
+    .from(categories)
+    .where(eq(categories.slug, slug))
     .limit(1);
 
   return category ?? null;

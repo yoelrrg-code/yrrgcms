@@ -1,5 +1,5 @@
 import type { Session } from "next-auth";
-import type { Post } from "@/lib/db/schema";
+
 
 // ============================================================
 // Capability types

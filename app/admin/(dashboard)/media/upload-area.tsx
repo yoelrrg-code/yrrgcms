@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { UploadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { sileo } from "sileo";
 
 export function UploadArea() {
   const router = useRouter();
@@ -27,8 +28,9 @@ export function UploadArea() {
         throw new Error(error.error || "Upload failed");
       }
       router.refresh();
-    } catch (err: any) {
-      alert(err.message);
+      sileo.success({ title: "File uploaded successfully!" });
+    } catch (err: unknown) {
+      sileo.error({ title: err instanceof Error ? err.message : "Upload failed" });
     } finally {
       setUploading(false);
       if (fileInputRef.current) {

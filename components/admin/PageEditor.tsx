@@ -21,6 +21,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import BlockEditor from "@/components/admin/BlockEditor/BlockEditor";
+import MediaPicker from "@/components/admin/MediaPicker/MediaPicker";
 import { createPage, updatePage, publishPage } from "@/lib/actions/pages";
 import type { Block } from "@/components/blocks/definitions";
 import type { Page } from "@/lib/db/schema";
@@ -49,11 +50,11 @@ export default function PageEditor({ page }: PageEditorProps) {
   const [blocks, setBlocks] = useState<Block[]>(
     (page?.blocks as Block[] | null) ?? []
   );
-  const [seoTitle, setSeoTitle] = useState((page?.seo as any)?.title ?? "");
-  const [seoDescription, setSeoDescription] = useState(
-    (page?.seo as any)?.description ?? ""
-  );
-  const [noIndex, setNoIndex] = useState((page?.seo as any)?.noIndex ?? false);
+  const seo = page?.seo as { title?: string; description?: string; ogImage?: string; noIndex?: boolean } | null;
+  const [seoTitle, setSeoTitle] = useState(seo?.title ?? "");
+  const [seoDescription, setSeoDescription] = useState(seo?.description ?? "");
+  const [seoOgImage, setSeoOgImage] = useState(seo?.ogImage ?? "");
+  const [noIndex, setNoIndex] = useState(seo?.noIndex ?? false);
   const [error, setError] = useState<string | null>(null);
 
   const handleTitleChange = (val: string) => {
@@ -66,8 +67,8 @@ export default function PageEditor({ page }: PageEditorProps) {
     slug,
     status,
     revalidate: Number(revalidate),
-    blocks: blocks as unknown as any,
-    seo: { title: seoTitle, description: seoDescription, noIndex },
+    blocks,
+    seo: { title: seoTitle, description: seoDescription, ogImage: seoOgImage, noIndex },
   });
 
   const handleSave = () => {
@@ -79,10 +80,10 @@ export default function PageEditor({ page }: PageEditorProps) {
           router.refresh();
         } else {
           const newPage = await createPage(buildPayload());
-          router.push(`/pages/${newPage.id}`);
+          router.push(`/admin/pages/${newPage.id}`);
         }
-      } catch (err: any) {
-        setError(err?.message ?? "An error occurred.");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred.");
       }
     });
   };
@@ -95,8 +96,8 @@ export default function PageEditor({ page }: PageEditorProps) {
         await updatePage(page.id, buildPayload());
         await publishPage(page.id);
         router.refresh();
-      } catch (err: any) {
-        setError(err?.message ?? "An error occurred.");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred.");
       }
     });
   };
@@ -121,7 +122,7 @@ export default function PageEditor({ page }: PageEditorProps) {
           <Button
             type="button"
             variant="outline"
-            onClick={() => router.push("/pages")}
+            onClick={() => router.push("/admin/pages")}
             disabled={isPending}
           >
             Cancel
@@ -245,6 +246,24 @@ export default function PageEditor({ page }: PageEditorProps) {
                   placeholder="Brief page description"
                   rows={3}
                 />
+              </div>
+              <div className="space-y-1.5">
+                <Label>OG Image URL</Label>
+                <div className="flex gap-2">
+                  <Input
+                    value={seoOgImage}
+                    onChange={(e) => setSeoOgImage(e.target.value)}
+                    placeholder="https://..."
+                  />
+                  <MediaPicker
+                    onSelect={(url) => setSeoOgImage(url)}
+                    trigger={
+                      <Button type="button" variant="outline">
+                        Browse
+                      </Button>
+                    }
+                  />
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <input

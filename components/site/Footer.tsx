@@ -1,8 +1,29 @@
 import Link from "next/link";
 import { getGlobal } from "@/lib/actions/globals";
 
+export interface SocialLink {
+  label: string;
+  url: string;
+}
+
+export interface FooterLink {
+  label: string;
+  url: string;
+}
+
+export interface FooterColumn {
+  title: string;
+  links: FooterLink[];
+}
+
+export interface FooterConfig {
+  copyright?: string;
+  socialLinks?: SocialLink[];
+  columns?: FooterColumn[];
+}
+
 export default async function Footer() {
-  const footerData = ((await getGlobal("footer")) as any) || {};
+  const footerData = ((await getGlobal("footer")) as FooterConfig) || {};
   const copyright = footerData.copyright || "© yrrgCMS. All rights reserved.";
   const socialLinks = footerData.socialLinks || [];
   const columns = footerData.columns || [];
@@ -19,7 +40,7 @@ export default async function Footer() {
             </p>
             {socialLinks.length > 0 && (
               <div className="flex flex-wrap gap-4 pt-2">
-                {socialLinks.map((social: any, idx: number) => (
+                {socialLinks.map((social: SocialLink, idx: number) => (
                   <a
                     key={idx}
                     href={social.url}
@@ -35,11 +56,11 @@ export default async function Footer() {
           </div>
 
           {/* Dynamic Columns */}
-          {columns.map((col: any, idx: number) => (
+          {columns.map((col: FooterColumn, idx: number) => (
             <div key={idx} className="space-y-4">
               <h4 className="font-medium text-foreground">{col.title}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                {col.links?.map((link: any, linkIdx: number) => (
+                {col.links?.map((link: FooterLink, linkIdx: number) => (
                   <li key={linkIdx}>
                     <Link
                       href={link.url}

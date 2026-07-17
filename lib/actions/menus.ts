@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { menus, menuItems, pages } from "@/lib/db/schema";
 import { requireCan } from "@/lib/permissions";
 import { eq, asc } from "drizzle-orm";
-import type { MenuItem } from "@/lib/db/schema";
+
 
 // Returns all menus
 export async function getMenus() {

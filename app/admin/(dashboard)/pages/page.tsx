@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { auth } from "@/lib/auth";
-import { getPosts, deletePost, publishPost, unpublishPost } from "@/lib/actions/posts";
+import { getPages, deletePage, publishPage, unpublishPage } from "@/lib/actions/pages";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -24,28 +23,31 @@ import {
 } from "@/components/ui/alert-dialog";
 import { PlusIcon, Pencil } from "lucide-react";
 
-export default async function PostsPage() {
-  const session = await auth();
-  const role = (session?.user as { role?: string })?.role;
+// Status badge helper
+function StatusBadge({ status }: { status: string }) {
+  return (
+    <Badge variant={status === "published" ? "default" : "secondary"}>
+      {status}
+    </Badge>
+  );
+}
 
-  // Authors see only their own posts (handled inside getPosts, but we pass authorId explicitly for clarity)
-  const posts = await getPosts();
+export default async function PagesPage() {
+  const pages = await getPages();
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Posts</h1>
+          <h1 className="text-2xl font-bold">Pages</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {role === "author"
-              ? "Your blog posts."
-              : "All blog posts from all authors."}
+            Manage your site pages and their content blocks.
           </p>
         </div>
-        <Link href="/posts/new">
+        <Link href="/admin/pages/new">
           <Button className="gap-2">
             <PlusIcon className="h-4 w-4" />
-            New Post
+            New Page
           </Button>
         </Link>
       </div>
@@ -55,37 +57,35 @@ export default async function PostsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
-              <TableHead>Author</TableHead>
+              <TableHead>Slug</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead>Last Updated</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {posts.length === 0 && (
+            {pages.length === 0 && (
               <TableRow>
                 <TableCell
                   colSpan={5}
                   className="text-center text-muted-foreground py-10"
                 >
-                  No posts yet. Create your first post above.
+                  No pages yet. Create your first page above.
                 </TableCell>
               </TableRow>
             )}
-            {posts.map((post) => (
-              <TableRow key={post.id}>
-                <TableCell className="font-medium">{post.title}</TableCell>
-                <TableCell className="text-sm text-muted-foreground">
-                  {post.authorName ?? "Unknown"}
+            {pages.map((page) => (
+              <TableRow key={page.id}>
+                <TableCell className="font-medium">{page.title}</TableCell>
+                <TableCell className="text-muted-foreground font-mono text-sm">
+                  /{page.slug}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={post.status === "published" ? "default" : "secondary"}>
-                    {post.status}
-                  </Badge>
+                  <StatusBadge status={page.status} />
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">
-                  {post.updatedAt
-                    ? new Date(post.updatedAt).toLocaleDateString("en-US", {
+                  {page.updatedAt
+                    ? new Date(page.updatedAt).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "short",
                         day: "numeric",
@@ -94,20 +94,27 @@ export default async function PostsPage() {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center justify-end gap-2">
-                    <Link href={`/posts/${post.id}`}>
+                    {/* Edit */}
+                    <Link href={`/admin/pages/${page.id}`}>
                       <Button variant="ghost" size="icon" className="h-8 w-8" title="Edit">
                         <Pencil className="h-3.5 w-3.5" />
                       </Button>
                     </Link>
 
-                    {post.status === "draft" ? (
+                    {/* Publish / Unpublish */}
+                    {page.status === "draft" ? (
                       <form
                         action={async () => {
                           "use server";
-                          await publishPost(post.id);
+                          await publishPage(page.id);
                         }}
                       >
-                        <Button type="submit" variant="ghost" size="sm" className="h-8 text-xs">
+                        <Button
+                          type="submit"
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 text-xs"
+                        >
                           Publish
                         </Button>
                       </form>
@@ -115,30 +122,32 @@ export default async function PostsPage() {
                       <form
                         action={async () => {
                           "use server";
-                          await unpublishPost(post.id);
+                          await unpublishPage(page.id);
                         }}
                       >
-                        <Button type="submit" variant="ghost" size="sm" className="h-8 text-xs">
+                        <Button
+                          type="submit"
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 text-xs"
+                        >
                           Unpublish
                         </Button>
                       </form>
                     )}
 
+                    {/* Delete */}
                     <AlertDialog>
-                      <AlertDialogTrigger >
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 text-xs text-destructive hover:text-destructive"
-                        >
-                          Delete
-                        </Button>
+                      <AlertDialogTrigger
+                        render={<Button variant="ghost" size="sm" className="h-8 text-xs text-destructive hover:text-destructive" />}
+                      >
+                        Delete
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete post?</AlertDialogTitle>
+                          <AlertDialogTitle>Delete page?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            This will permanently delete &quot;{post.title}&quot;. This
+                            This will permanently delete &quot;{page.title}&quot;. This
                             action cannot be undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
@@ -147,7 +156,7 @@ export default async function PostsPage() {
                           <form
                             action={async () => {
                               "use server";
-                              await deletePost(post.id);
+                              await deletePage(page.id);
                             }}
                           >
                             <AlertDialogAction type="submit">Delete</AlertDialogAction>

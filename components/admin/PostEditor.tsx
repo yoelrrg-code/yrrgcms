@@ -46,7 +46,10 @@ interface Tag {
 }
 
 interface PostEditorProps {
-  post?: Post | null;
+  post?: (Post & { 
+    categories?: { categoryId: string }[]; 
+    tags?: { tagId: string }[]; 
+  }) | null;
   categories: Category[];
   tags: Tag[];
 }
@@ -59,12 +62,17 @@ export default function PostEditor({ post, categories, tags }: PostEditorProps) 
   const [slug, setSlug] = useState(post?.slug ?? "");
   const [excerpt, setExcerpt] = useState(post?.excerpt ?? "");
   const [featuredImageUrl, setFeaturedImageUrl] = useState(post?.featuredImageUrl ?? "");
-  const [content, setContent] = useState<any>(post?.content ?? null);
+  const [content, setContent] = useState<unknown>(post?.content ?? null);
   const [status, setStatus] = useState<"draft" | "published">(post?.status ?? "draft");
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
-  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
-  const [seoTitle, setSeoTitle] = useState((post?.seo as any)?.title ?? "");
-  const [seoDescription, setSeoDescription] = useState((post?.seo as any)?.description ?? "");
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>(
+    post?.categories?.map((c) => c.categoryId) ?? []
+  );
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>(
+    post?.tags?.map((t) => t.tagId) ?? []
+  );
+  const [seoTitle, setSeoTitle] = useState((post?.seo as Record<string, unknown>)?.title as string ?? "");
+  const [seoDescription, setSeoDescription] = useState((post?.seo as Record<string, unknown>)?.description as string ?? "");
+  const [seoOgImage, setSeoOgImage] = useState((post?.seo as Record<string, unknown>)?.ogImage as string ?? "");
   const [error, setError] = useState<string | null>(null);
 
   const handleTitleChange = (val: string) => {
@@ -79,7 +87,9 @@ export default function PostEditor({ post, categories, tags }: PostEditorProps) 
     featuredImageUrl: featuredImageUrl || undefined,
     content,
     status,
-    seo: { title: seoTitle, description: seoDescription },
+    seo: { title: seoTitle, description: seoDescription, ogImage: seoOgImage },
+    categoryIds: selectedCategoryIds,
+    tagIds: selectedTagIds,
   });
 
   const handleSave = () => {
@@ -91,10 +101,10 @@ export default function PostEditor({ post, categories, tags }: PostEditorProps) 
           router.refresh();
         } else {
           const newPost = await createPost(buildPayload());
-          router.push(`/posts/${newPost.id}`);
+          router.push(`/admin/posts/${newPost.id}`);
         }
-      } catch (err: any) {
-        setError(err?.message ?? "An error occurred.");
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "An error occurred.");
       }
     });
   };
@@ -107,8 +117,8 @@ export default function PostEditor({ post, categories, tags }: PostEditorProps) 
         await updatePost(post.id, buildPayload());
         await publishPost(post.id);
         router.refresh();
-      } catch (err: any) {
-        setError(err?.message ?? "An error occurred.");
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "An error occurred.");
       }
     });
   };
@@ -143,7 +153,7 @@ export default function PostEditor({ post, categories, tags }: PostEditorProps) 
           <Button
             type="button"
             variant="outline"
-            onClick={() => router.push("/posts")}
+            onClick={() => router.push("/admin/posts")}
             disabled={isPending}
           >
             Cancel
@@ -349,6 +359,24 @@ export default function PostEditor({ post, categories, tags }: PostEditorProps) 
                   placeholder="Brief description"
                   rows={3}
                 />
+              </div>
+              <div className="space-y-1.5">
+                <Label>OG Image URL</Label>
+                <div className="flex gap-2">
+                  <Input
+                    value={seoOgImage}
+                    onChange={(e) => setSeoOgImage(e.target.value)}
+                    placeholder="https://..."
+                  />
+                  <MediaPicker
+                    onSelect={(url) => setSeoOgImage(url)}
+                    trigger={
+                      <Button type="button" variant="outline">
+                        Browse
+                      </Button>
+                    }
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>

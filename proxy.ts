@@ -11,7 +11,7 @@ const ADMIN_ONLY_PATHS = [
   "/admin/users",
 ];
 
-export default auth(function middleware(req: NextRequest & { auth: any }) {
+export default auth(function proxy(req: NextRequest & { auth: import("next-auth").Session | null }) {
   const { pathname } = req.nextUrl;
 
   // Not an admin route — let it through
@@ -19,19 +19,24 @@ export default auth(function middleware(req: NextRequest & { auth: any }) {
     return NextResponse.next();
   }
 
+  // Exact /admin route should go to dashboard
+  if (pathname === "/admin") {
+    return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+  }
+
   // No session — redirect to login
-  if (!req.auth) {
+  if (!req.auth && pathname !== "/admin/login") {
     const loginUrl = new URL("/admin/login", req.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
   // Already authenticated, trying to access login — redirect to dashboard
-  if (pathname === "/admin/login") {
+  if (req.auth && pathname === "/admin/login") {
     return NextResponse.redirect(new URL("/admin/dashboard", req.url));
   }
 
-  const role = req.auth.user?.role;
+  const role = (req.auth?.user as { role?: string })?.role;
 
   // Author trying to access admin-only route
   const isAdminOnly = ADMIN_ONLY_PATHS.some((p) => pathname.startsWith(p));

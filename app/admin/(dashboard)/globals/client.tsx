@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { saveGlobal } from "@/lib/actions/globals";
+import { sileo } from "sileo";
 import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -9,36 +10,67 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Trash2 } from "lucide-react";
+import MediaPicker from "@/components/admin/MediaPicker/MediaPicker";
+
+type HeaderConfig = {
+  siteName?: string;
+  logoUrl?: string;
+  ctaText?: string;
+  ctaUrl?: string;
+};
+
+type SocialLink = {
+  label: string;
+  url: string;
+};
+
+type FooterColumn = {
+  title: string;
+  links: { label: string; url: string }[];
+};
+
+type FooterConfig = {
+  copyright: string;
+  socialLinks: SocialLink[];
+  columns: FooterColumn[];
+};
+
+type SeoConfig = {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  favicon?: string;
+};
 
 export default function GlobalsClient({
   initialHeader,
   initialFooter,
   initialSeo,
 }: {
-  initialHeader: any;
-  initialFooter: any;
-  initialSeo: any;
+  initialHeader: Partial<HeaderConfig> | null;
+  initialFooter: Partial<FooterConfig> | null;
+  initialSeo: Partial<SeoConfig> | null;
 }) {
   const router = useRouter();
-  const [header, setHeader] = useState(initialHeader);
-  const [footer, setFooter] = useState({
+  const [header, setHeader] = useState<HeaderConfig>(initialHeader || {});
+  const [footer, setFooter] = useState<FooterConfig>({
     copyright: "",
     socialLinks: [],
     columns: [],
-    ...initialFooter,
+    ...(initialFooter || {}),
   });
-  const [seo, setSeo] = useState(initialSeo);
+  const [seo, setSeo] = useState<SeoConfig>(initialSeo || {});
   const [saving, setSaving] = useState(false);
 
-  const handleSave = async (key: "header" | "footer" | "seo_defaults", data: any) => {
+  const handleSave = async (key: "header" | "footer" | "seo_defaults", data: Record<string, unknown>) => {
     setSaving(true);
     try {
       await saveGlobal(key, data);
       router.refresh();
-      alert("Settings saved!");
+      sileo.success({ title: "Settings saved!" });
     } catch (err) {
       console.error(err);
-      alert("Failed to save settings");
+      sileo.error({ title: "Failed to save settings" });
     } finally {
       setSaving(false);
     }
@@ -63,10 +95,16 @@ export default function GlobalsClient({
           </div>
           <div className="space-y-2">
             <Label>Logo URL</Label>
-            <Input
-              value={header.logoUrl || ""}
-              onChange={(e) => setHeader({ ...header, logoUrl: e.target.value })}
-            />
+            <div className="flex gap-2">
+              <Input
+                value={header.logoUrl || ""}
+                onChange={(e) => setHeader({ ...header, logoUrl: e.target.value })}
+              />
+              <MediaPicker
+                onSelect={(url) => setHeader({ ...header, logoUrl: url })}
+                trigger={<Button type="button" variant="outline">Browse</Button>}
+              />
+            </div>
           </div>
           <div className="space-y-2">
             <Label>CTA Button Text</Label>
@@ -100,7 +138,7 @@ export default function GlobalsClient({
 
           <div className="space-y-4">
             <Label>Social Links</Label>
-            {footer.socialLinks.map((link: any, idx: number) => (
+            {footer.socialLinks.map((link: SocialLink, idx: number) => (
               <div key={idx} className="flex gap-2 items-center">
                 <Input
                   placeholder="Label (e.g. Twitter)"
@@ -124,7 +162,7 @@ export default function GlobalsClient({
                   variant="ghost"
                   size="icon"
                   onClick={() => {
-                    const newLinks = footer.socialLinks.filter((_: any, i: number) => i !== idx);
+                    const newLinks = footer.socialLinks.filter((_: unknown, i: number) => i !== idx);
                     setFooter({ ...footer, socialLinks: newLinks });
                   }}
                 >
@@ -163,7 +201,7 @@ export default function GlobalsClient({
             </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {footer.columns.map((col: any, colIdx: number) => (
+            {footer.columns.map((col: FooterColumn, colIdx: number) => (
               <div key={colIdx} className="space-y-4 p-4 border rounded bg-background">
                 <div className="flex items-center gap-2">
                   <Input
@@ -179,7 +217,7 @@ export default function GlobalsClient({
                     variant="ghost"
                     size="icon"
                     onClick={() => {
-                      const newCols = footer.columns.filter((_: any, i: number) => i !== colIdx);
+                      const newCols = footer.columns.filter((_: unknown, i: number) => i !== colIdx);
                       setFooter({ ...footer, columns: newCols });
                     }}
                   >
@@ -187,7 +225,7 @@ export default function GlobalsClient({
                   </Button>
                 </div>
                 <div className="space-y-2">
-                  {col.links.map((link: any, linkIdx: number) => (
+                  {col.links.map((link: { label: string; url: string }, linkIdx: number) => (
                     <div key={linkIdx} className="flex gap-2">
                       <Input
                         value={link.label}
@@ -216,7 +254,7 @@ export default function GlobalsClient({
                         onClick={() => {
                           const newCols = [...footer.columns];
                           newCols[colIdx].links = newCols[colIdx].links.filter(
-                            (_: any, i: number) => i !== linkIdx
+                            (_: unknown, i: number) => i !== linkIdx
                           );
                           setFooter({ ...footer, columns: newCols });
                         }}
@@ -266,17 +304,29 @@ export default function GlobalsClient({
           </div>
           <div className="space-y-2">
             <Label>Default OG Image URL</Label>
-            <Input
-              value={seo.ogImage || ""}
-              onChange={(e) => setSeo({ ...seo, ogImage: e.target.value })}
-            />
+            <div className="flex gap-2">
+              <Input
+                value={seo.ogImage || ""}
+                onChange={(e) => setSeo({ ...seo, ogImage: e.target.value })}
+              />
+              <MediaPicker
+                onSelect={(url) => setSeo({ ...seo, ogImage: url })}
+                trigger={<Button type="button" variant="outline">Browse</Button>}
+              />
+            </div>
           </div>
           <div className="space-y-2">
             <Label>Favicon URL</Label>
-            <Input
-              value={seo.favicon || ""}
-              onChange={(e) => setSeo({ ...seo, favicon: e.target.value })}
-            />
+            <div className="flex gap-2">
+              <Input
+                value={seo.favicon || ""}
+                onChange={(e) => setSeo({ ...seo, favicon: e.target.value })}
+              />
+              <MediaPicker
+                onSelect={(url) => setSeo({ ...seo, favicon: url })}
+                trigger={<Button type="button" variant="outline">Browse</Button>}
+              />
+            </div>
           </div>
           <Button onClick={() => handleSave("seo_defaults", seo)} disabled={saving} className="w-fit">
             Save SEO Defaults

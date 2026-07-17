@@ -40,24 +40,24 @@ type NavItem = {
 };
 
 const ADMIN_NAV: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Pages", href: "/pages", icon: FileText },
-  { label: "Posts", href: "/posts", icon: Newspaper },
-  { label: "Categories", href: "/categories", icon: FolderTree },
-  { label: "Tags", href: "/tags", icon: Tags },
-  { label: "Forms", href: "/forms", icon: ClipboardList },
-  { label: "Menus", href: "/menus", icon: Menu },
-  { label: "Globals", href: "/globals", icon: Globe },
-  { label: "Media", href: "/media", icon: Image },
-  { label: "Users", href: "/users", icon: Users },
+  { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+  { label: "Pages", href: "/admin/pages", icon: FileText },
+  { label: "Posts", href: "/admin/posts", icon: Newspaper },
+  { label: "Categories", href: "/admin/categories", icon: FolderTree },
+  { label: "Tags", href: "/admin/tags", icon: Tags },
+  { label: "Forms", href: "/admin/forms", icon: ClipboardList },
+  { label: "Menus", href: "/admin/menus", icon: Menu },
+  { label: "Globals", href: "/admin/globals", icon: Globe },
+  { label: "Media", href: "/admin/media", icon: Image },
+  { label: "Users", href: "/admin/users", icon: Users },
 ];
 
 const AUTHOR_NAV: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Pages", href: "/pages", icon: FileText },
-  { label: "Posts", href: "/posts", icon: Newspaper },
-  { label: "Tags", href: "/tags", icon: Tags },
-  { label: "Media", href: "/media", icon: Image },
+  { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+  { label: "Pages", href: "/admin/pages", icon: FileText },
+  { label: "Posts", href: "/admin/posts", icon: Newspaper },
+  { label: "Tags", href: "/admin/tags", icon: Tags },
+  { label: "Media", href: "/admin/media", icon: Image },
 ];
 
 export default async function AdminLayout({
@@ -68,7 +68,7 @@ export default async function AdminLayout({
   const session = await auth();
 
   if (!session?.user) {
-    redirect("/login");
+    redirect("/admin/login");
   }
 
   const navItems = isAdmin(session) ? ADMIN_NAV : AUTHOR_NAV;

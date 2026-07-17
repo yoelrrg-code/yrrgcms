@@ -45,11 +45,11 @@ export function DeleteUserButton({ userId, userName }: DeleteUserButtonProps) {
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger >
-        <Button variant="destructive" size="sm" className="gap-1">
-          <Trash2 className="size-3.5" />
-          Delete
-        </Button>
+      <AlertDialogTrigger
+        render={<Button variant="destructive" size="sm" className="gap-1" />}
+      >
+        <Trash2 className="size-3.5" />
+        Delete
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

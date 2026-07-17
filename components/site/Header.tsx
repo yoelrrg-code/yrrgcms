@@ -11,8 +11,24 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, ChevronDown } from "lucide-react";
 
+export interface HeaderConfig {
+  siteName?: string;
+  logoUrl?: string;
+  ctaText?: string;
+  ctaUrl?: string;
+}
+
+export interface NavItem {
+  id: string;
+  label: string;
+  url?: string | null;
+  pageSlug?: string | null;
+  target?: string | null;
+  children?: NavItem[];
+}
+
 export default async function Header() {
-  const headerData = ((await getGlobal("header")) as any) || {};
+  const headerData = ((await getGlobal("header")) as HeaderConfig) || {};
   const menuData = await getMenuByLocation("header");
 
   const siteName = headerData.siteName || "yrrgCMS";
@@ -35,7 +51,7 @@ export default async function Header() {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-          {navItems.map((item: any) => {
+          {navItems.map((item: NavItem) => {
             const hren = item.children && item.children.length > 0;
             const href = item.url || (item.pageSlug ? (item.pageSlug === "home" ? "/" : `/${item.pageSlug}`) : "#");
 
@@ -46,11 +62,11 @@ export default async function Header() {
                     {item.label} <ChevronDown className="h-4 w-4" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    {item.children.map((child: any) => {
+                    {item.children?.map((child: NavItem) => {
                       const childHref = child.url || (child.pageSlug ? (child.pageSlug === "home" ? "/" : `/${child.pageSlug}`) : "#");
                       return (
                         <DropdownMenuItem key={child.id} >
-                          <Link href={childHref} target={child.target}>
+                          <Link href={childHref} target={child.target || undefined}>
                             {child.label}
                           </Link>
                         </DropdownMenuItem>
@@ -62,7 +78,7 @@ export default async function Header() {
             }
 
             return (
-              <Link key={item.id} href={href} target={item.target} className="hover:text-primary transition-colors">
+              <Link key={item.id} href={href} target={item.target || undefined} className="hover:text-primary transition-colors">
                 {item.label}
               </Link>
             );
@@ -80,14 +96,15 @@ export default async function Header() {
 
           {/* Mobile Nav */}
           <Sheet>
-            <SheetTrigger  className="md:hidden">
-              <Button variant="outline" size="icon">
-                <Menu className="h-5 w-5" />
-              </Button>
+            <SheetTrigger
+              className="md:hidden"
+              render={<Button variant="outline" size="icon" />}
+            >
+              <Menu className="h-5 w-5" />
             </SheetTrigger>
             <SheetContent side="right">
               <nav className="flex flex-col gap-4 mt-8">
-                {navItems.map((item: any) => {
+                {navItems.map((item: NavItem) => {
                   const hren = item.children && item.children.length > 0;
                   const href = item.url || (item.pageSlug ? (item.pageSlug === "home" ? "/" : `/${item.pageSlug}`) : "#");
 
@@ -96,10 +113,10 @@ export default async function Header() {
                       <div key={item.id} className="space-y-3">
                         <div className="font-medium">{item.label}</div>
                         <div className="pl-4 flex flex-col gap-2">
-                          {item.children.map((child: any) => {
+                          {item.children?.map((child: NavItem) => {
                             const childHref = child.url || (child.pageSlug ? (child.pageSlug === "home" ? "/" : `/${child.pageSlug}`) : "#");
                             return (
-                              <Link key={child.id} href={childHref} target={child.target} className="text-muted-foreground hover:text-foreground">
+                              <Link key={child.id} href={childHref} target={child.target || undefined} className="text-muted-foreground hover:text-foreground">
                                 {child.label}
                               </Link>
                             );
@@ -110,7 +127,7 @@ export default async function Header() {
                   }
 
                   return (
-                    <Link key={item.id} href={href} target={item.target} className="font-medium hover:text-primary">
+                    <Link key={item.id} href={href} target={item.target || undefined} className="font-medium hover:text-primary">
                       {item.label}
                     </Link>
                   );

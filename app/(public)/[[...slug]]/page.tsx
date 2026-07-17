@@ -3,6 +3,13 @@ import { notFound } from "next/navigation";
 import { BLOCK_REGISTRY, Block } from "@/components/blocks";
 import { Metadata } from "next";
 
+interface SeoData {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  noIndex?: boolean;
+}
+
 export const revalidate = 60; // Default ISR interval
 
 export async function generateMetadata({
@@ -18,7 +25,7 @@ export async function generateMetadata({
     return { title: "Not Found" };
   }
 
-  const seo = (page.seo as any) || {};
+  const seo = (page.seo as SeoData) || {};
 
   return {
     title: seo.title || page.title,

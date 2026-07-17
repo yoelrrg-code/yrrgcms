@@ -44,7 +44,7 @@ export default async function FormsPage() {
     const id = formData.get("id") as string;
     if (id) {
       await deleteForm(id);
-      revalidatePath("/forms");
+      revalidatePath("/admin/forms");
     }
   }
 
@@ -54,7 +54,7 @@ export default async function FormsPage() {
     if (name) {
       const { createForm } = await import("@/lib/actions/forms");
       const newForm = await createForm({ name, fields: [] });
-      redirect(`/forms/${newForm.id}`);
+      redirect(`/admin/forms/${newForm.id}`);
     }
   }
 
@@ -96,7 +96,7 @@ export default async function FormsPage() {
               </TableRow>
             ) : (
               formsData.map((form) => {
-                const fieldsArr = (form.fields as any[]) || [];
+                const fieldsArr = (form.fields as unknown[]) || [];
                 return (
                   <TableRow key={form.id}>
                     <TableCell className="font-medium">{form.name}</TableCell>
@@ -109,10 +109,10 @@ export default async function FormsPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button variant="outline" size="icon" render={<Link href={`/forms/${form.id}/submissions`} title="View Submissions" />}>
+                        <Button variant="outline" size="icon" render={<Link href={`/admin/forms/${form.id}/submissions`} title="View Submissions" />}>
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Button variant="outline" size="icon" render={<Link href={`/forms/${form.id}`} title="Edit Form" />}>
+                        <Button variant="outline" size="icon" render={<Link href={`/admin/forms/${form.id}`} title="Edit Form" />}>
                           <Edit className="h-4 w-4" />
                         </Button>
                         <form action={handleDelete}>

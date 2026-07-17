@@ -12,6 +12,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Upload, Image as ImageIcon, Check } from "lucide-react";
 import { useEffect } from "react";
+import { sileo } from "sileo";
 
 interface MediaItem {
   id: string;
@@ -50,6 +51,7 @@ export default function MediaPicker({ onSelect, trigger }: MediaPickerProps) {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (open) fetchMedia();
   }, [open]);
 
@@ -68,8 +70,9 @@ export default function MediaPicker({ onSelect, trigger }: MediaPickerProps) {
       const res = await fetch("/api/media/upload", { method: "POST", body: formData });
       if (res.ok) {
         await fetchMedia();
+        sileo.success({ title: "File uploaded!" });
       } else {
-        alert("Upload failed. Please try again.");
+        sileo.error({ title: "Upload failed. Please try again." });
       }
     } finally {
       setUploading(false);
@@ -78,7 +81,7 @@ export default function MediaPicker({ onSelect, trigger }: MediaPickerProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger >{trigger}</DialogTrigger>
+      <DialogTrigger render={trigger as React.ReactElement} />
       <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Media Library</DialogTitle>

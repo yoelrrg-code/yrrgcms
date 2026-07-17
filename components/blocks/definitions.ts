@@ -1,14 +1,14 @@
 export interface Block {
   id: string;
   type: string;
-  props: Record<string, any>;
+  props: Record<string, unknown>;
 }
 
 export interface BlockDefinition {
   type: string;
   label: string;
   description: string;
-  defaultProps: Record<string, any>;
+  defaultProps: Record<string, unknown>;
 }
 
 export const BLOCK_DEFINITIONS: BlockDefinition[] = [

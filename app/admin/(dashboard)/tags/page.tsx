@@ -1,4 +1,5 @@
 import { getTags, createTag, deleteTag } from "@/lib/actions/tags";
+import { revalidatePath } from "next/cache";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -75,14 +76,10 @@ export default async function TagsPage() {
                   <TableCell>
                     <div className="flex items-center justify-end gap-2">
                       <AlertDialog>
-                        <AlertDialogTrigger >
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 text-xs text-destructive hover:text-destructive"
-                          >
-                            Delete
-                          </Button>
+                        <AlertDialogTrigger
+                          render={<Button variant="ghost" size="sm" className="h-8 text-xs text-destructive hover:text-destructive" />}
+                        >
+                          Delete
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
@@ -97,6 +94,7 @@ export default async function TagsPage() {
                               action={async () => {
                                 "use server";
                                 await deleteTag(tag.id);
+                                revalidatePath("/admin/tags");
                               }}
                             >
                               <AlertDialogAction type="submit">Delete</AlertDialogAction>
@@ -128,6 +126,7 @@ export default async function TagsPage() {
                 const slugRaw = String(formData.get("slug") ?? "").trim();
                 if (!name) return;
                 await createTag({ name, slug: slugRaw || toSlug(name) });
+                revalidatePath("/admin/tags");
               }}
               className="space-y-4"
             >

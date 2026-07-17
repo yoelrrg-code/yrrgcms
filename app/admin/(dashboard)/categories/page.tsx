@@ -1,4 +1,5 @@
-import { getCategories, createCategory, updateCategory, deleteCategory } from "@/lib/actions/categories";
+import { getCategories, createCategory, deleteCategory } from "@/lib/actions/categories";
+import { revalidatePath } from "next/cache";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,15 +24,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, Trash2 } from "lucide-react";
 
 function toSlug(str: string) {
   return str
@@ -93,14 +88,10 @@ export default async function CategoriesPage() {
                     <div className="flex items-center justify-end gap-2">
                       {/* Delete */}
                       <AlertDialog>
-                        <AlertDialogTrigger>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 text-xs text-destructive hover:text-destructive"
-                          >
-                            Delete
-                          </Button>
+                        <AlertDialogTrigger
+                          render={<Button variant="ghost" size="icon" className="text-destructive" />}
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
@@ -117,6 +108,7 @@ export default async function CategoriesPage() {
                               action={async () => {
                                 "use server";
                                 await deleteCategory(cat.id);
+                                revalidatePath("/admin/categories");
                               }}
                             >
                               <AlertDialogAction type="submit">Delete</AlertDialogAction>
@@ -157,6 +149,7 @@ export default async function CategoriesPage() {
                   description: description || undefined,
                   parentId: parentId || undefined,
                 });
+                revalidatePath("/admin/categories");
               }}
               className="space-y-4"
             >

@@ -20,8 +20,8 @@ import {
 } from "lucide-react";
 
 interface RichTextEditorProps {
-  content: any;
-  onChange: (content: any) => void;
+  content: unknown;
+  onChange: (content: unknown) => void;
   placeholder?: string;
 }
 

@@ -22,6 +22,7 @@ import { BLOCK_DEFINITIONS, type Block, type BlockDefinition } from "@/component
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import MediaPicker from "@/components/admin/MediaPicker/MediaPicker";
 import { Badge } from "@/components/ui/badge";
 import {
   Sheet,
@@ -118,19 +119,17 @@ function SortableBlockItem({
 
 interface PropEditorProps {
   block: Block;
-  onChange: (updatedProps: Record<string, any>) => void;
+  onChange: (updatedProps: Record<string, unknown>) => void;
   onClose: () => void;
 }
 
 function PropEditor({ block, onChange, onClose }: PropEditorProps) {
-  const [localProps, setLocalProps] = useState<Record<string, any>>({ ...block.props });
+  const [localProps, setLocalProps] = useState<Record<string, unknown>>({ ...block.props });
 
-  const handleChange = (key: string, value: any) => {
-    setLocalProps((prev) => {
-      const updated = { ...prev, [key]: value };
-      onChange(updated);
-      return updated;
-    });
+  const handleChange = (key: string, value: unknown) => {
+    const updated = { ...localProps, [key]: value };
+    setLocalProps(updated);
+    onChange(updated);
   };
 
   return (
@@ -147,6 +146,37 @@ function PropEditor({ block, onChange, onClose }: PropEditorProps) {
       <div className="space-y-3">
         {Object.entries(localProps).map(([key, value]) => {
           const label = key.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase());
+
+          const isImageField =
+            typeof value === "string" &&
+            (key.toLowerCase().includes("image") ||
+              key.toLowerCase().includes("icon") ||
+              key.toLowerCase().includes("logo") ||
+              key.toLowerCase().includes("avatar") ||
+              key.toLowerCase() === "src");
+
+          if (isImageField) {
+            return (
+              <div key={key} className="space-y-1">
+                <label className="text-xs font-medium text-muted-foreground">{label}</label>
+                <div className="flex gap-2">
+                  <Input
+                    value={value}
+                    onChange={(e) => handleChange(key, e.target.value)}
+                    className="h-8 text-sm"
+                  />
+                  <MediaPicker
+                    onSelect={(url) => handleChange(key, url)}
+                    trigger={
+                      <Button type="button" variant="outline" size="sm" className="h-8">
+                        Browse
+                      </Button>
+                    }
+                  />
+                </div>
+              </div>
+            );
+          }
 
           // Render textarea for long string values or 'content' key
           if (key === "content" || (typeof value === "string" && value.length > 80)) {
@@ -271,7 +301,7 @@ export default function BlockEditor({ blocks, onChange }: BlockEditorProps) {
     const newBlock: Block = {
       id: nanoid(),
       type: type as Block["type"],
-      props: { ...(def.defaultProps as Record<string, any>) },
+      props: { ...(def.defaultProps as Record<string, unknown>) },
     };
     onChange([...blocks, newBlock]);
     setSelectedId(newBlock.id);
@@ -283,7 +313,7 @@ export default function BlockEditor({ blocks, onChange }: BlockEditorProps) {
     if (selectedId === id) setSelectedId(null);
   };
 
-  const updateBlockProps = (id: string, props: Record<string, any>) => {
+  const updateBlockProps = (id: string, props: Record<string, unknown>) => {
     onChange(blocks.map((b: Block) => (b.id === id ? { ...b, props } : b)));
   };
 
@@ -323,11 +353,11 @@ export default function BlockEditor({ blocks, onChange }: BlockEditorProps) {
 
         {/* Add block button */}
         <Sheet open={paletteOpen} onOpenChange={setPaletteOpen}>
-          <SheetTrigger>
-            <Button type="button" variant="outline" className="w-full mt-2 gap-2">
-              <Plus className="h-4 w-4" />
-              Add Block
-            </Button>
+          <SheetTrigger
+            render={<Button type="button" variant="outline" className="w-full mt-2 gap-2" />}
+          >
+            <Plus className="h-4 w-4" />
+            Add Block
           </SheetTrigger>
           <SheetContent side="bottom" className="max-h-[60vh] overflow-y-auto">
             <SheetHeader>

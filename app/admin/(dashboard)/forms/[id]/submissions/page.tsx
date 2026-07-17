@@ -39,7 +39,7 @@ export default async function FormSubmissionsPage({
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon">
-          <Link href="/forms" title="Back to forms">
+          <Link href="/admin/forms" title="Back to forms">
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>
@@ -66,7 +66,7 @@ export default async function FormSubmissionsPage({
               </TableRow>
             ) : (
               submissions.map((sub) => {
-                const data = sub.data as Record<string, any>;
+                const data = (sub.data as Record<string, unknown>) || {};
                 const preview = Object.entries(data)
                   .slice(0, 3)
                   .map(([k, v]) => `${k}: ${v}`)

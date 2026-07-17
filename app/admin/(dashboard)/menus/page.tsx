@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Trash2, Plus, ListTree } from "lucide-react";
+import { Trash2, Plus, ListTree } from "lucide-react";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
@@ -29,10 +29,10 @@ export default async function MenusPage() {
   async function handleCreate(formData: FormData) {
     "use server";
     const name = formData.get("name") as string;
-    const location = formData.get("location") as any;
+    const location = formData.get("location") as "header" | "footer" | "sidebar";
     if (name && location) {
       const newMenu = await createMenu({ name, location });
-      redirect(`/menus/${newMenu.id}`);
+      redirect(`/admin/menus/${newMenu.id}`);
     }
   }
 
@@ -41,7 +41,7 @@ export default async function MenusPage() {
     const id = formData.get("id") as string;
     if (id) {
       await deleteMenu(id);
-      revalidatePath("/menus");
+      revalidatePath("/admin/menus");
     }
   }
 
@@ -98,7 +98,7 @@ export default async function MenusPage() {
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button variant="outline" size="sm" >
-                        <Link href={`/menus/${menu.id}`} title="Edit Items">
+                        <Link href={`/admin/menus/${menu.id}`} title="Edit Items">
                           <ListTree className="mr-2 h-4 w-4" /> Edit Items
                         </Link>
                       </Button>

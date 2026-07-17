@@ -1,6 +1,7 @@
 "use client";
 
 import { use, useState, useEffect } from "react";
+import { sileo } from "sileo";
 import { getFormById, updateForm } from "@/lib/actions/forms";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -29,13 +30,30 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+type FieldType = {
+  id: string;
+  type: string;
+  label: string;
+  placeholder?: string;
+  required?: boolean;
+  options?: string[];
+};
+
+type FormType = {
+  id: string;
+  name: string;
+  notifyEmail: string | null;
+  successMessage: string | null;
+  fields: FieldType[];
+};
+
 function SortableField({
   field,
   updateField,
   removeField,
 }: {
-  field: any;
-  updateField: (id: string, updates: any) => void;
+  field: FieldType;
+  updateField: (id: string, updates: Partial<FieldType>) => void;
   removeField: (id: string) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -73,7 +91,7 @@ function SortableField({
             <Label>Field Type</Label>
             <Select
               value={field.type}
-              onValueChange={(val) => updateField(field.id, { type: val })}
+              onValueChange={(val) => updateField(field.id, { type: val || "text" })}
             >
               <SelectTrigger>
                 <SelectValue />
@@ -141,14 +159,20 @@ export default function FormBuilderPage({ params }: { params: Promise<{ id: stri
   const { id } = use(params);
   const router = useRouter();
 
-  const [form, setForm] = useState<any>(null);
+  const [form, setForm] = useState<FormType | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     getFormById(id).then((data) => {
       if (data) {
-        setForm(data);
+        setForm({
+          id: data.id,
+          name: data.name,
+          notifyEmail: data.notifyEmail,
+          successMessage: data.successMessage,
+          fields: (data.fields as FieldType[]) || [],
+        });
       }
       setLoading(false);
     });
@@ -167,9 +191,10 @@ export default function FormBuilderPage({ params }: { params: Promise<{ id: stri
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      setForm((prev: any) => {
-        const oldIndex = prev.fields.findIndex((f: any) => f.id === active.id);
-        const newIndex = prev.fields.findIndex((f: any) => f.id === over.id);
+      setForm((prev: FormType | null) => {
+        if (!prev) return prev;
+        const oldIndex = prev.fields.findIndex((f: FieldType) => f.id === active.id);
+        const newIndex = prev.fields.findIndex((f: FieldType) => f.id === over.id);
         return {
           ...prev,
           fields: arrayMove(prev.fields, oldIndex, newIndex),
@@ -186,26 +211,26 @@ export default function FormBuilderPage({ params }: { params: Promise<{ id: stri
       placeholder: "",
       required: false,
     };
-    setForm((prev: any) => ({
+    setForm((prev: FormType | null) => prev ? ({
       ...prev,
       fields: [...(prev.fields || []), newField],
-    }));
+    }) : prev);
   };
 
-  const updateField = (fieldId: string, updates: any) => {
-    setForm((prev: any) => ({
+  const updateField = (fieldId: string, updates: Partial<FieldType>) => {
+    setForm((prev: FormType | null) => prev ? ({
       ...prev,
-      fields: prev.fields.map((f: any) =>
+      fields: prev.fields.map((f: FieldType) =>
         f.id === fieldId ? { ...f, ...updates } : f
       ),
-    }));
+    }) : prev);
   };
 
   const removeField = (fieldId: string) => {
-    setForm((prev: any) => ({
+    setForm((prev: FormType | null) => prev ? ({
       ...prev,
-      fields: prev.fields.filter((f: any) => f.id !== fieldId),
-    }));
+      fields: prev.fields.filter((f: FieldType) => f.id !== fieldId),
+    }) : prev);
   };
 
   const handleSave = async () => {
@@ -213,14 +238,15 @@ export default function FormBuilderPage({ params }: { params: Promise<{ id: stri
     try {
       await updateForm(form.id, {
         name: form.name,
-        notifyEmail: form.notifyEmail,
-        successMessage: form.successMessage,
+        notifyEmail: form.notifyEmail ?? undefined,
+        successMessage: form.successMessage ?? undefined,
         fields: form.fields,
       });
       router.refresh();
+      sileo.success({ title: "Form saved successfully!" });
     } catch (err) {
       console.error(err);
-      alert("Failed to save form");
+      sileo.error({ title: "Failed to save form" });
     } finally {
       setSaving(false);
     }
@@ -231,7 +257,7 @@ export default function FormBuilderPage({ params }: { params: Promise<{ id: stri
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="outline" size="icon">
-            <Link href="/forms" title="Back to forms">
+            <Link href="/admin/forms" title="Back to forms">
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
@@ -283,10 +309,10 @@ export default function FormBuilderPage({ params }: { params: Promise<{ id: stri
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={form.fields?.map((f: any) => f.id) || []}
+            items={form.fields?.map((f: FieldType) => f.id) || []}
             strategy={verticalListSortingStrategy}
           >
-            {form.fields?.map((field: any) => (
+            {form.fields?.map((field: FieldType) => (
               <SortableField
                 key={field.id}
                 field={field}
@@ -299,7 +325,7 @@ export default function FormBuilderPage({ params }: { params: Promise<{ id: stri
 
         {(!form.fields || form.fields.length === 0) && (
           <div className="text-center p-8 border border-dashed rounded-md text-muted-foreground">
-            No fields yet. Click "Add Field" to start building your form.
+            No fields yet. Click &quot;Add Field&quot; to start building your form.
           </div>
         )}
       </div>

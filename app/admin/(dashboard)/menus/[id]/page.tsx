@@ -1,6 +1,7 @@
 "use client";
 
 import { use, useState, useEffect } from "react";
+import { sileo } from "sileo";
 import { getMenuById, saveMenuItems } from "@/lib/actions/menus";
 import { getPages } from "@/lib/actions/pages";
 import { useRouter } from "next/navigation";
@@ -28,6 +29,29 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+type MenuItemType = {
+  id: string;
+  label: string;
+  url: string | null;
+  pageId: string | null;
+  parentId: string | null;
+  target: "_self" | "_blank" | null;
+  order?: number;
+};
+
+type PageType = {
+  id: string;
+  title: string;
+  slug?: string;
+};
+
+type MenuType = {
+  id: string;
+  name: string;
+  location: string;
+  items?: MenuItemType[];
+};
+
 function SortableMenuItem({
   item,
   updateItem,
@@ -35,11 +59,11 @@ function SortableMenuItem({
   pages,
   allItems,
 }: {
-  item: any;
-  updateItem: (id: string, updates: any) => void;
+  item: MenuItemType;
+  updateItem: (id: string, updates: Partial<MenuItemType>) => void;
   removeItem: (id: string) => void;
-  pages: any[];
-  allItems: any[];
+  pages: PageType[];
+  allItems: MenuItemType[];
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: item.id });
@@ -168,9 +192,9 @@ export default function MenuBuilderPage({ params }: { params: Promise<{ id: stri
   const { id } = use(params);
   const router = useRouter();
 
-  const [menu, setMenu] = useState<any>(null);
-  const [items, setItems] = useState<any[]>([]);
-  const [pages, setPages] = useState<any[]>([]);
+  const [menu, setMenu] = useState<MenuType | null>(null);
+  const [items, setItems] = useState<MenuItemType[]>([]);
+  const [pages, setPages] = useState<PageType[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -179,9 +203,9 @@ export default function MenuBuilderPage({ params }: { params: Promise<{ id: stri
       if (menuData) {
         setMenu(menuData);
         // Sort items by order so DND displays them correctly initially
-        const sorted = (menuData.items || []).sort((a: any, b: any) => a.order - b.order);
+        const sorted = (menuData.items || []).sort((a: MenuItemType, b: MenuItemType) => (a.order || 0) - (b.order || 0));
         // Convert to client-friendly format
-        setItems(sorted.map((i: any) => ({ ...i, id: i.id || Math.random().toString(36).substr(2, 9) })));
+        setItems(sorted.map((i: MenuItemType) => ({ ...i, id: i.id || Math.random().toString(36).substr(2, 9) })));
       }
       setPages(pagesData || []);
       setLoading(false);
@@ -210,7 +234,7 @@ export default function MenuBuilderPage({ params }: { params: Promise<{ id: stri
   };
 
   const addItem = () => {
-    const newItem = {
+    const newItem: MenuItemType = {
       id: Math.random().toString(36).substr(2, 9),
       label: "New Link",
       url: null,
@@ -221,7 +245,7 @@ export default function MenuBuilderPage({ params }: { params: Promise<{ id: stri
     setItems((prev) => [...prev, newItem]);
   };
 
-  const updateItem = (itemId: string, updates: any) => {
+  const updateItem = (itemId: string, updates: Partial<MenuItemType>) => {
     setItems((prev) =>
       prev.map((i) => (i.id === itemId ? { ...i, ...updates } : i))
     );
@@ -242,14 +266,14 @@ export default function MenuBuilderPage({ params }: { params: Promise<{ id: stri
         pageId: item.pageId,
         parentId: item.parentId,
         order: index,
-        target: item.target,
+        target: item.target === null ? undefined : item.target,
       }));
       await saveMenuItems(menu.id, payload);
       router.refresh();
-      alert("Menu saved!");
+      sileo.success({ title: "Menu saved!" });
     } catch (err) {
       console.error(err);
-      alert("Failed to save menu");
+      sileo.error({ title: "Failed to save menu" });
     } finally {
       setSaving(false);
     }
@@ -260,7 +284,7 @@ export default function MenuBuilderPage({ params }: { params: Promise<{ id: stri
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="outline" size="icon" >
-            <Link href="/menus">
+            <Link href="/admin/menus">
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
@@ -305,7 +329,7 @@ export default function MenuBuilderPage({ params }: { params: Promise<{ id: stri
 
         {items.length === 0 && (
           <div className="text-center p-8 border border-dashed rounded-md text-muted-foreground">
-            No items yet. Click "Add Link" to start building your menu.
+            No items yet. Click &quot;Add Link&quot; to start building your menu.
           </div>
         )}
       </div>
