@@ -95,7 +95,7 @@ export default async function AdminLayout({
               <Zap className="size-4" />
             </div>
             <Link href="/dashboard" className="text-sm font-semibold tracking-tight hover:underline">
-              yrrgCMS
+              YRRG CMS
             </Link>
           </div>
         </SidebarHeader>

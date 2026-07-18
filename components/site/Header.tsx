@@ -32,7 +32,7 @@ export default async function Header({ transparency }: { transparency?: number }
   const headerData = ((await getGlobal("header")) as HeaderConfig) || {};
   const menuData = await getMenuByLocation("header");
 
-  const siteName = headerData.siteName || "yrrgCMS";
+  const siteName = headerData.siteName || "YRRG CMS";
   const logoUrl = headerData.logoUrl;
   const ctaText = headerData.ctaText;
   const ctaUrl = headerData.ctaUrl;

@@ -5,7 +5,7 @@ import { getMenus } from "@/lib/actions/menus";
 import GlobalsClient from "./client";
 
 export const metadata = {
-  title: "Global Settings | yrrgCMS",
+  title: "Global Settings | YRRG CMS",
 };
 
 export default async function GlobalsPage() {

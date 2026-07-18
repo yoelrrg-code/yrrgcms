@@ -148,9 +148,9 @@ export interface FooterConfig {
 export default async function Footer() {
   const headerData = ((await getGlobal("header")) as HeaderConfig) || {};
   const footerData = ((await getGlobal("footer")) as FooterConfig) || {};
-  const siteName = headerData.siteName || "yrrgCMS";
+  const siteName = headerData.siteName || "YRRG CMS";
   const siteDescription = headerData.siteDescription || "A modern Next.js 15 CMS powered by App Router and Drizzle.";
-  const copyright = footerData.copyright || "© yrrgCMS. All rights reserved.";
+  const copyright = footerData.copyright || "© YRRG CMS. All rights reserved.";
   const socialLinks = footerData.socialLinks || [];
   const columns = footerData.columns || [];
 

@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const form = await getFormById(id);
   if (!form) return { title: "Form Not Found" };
-  return { title: `${form.name} Submissions | yrrgCMS` };
+  return { title: `${form.name} Submissions | YRRG CMS` };
 }
 
 export default async function FormSubmissionsPage({

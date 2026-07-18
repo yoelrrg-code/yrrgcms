@@ -69,7 +69,7 @@ function LoginForm() {
             <Zap className="size-6" />
           </div>
           <div className="text-center">
-            <h1 className="text-2xl font-bold tracking-tight">yrrgCMS</h1>
+            <h1 className="text-2xl font-bold tracking-tight">YRRG CMS</h1>
             <p className="text-sm text-muted-foreground">Admin Panel</p>
           </div>
         </div>
@@ -135,7 +135,7 @@ function LoginForm() {
         </Card>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          yrrgCMS &copy; {new Date().getFullYear()}
+          YRRG CMS &copy; {new Date().getFullYear()}
         </p>
       </div>
     </div>

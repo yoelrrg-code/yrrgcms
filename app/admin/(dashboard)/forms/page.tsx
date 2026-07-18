@@ -19,7 +19,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 export const metadata = {
-  title: "Forms | yrrgCMS",
+  title: "Forms | YRRG CMS",
 };
 
 export default async function FormsPage() {

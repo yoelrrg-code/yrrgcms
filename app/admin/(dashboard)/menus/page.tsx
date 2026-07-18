@@ -17,7 +17,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 export const metadata = {
-  title: "Menus | yrrgCMS",
+  title: "Menus | YRRG CMS",
 };
 
 export default async function MenusPage() {

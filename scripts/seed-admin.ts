@@ -53,7 +53,7 @@ async function main() {
         {
           key: "header",
           value: {
-            siteName: "yrrgCMS",
+            siteName: "YRRG CMS",
             logoUrl: "",
             ctaText: "Contact Us",
             ctaUrl: "/contact",
@@ -62,7 +62,7 @@ async function main() {
         {
           key: "footer",
           value: {
-            copyright: `© ${new Date().getFullYear()} yrrgCMS. All rights reserved.`,
+            copyright: `© ${new Date().getFullYear()} YRRG CMS. All rights reserved.`,
             socialLinks: [],
             columns: [],
           },
@@ -70,7 +70,7 @@ async function main() {
         {
           key: "seo_defaults",
           value: {
-            siteTitle: "yrrgCMS",
+            siteTitle: "YRRG CMS",
             description: "A powerful CMS built with Next.js",
             ogImage: "",
             favicon: "",

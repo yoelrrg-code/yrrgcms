@@ -12,7 +12,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "yrrgCMS",
+  title: "YRRG CMS",
   description: "Custom CMS built with Next.js",
 };
 

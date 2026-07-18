@@ -17,7 +17,7 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     label: "Hero Banner",
     description: "Full-width hero section with image and text",
     defaultProps: {
-      title: "Welcome to yrrgCMS",
+      title: "Welcome to YRRG CMS",
       subtitle: "The powerful Headless CMS",
       ctaText: "Get Started",
       ctaUrl: "/",

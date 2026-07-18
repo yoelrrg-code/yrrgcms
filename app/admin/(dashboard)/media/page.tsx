@@ -8,7 +8,7 @@ import Image from "next/image";
 import { revalidatePath } from "next/cache";
 
 export const metadata = {
-  title: "Media | yrrgCMS",
+  title: "Media | YRRG CMS",
 };
 
 function formatBytes(bytes: number) {
