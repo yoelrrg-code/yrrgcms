@@ -19,6 +19,8 @@ export interface PostsGridProps {
 }
 
 export default async function PostsGrid({
+  paddingTop,
+  paddingBottom,
   title,
   categoryId,
   count = 6,

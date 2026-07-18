@@ -27,6 +27,7 @@ type ThemeConfig = {
   button?: Record<string, string>;
   typography?: {
     paragraphColor?: string;
+    paragraphPadding?: string;
     h1?: HeadingConfig;
     h2?: HeadingConfig;
     h3?: HeadingConfig;

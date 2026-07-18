@@ -58,8 +58,8 @@ export default async function EditCategoryPage({
 
               await updateCategory(category.id, {
                 name,
-                description: description || null,
-                parentId: parentId || null,
+                description: description || undefined,
+                parentId: parentId || undefined,
               });
               
               revalidatePath("/admin/categories");
