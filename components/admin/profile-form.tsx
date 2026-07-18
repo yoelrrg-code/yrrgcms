@@ -35,12 +35,12 @@ export function ProfileForm({ user }: ProfileFormProps) {
     e.preventDefault();
 
     if (!firstName.trim()) {
-      sileo.error({ title: "El nombre es requerido." });
+      sileo.error({ title: "First name is required." });
       return;
     }
 
     if (password && password !== confirmPassword) {
-      sileo.error({ title: "Las contraseñas no coinciden." });
+      sileo.error({ title: "Passwords do not match." });
       return;
     }
 
@@ -52,7 +52,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
           ...(password ? { password } : {}),
         });
         
-        sileo.success({ title: "Perfil actualizado con éxito." });
+        sileo.success({ title: "Profile updated successfully." });
         setPassword("");
         setConfirmPassword("");
         
@@ -60,7 +60,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
         router.refresh();
       } catch (err) {
         sileo.error({
-          title: err instanceof Error ? err.message : "Ocurrió un error al actualizar el perfil."
+          title: err instanceof Error ? err.message : "Failed to update profile."
         });
       }
     });
@@ -69,9 +69,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
   return (
     <Card className="max-w-2xl">
       <CardHeader>
-        <CardTitle>Configuración de Perfil</CardTitle>
+        <CardTitle>Profile Settings</CardTitle>
         <CardDescription>
-          Actualizá tu información personal y contraseña de acceso.
+          Update your personal information and account password.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -79,7 +79,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
 
           {/* Email (Readonly) */}
           <div className="space-y-1.5">
-            <Label htmlFor="email">Correo Electrónico (No modificable)</Label>
+            <Label htmlFor="email">Email Address (Read-only)</Label>
             <Input
               id="email"
               type="email"
@@ -92,40 +92,40 @@ export function ProfileForm({ user }: ProfileFormProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Nombre */}
             <div className="space-y-1.5">
-              <Label htmlFor="firstName">Nombre</Label>
+              <Label htmlFor="firstName">First Name</Label>
               <Input
                 id="firstName"
                 type="text"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                placeholder="Juan"
+                placeholder="Jane"
                 required
               />
             </div>
 
             {/* Apellidos */}
             <div className="space-y-1.5">
-              <Label htmlFor="lastName">Apellidos</Label>
+              <Label htmlFor="lastName">Last Name</Label>
               <Input
                 id="lastName"
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                placeholder="Pérez"
+                placeholder="Doe"
               />
             </div>
           </div>
 
           <div className="border-t pt-4 space-y-4">
-            <h3 className="text-sm font-medium text-foreground">Cambiar Contraseña</h3>
+            <h3 className="text-sm font-medium text-foreground">Change Password</h3>
             <p className="text-xs text-muted-foreground">
-              Dejá estos campos en blanco si no querés cambiar tu contraseña actual.
+              Leave these fields blank if you do not want to change your current password.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Nueva Contraseña */}
               <div className="space-y-1.5">
-                <Label htmlFor="password">Nueva Contraseña</Label>
+                <Label htmlFor="password">New Password</Label>
                 <Input
                   id="password"
                   type="password"
@@ -137,7 +137,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
 
               {/* Confirmar Contraseña */}
               <div className="space-y-1.5">
-                <Label htmlFor="confirmPassword">Confirmar Nueva Contraseña</Label>
+                <Label htmlFor="confirmPassword">Confirm New Password</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -151,7 +151,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
 
           <Button type="submit" disabled={isPending} className="w-full md:w-auto">
             {isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
-            Guardar Cambios
+            Save Changes
           </Button>
         </form>
       </CardContent>

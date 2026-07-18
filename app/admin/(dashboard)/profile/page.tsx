@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { ProfileForm } from "@/components/admin/profile-form";
 
 export const metadata = {
-  title: "Editar Perfil | YRRG CMS",
+  title: "Edit Profile | YRRG CMS",
 };
 
 export default async function ProfilePage() {
@@ -22,9 +22,9 @@ export default async function ProfilePage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Mi Perfil</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Profile Settings</h1>
         <p className="text-muted-foreground mt-1">
-          Administrá los detalles de tu cuenta de usuario.
+          Manage your user account details.
         </p>
       </div>
       

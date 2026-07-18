@@ -144,7 +144,7 @@ export default async function AdminLayout({
             render={<Link href="/admin/profile" />}
           >
             <User className="size-4" />
-            Editar Perfil
+            Edit Profile
           </Button>
           <SignOutButton />
         </SidebarFooter>
