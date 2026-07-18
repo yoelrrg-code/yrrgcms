@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, jsonb, integer, uuid, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, jsonb, integer, uuid, pgEnum, boolean } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 // ============================================================
@@ -197,6 +197,20 @@ export const globals = pgTable("globals", {
 });
 
 // ============================================================
+// THEMES
+// ============================================================
+
+export const themes = pgTable("themes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  isActive: boolean("is_active").notNull().default(false),
+  config: jsonb("config").notNull().default({}),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// ============================================================
 // RELATIONS
 // ============================================================
 
@@ -278,3 +292,5 @@ export type Menu = typeof menus.$inferSelect;
 export type MenuItem = typeof menuItems.$inferSelect;
 export type Media = typeof media.$inferSelect;
 export type Global = typeof globals.$inferSelect;
+export type Theme = typeof themes.$inferSelect;
+export type NewTheme = typeof themes.$inferInsert;

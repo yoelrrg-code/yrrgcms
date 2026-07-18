@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { Button } from "@/components/ui/button";
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -31,6 +32,8 @@ interface FormConfig {
 }
 
 export interface ContactFormBlockProps {
+  paddingTop?: string;
+  paddingBottom?: string;
   formId: string;
   title?: string;
 }
@@ -40,6 +43,8 @@ type Status = "idle" | "loading" | "success" | "error";
 // ── Component ────────────────────────────────────────────────
 
 export default function ContactFormBlock({
+  paddingTop,
+  paddingBottom,
   formId,
   title,
 }: ContactFormBlockProps) {
@@ -104,7 +109,7 @@ export default function ContactFormBlock({
   // ── Loading skeleton ──────────────────────────────────────
   if (!config && !configError) {
     return (
-      <section className="py-20 px-6">
+      <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} py-20 px-6`}>
         <div className="mx-auto max-w-2xl animate-pulse space-y-4">
           <div className="h-8 w-1/2 rounded-lg bg-slate-200 dark:bg-slate-700" />
           {[1, 2, 3].map((i) => (
@@ -191,10 +196,9 @@ export default function ContactFormBlock({
             </p>
           )}
 
-          <button
+          <Button
             type="submit"
             disabled={status === "loading"}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-violet-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-violet-500/20 transition-all hover:bg-violet-500 hover:shadow-violet-500/40 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400"
           >
             {status === "loading" && (
               <svg
@@ -219,7 +223,7 @@ export default function ContactFormBlock({
               </svg>
             )}
             {status === "loading" ? "Sending…" : "Submit"}
-          </button>
+          </Button>
         </form>
       </div>
     </section>
@@ -238,7 +242,7 @@ function FieldRenderer({
   onChange: (val: string | boolean) => void;
 }) {
   const inputClass =
-    "w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm text-foreground shadow-sm outline-none ring-offset-background transition placeholder:text-muted-foreground focus:border-violet-500 focus:ring-2 focus:ring-violet-400/30 disabled:opacity-50";
+    "w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm text-foreground shadow-sm outline-none ring-offset-background transition placeholder:text-muted-foreground focus:border-violet-500 focus:ring-2 focus:ring-theme-primary/30 disabled:opacity-50";
 
   const labelEl = (
     <label
@@ -319,7 +323,7 @@ function FieldRenderer({
                 required={field.required}
                 checked={value === opt}
                 onChange={() => onChange(opt)}
-                className="h-4 w-4 accent-violet-600"
+                className="h-4 w-4 accent-theme-primary"
               />
               {opt}
             </label>
@@ -339,7 +343,7 @@ function FieldRenderer({
           required={field.required}
           checked={value as boolean}
           onChange={(e) => onChange(e.target.checked)}
-          className="mt-0.5 h-4 w-4 rounded accent-violet-600"
+          className="mt-0.5 h-4 w-4 rounded accent-theme-primary"
         />
         <span className="text-sm text-foreground">{field.label}</span>
       </label>

@@ -11,9 +11,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Trash2 } from "lucide-react";
 import MediaPicker from "@/components/admin/MediaPicker/MediaPicker";
+import RichTextEditor from "@/components/admin/RichTextEditor/RichTextEditor";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type HeaderConfig = {
   siteName?: string;
+  siteDescription?: string;
   logoUrl?: string;
   ctaText?: string;
   ctaUrl?: string;
@@ -26,7 +29,10 @@ type SocialLink = {
 
 type FooterColumn = {
   title: string;
+  type?: "links" | "menu" | "richText";
   links: { label: string; url: string }[];
+  menuId?: string;
+  richText?: unknown;
 };
 
 type FooterConfig = {
@@ -46,10 +52,12 @@ export default function GlobalsClient({
   initialHeader,
   initialFooter,
   initialSeo,
+  initialMenus,
 }: {
   initialHeader: Partial<HeaderConfig> | null;
   initialFooter: Partial<FooterConfig> | null;
   initialSeo: Partial<SeoConfig> | null;
+  initialMenus?: { id: string; name: string; location: string }[];
 }) {
   const router = useRouter();
   const [header, setHeader] = useState<HeaderConfig>(initialHeader || {});
@@ -91,6 +99,13 @@ export default function GlobalsClient({
             <Input
               value={header.siteName || ""}
               onChange={(e) => setHeader({ ...header, siteName: e.target.value })}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Site Description</Label>
+            <Textarea
+              value={header.siteDescription || ""}
+              onChange={(e) => setHeader({ ...header, siteDescription: e.target.value })}
             />
           </div>
           <div className="space-y-2">
@@ -225,56 +240,118 @@ export default function GlobalsClient({
                   </Button>
                 </div>
                 <div className="space-y-2">
-                  {col.links.map((link: { label: string; url: string }, linkIdx: number) => (
-                    <div key={linkIdx} className="flex gap-2">
-                      <Input
-                        value={link.label}
-                        placeholder="Label"
-                        className="h-8 text-sm"
-                        onChange={(e) => {
-                          const newCols = [...footer.columns];
-                          newCols[colIdx].links[linkIdx].label = e.target.value;
-                          setFooter({ ...footer, columns: newCols });
-                        }}
-                      />
-                      <Input
-                        value={link.url}
-                        placeholder="URL"
-                        className="h-8 text-sm"
-                        onChange={(e) => {
-                          const newCols = [...footer.columns];
-                          newCols[colIdx].links[linkIdx].url = e.target.value;
-                          setFooter({ ...footer, columns: newCols });
-                        }}
-                      />
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => {
-                          const newCols = [...footer.columns];
-                          newCols[colIdx].links = newCols[colIdx].links.filter(
-                            (_: unknown, i: number) => i !== linkIdx
-                          );
-                          setFooter({ ...footer, columns: newCols });
-                        }}
-                      >
-                        <Trash2 className="h-3 w-3 text-destructive" />
-                      </Button>
-                    </div>
-                  ))}
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="w-full text-xs h-8"
-                    onClick={() => {
+                  <Select
+                    value={col.type || "links"}
+                    onValueChange={(val) => {
+                      if (!val) return;
                       const newCols = [...footer.columns];
-                      newCols[colIdx].links.push({ label: "", url: "" });
+                      newCols[colIdx].type = val as "links" | "menu" | "richText";
                       setFooter({ ...footer, columns: newCols });
                     }}
                   >
-                    <Plus className="mr-2 h-3 w-3" /> Add Link
-                  </Button>
+                    <SelectTrigger className="w-full h-8 text-xs">
+                      <SelectValue placeholder="Column Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="links">Manual Links</SelectItem>
+                      <SelectItem value="menu">Select Menu</SelectItem>
+                      <SelectItem value="richText">Rich Text</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {(!col.type || col.type === "links") && (
+                    <div className="space-y-2 pt-2">
+                      {col.links.map((link: { label: string; url: string }, linkIdx: number) => (
+                        <div key={linkIdx} className="flex gap-2">
+                          <Input
+                            value={link.label}
+                            placeholder="Label"
+                            className="h-8 text-sm"
+                            onChange={(e) => {
+                              const newCols = [...footer.columns];
+                              newCols[colIdx].links[linkIdx].label = e.target.value;
+                              setFooter({ ...footer, columns: newCols });
+                            }}
+                          />
+                          <Input
+                            value={link.url}
+                            placeholder="URL"
+                            className="h-8 text-sm"
+                            onChange={(e) => {
+                              const newCols = [...footer.columns];
+                              newCols[colIdx].links[linkIdx].url = e.target.value;
+                              setFooter({ ...footer, columns: newCols });
+                            }}
+                          />
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => {
+                              const newCols = [...footer.columns];
+                              newCols[colIdx].links = newCols[colIdx].links.filter(
+                                (_: unknown, i: number) => i !== linkIdx
+                              );
+                              setFooter({ ...footer, columns: newCols });
+                            }}
+                          >
+                            <Trash2 className="h-3 w-3 text-destructive" />
+                          </Button>
+                        </div>
+                      ))}
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="w-full text-xs h-8"
+                        onClick={() => {
+                          const newCols = [...footer.columns];
+                          newCols[colIdx].links.push({ label: "", url: "" });
+                          setFooter({ ...footer, columns: newCols });
+                        }}
+                      >
+                        <Plus className="mr-2 h-3 w-3" /> Add Link
+                      </Button>
+                    </div>
+                  )}
+
+                  {col.type === "menu" && (
+                    <div className="pt-2">
+                      <Select
+                        value={col.menuId || ""}
+                        onValueChange={(val) => {
+                          if (!val) return;
+                          const newCols = [...footer.columns];
+                          newCols[colIdx].menuId = val;
+                          setFooter({ ...footer, columns: newCols });
+                        }}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Choose a menu..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {initialMenus?.map((menu) => (
+                            <SelectItem key={menu.id} value={menu.id}>
+                              {menu.name} ({menu.location})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  {col.type === "richText" && (
+                    <div className="pt-2">
+                      <RichTextEditor
+                        content={col.richText}
+                        onChange={(content) => {
+                          const newCols = [...footer.columns];
+                          newCols[colIdx].richText = content;
+                          setFooter({ ...footer, columns: newCols });
+                        }}
+                        placeholder="Write column content here..."
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

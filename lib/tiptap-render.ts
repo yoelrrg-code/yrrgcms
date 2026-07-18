@@ -13,12 +13,22 @@ import { Image } from "@tiptap/extension-image";
 export function tiptapToHtml(content: unknown): string {
   if (!content) return "";
 
+  let parsedContent = content;
+  if (typeof content === "string") {
+    try {
+      parsedContent = JSON.parse(content);
+    } catch {
+      // Not a valid JSON string, might be raw text or HTML
+      parsedContent = { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: content }] }] };
+    }
+  }
+
   // Tiptap expects the root node to have type "doc"
   const doc =
-    typeof content === "object" &&
-    content !== null &&
-    (content as Record<string, unknown>).type === "doc"
-      ? content
+    typeof parsedContent === "object" &&
+    parsedContent !== null &&
+    (parsedContent as Record<string, unknown>).type === "doc"
+      ? parsedContent
       : { type: "doc", content: [] };
 
   try {

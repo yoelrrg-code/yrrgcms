@@ -9,11 +9,15 @@ export interface GalleryImage {
 }
 
 export interface ImageGalleryProps {
+  paddingTop?: string;
+  paddingBottom?: string;
   images: GalleryImage[];
   columns?: 2 | 3 | 4;
 }
 
 export default function ImageGallery({
+  paddingTop,
+  paddingBottom,
   images,
   columns = 3,
 }: ImageGalleryProps) {
@@ -67,7 +71,7 @@ export default function ImageGallery({
 
   return (
     <>
-      <section className="py-16 px-6">
+      <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} py-16 px-6`}>
         <div className="mx-auto max-w-6xl">
           <div className={`grid gap-4 ${colClass}`}>
             {images.map((img, idx) => (
@@ -75,7 +79,7 @@ export default function ImageGallery({
                 key={idx}
                 type="button"
                 onClick={() => setLightboxIndex(idx)}
-                className="group relative overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2"
+                className="group relative overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary focus-visible:ring-offset-2"
                 aria-label={`Open image: ${img.alt || `Image ${idx + 1}`}`}
               >
                 <div className="aspect-square">

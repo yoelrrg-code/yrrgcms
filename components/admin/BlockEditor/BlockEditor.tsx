@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import MediaPicker from "@/components/admin/MediaPicker/MediaPicker";
+import RichTextEditor from "@/components/admin/RichTextEditor/RichTextEditor";
 import { Badge } from "@/components/ui/badge";
 import {
   Sheet,
@@ -149,10 +150,10 @@ function PropEditor({ block, onChange, onClose }: PropEditorProps) {
 
           const isImageField =
             typeof value === "string" &&
-            (key.toLowerCase().includes("image") ||
-              key.toLowerCase().includes("icon") ||
-              key.toLowerCase().includes("logo") ||
-              key.toLowerCase().includes("avatar") ||
+            (key.toLowerCase().includes("image") && !key.toLowerCase().includes("position") && !key.toLowerCase().includes("alt") ||
+              key.toLowerCase().includes("icon") && !key.toLowerCase().includes("position") && !key.toLowerCase().includes("alt") ||
+              key.toLowerCase().includes("logo") && !key.toLowerCase().includes("position") && !key.toLowerCase().includes("alt") ||
+              key.toLowerCase().includes("avatar") && !key.toLowerCase().includes("position") && !key.toLowerCase().includes("alt") ||
               key.toLowerCase() === "src");
 
           if (isImageField) {
@@ -178,13 +179,37 @@ function PropEditor({ block, onChange, onClose }: PropEditorProps) {
             );
           }
 
-          // Render textarea for long string values or 'content' key
-          if (key === "content" || (typeof value === "string" && value.length > 80)) {
+          // Use RichTextEditor for 'content' key
+          if (key === "content") {
+            let editorContent = value;
+            if (typeof value === "string") {
+              try {
+                editorContent = JSON.parse(value);
+              } catch {
+                // If it's a raw string that isn't JSON, just pass the string
+              }
+            }
+
+            return (
+              <div key={key} className="space-y-1">
+                <label className="text-xs font-medium text-muted-foreground">{label}</label>
+                <div className="border rounded-md">
+                  <RichTextEditor
+                    content={editorContent}
+                    onChange={(val) => handleChange(key, val)}
+                  />
+                </div>
+              </div>
+            );
+          }
+
+          // Render textarea for long string values
+          if (typeof value === "string" && value.length > 80) {
             return (
               <div key={key} className="space-y-1">
                 <label className="text-xs font-medium text-muted-foreground">{label}</label>
                 <Textarea
-                  value={typeof value === "string" ? value : JSON.stringify(value, null, 2)}
+                  value={value}
                   onChange={(e) => handleChange(key, e.target.value)}
                   rows={4}
                   className="text-sm font-mono"
@@ -322,6 +347,7 @@ export default function BlockEditor({ blocks, onChange }: BlockEditorProps) {
       {/* ── Left: block list ─────────────────────────────────────────── */}
       <div className="w-72 shrink-0 flex flex-col gap-2">
         <DndContext
+          id="dnd-block-editor"
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}

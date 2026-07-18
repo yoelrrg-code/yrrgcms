@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { pages, users } from "@/lib/db/schema";
 import { requireCan } from "@/lib/permissions";
 import { eq, desc } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 // Returns all pages ordered by updatedAt desc with author name
 export async function getPages() {
@@ -121,6 +122,7 @@ export async function deletePage(id: string) {
   requireCan(session, "delete", "pages");
 
   await db.delete(pages).where(eq(pages.id, id));
+  revalidatePath("/admin/pages");
 }
 
 // Publishes a page (sets status=published, publishedAt=now)
@@ -138,6 +140,7 @@ export async function publishPage(id: string) {
     .where(eq(pages.id, id))
     .returning();
 
+  revalidatePath("/admin/pages");
   return updated;
 }
 
@@ -156,5 +159,6 @@ export async function unpublishPage(id: string) {
     .where(eq(pages.id, id))
     .returning();
 
+  revalidatePath("/admin/pages");
   return updated;
 }

@@ -10,6 +10,8 @@ import {
 import { eq, desc, and } from "drizzle-orm";
 
 export interface PostsGridProps {
+  paddingTop?: string;
+  paddingBottom?: string;
   title?: string;
   categoryId?: string;
   count?: number;
@@ -52,7 +54,7 @@ export default async function PostsGrid({
   // ── Empty state ──────────────────────────────────────────────
   if (postRows.length === 0) {
     return (
-      <section className="py-20 px-6">
+      <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} py-20 px-6`}>
         {title && (
           <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             {title}
@@ -172,7 +174,7 @@ function PostCard({ post }: { post: PostRow }) {
         {post.categoryName && (
           <Link
             href={`/blog/category/${post.categorySlug}`}
-            className="w-fit rounded-full bg-violet-100 dark:bg-violet-950 px-3 py-0.5 text-xs font-semibold text-violet-700 dark:text-violet-300 ring-1 ring-violet-200 dark:ring-violet-800 transition-colors hover:bg-violet-200 dark:hover:bg-violet-900"
+            className="w-fit rounded-full bg-theme-primary/10 px-3 py-0.5 text-xs font-semibold text-theme-primary ring-1 ring-theme-primary/20 transition-colors hover:bg-theme-primary/20"
           >
             {post.categoryName}
           </Link>
@@ -180,7 +182,7 @@ function PostCard({ post }: { post: PostRow }) {
 
         {/* Title */}
         <Link href={`/blog/${post.slug}`}>
-          <h3 className="text-lg font-bold leading-snug text-foreground transition-colors group-hover:text-violet-600 dark:group-hover:text-violet-400 line-clamp-2">
+          <h3 className="text-lg font-bold leading-snug text-foreground transition-colors group-hover:text-theme-primary line-clamp-2">
             {post.title}
           </h3>
         </Link>
@@ -238,13 +240,13 @@ function PostListItem({ post }: { post: PostRow }) {
         {post.categoryName && (
           <Link
             href={`/blog/category/${post.categorySlug}`}
-            className="w-fit text-xs font-semibold uppercase tracking-wide text-violet-600 dark:text-violet-400 hover:underline"
+            className="w-fit text-xs font-semibold uppercase tracking-wide text-theme-primary hover:underline"
           >
             {post.categoryName}
           </Link>
         )}
         <Link href={`/blog/${post.slug}`}>
-          <h3 className="text-xl font-bold leading-snug text-foreground transition-colors group-hover:text-violet-600 dark:group-hover:text-violet-400">
+          <h3 className="text-xl font-bold leading-snug text-foreground transition-colors group-hover:text-theme-primary">
             {post.title}
           </h3>
         </Link>

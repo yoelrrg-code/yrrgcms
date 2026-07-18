@@ -30,6 +30,7 @@ import {
   Image,
   Users,
   Zap,
+  Palette,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -48,6 +49,7 @@ const ADMIN_NAV: NavItem[] = [
   { label: "Forms", href: "/admin/forms", icon: ClipboardList },
   { label: "Menus", href: "/admin/menus", icon: Menu },
   { label: "Globals", href: "/admin/globals", icon: Globe },
+  { label: "Themes", href: "/admin/themes", icon: Palette },
   { label: "Media", href: "/admin/media", icon: Image },
   { label: "Users", href: "/admin/users", icon: Users },
 ];
@@ -83,7 +85,8 @@ export default async function AdminLayout({
     .slice(0, 2);
 
   return (
-    <SidebarProvider>
+    <div className="admin-dashboard flex w-full">
+      <SidebarProvider>
       <Sidebar>
         {/* Brand header */}
         <SidebarHeader className="border-b border-sidebar-border px-4 py-3">
@@ -145,5 +148,6 @@ export default async function AdminLayout({
         <main className="flex-1 overflow-auto p-6">{children}</main>
       </SidebarInset>
     </SidebarProvider>
+    </div>
   );
 }

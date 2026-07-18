@@ -2,6 +2,8 @@ import Image from "next/image";
 import { tiptapToHtml } from "@/lib/tiptap-render";
 
 export interface TextWithImageProps {
+  paddingTop?: string;
+  paddingBottom?: string;
   /** Tiptap JSON document or null */
   content: unknown;
   imageUrl: string;
@@ -10,6 +12,8 @@ export interface TextWithImageProps {
 }
 
 export default function TextWithImage({
+  paddingTop,
+  paddingBottom,
   content,
   imageUrl,
   imageAlt,
@@ -37,7 +41,7 @@ export default function TextWithImage({
   );
 
   return (
-    <section className="py-20 px-6">
+    <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} py-20 px-6`}>
       <div className="mx-auto max-w-6xl">
         <div
           className={`flex flex-col gap-12 lg:flex-row lg:items-center ${

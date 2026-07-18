@@ -78,7 +78,7 @@ export default async function BlogPostPage({
                 <Link
                   key={cat.id}
                   href={`/blog/category/${cat.slug}`}
-                  className="rounded-full bg-violet-100 dark:bg-violet-900/30 px-3 py-1 text-xs font-semibold text-violet-700 dark:text-violet-300 hover:bg-violet-200 dark:hover:bg-violet-900/50 transition-colors"
+                  className="rounded-full bg-theme-primary/10 px-3 py-1 text-xs font-semibold text-theme-primary hover:bg-theme-primary/20 transition-colors"
                 >
                   {cat.name}
                 </Link>
@@ -114,9 +114,9 @@ export default async function BlogPostPage({
             className="
               prose prose-lg prose-slate dark:prose-invert max-w-none
               prose-headings:font-bold prose-headings:tracking-tight
-              prose-a:text-violet-600 dark:prose-a:text-violet-400
-              prose-a:underline-offset-4 hover:prose-a:text-violet-500
-              prose-blockquote:border-l-violet-500
+              prose-a:text-theme-primary
+              prose-a:underline-offset-4 hover:prose-a:text-theme-primary/80
+              prose-blockquote:border-l-theme-primary
               prose-blockquote:bg-slate-50 dark:prose-blockquote:bg-slate-800/50
               prose-blockquote:rounded-r-lg prose-blockquote:py-1 prose-blockquote:pr-4
               prose-code:bg-slate-100 dark:prose-code:bg-slate-800

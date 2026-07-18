@@ -1,5 +1,6 @@
 import { getTags, createTag, deleteTag } from "@/lib/actions/tags";
 import { revalidatePath } from "next/cache";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,7 +24,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, Pencil } from "lucide-react";
 
 function toSlug(str: string) {
   return str
@@ -75,6 +76,9 @@ export default async function TagsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-2">
+                      <Button variant="ghost" size="icon" render={<Link href={`/admin/tags/${tag.id}`} />}>
+                        <Pencil className="h-4 w-4 text-muted-foreground" />
+                      </Button>
                       <AlertDialog>
                         <AlertDialogTrigger
                           render={<Button variant="ghost" size="sm" className="h-8 text-xs text-destructive hover:text-destructive" />}

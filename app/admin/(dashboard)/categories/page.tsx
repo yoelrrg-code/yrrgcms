@@ -1,5 +1,6 @@
 import { getCategories, createCategory, deleteCategory } from "@/lib/actions/categories";
 import { revalidatePath } from "next/cache";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,7 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusIcon, Trash2 } from "lucide-react";
+import { PlusIcon, Trash2, Pencil } from "lucide-react";
 
 function toSlug(str: string) {
   return str
@@ -86,6 +87,9 @@ export default async function CategoriesPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-2">
+                      <Button variant="ghost" size="icon" render={<Link href={`/admin/categories/${cat.id}`} />}>
+                        <Pencil className="h-4 w-4 text-muted-foreground" />
+                      </Button>
                       {/* Delete */}
                       <AlertDialog>
                         <AlertDialogTrigger

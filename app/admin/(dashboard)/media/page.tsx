@@ -79,15 +79,15 @@ export default async function MediaPage() {
                 
                 {/* Actions overlay */}
                 <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button variant="secondary" size="icon" className="h-7 w-7 bg-background/80 hover:bg-background" >
-                    <a href={file.url} target="_blank" rel="noreferrer" title="Open URL">
+                  {/* <Button variant="secondary" size="icon" className="h-7 w-7 bg-background/80 hover:bg-background" > */}
+                    <a href={file.url} target="_blank" rel="noreferrer" title="Open URL" className="h-7 w-7 bg-background/80 hover:bg-background flex items-center justify-center rounded-md">
                       <Copy className="h-3.5 w-3.5" />
                     </a>
-                  </Button>
+                  {/* </Button> */}
                   <form action={handleDelete}>
                     <input type="hidden" name="id" value={file.id} />
-                    <Button variant="destructive" size="icon" type="submit" className="h-7 w-7 bg-destructive/90 hover:bg-destructive" title="Delete">
-                      <Trash2 className="h-3.5 w-3.5" />
+                    <Button variant="destructive" size="icon" type="submit" className="h-7 w-7 bg-destructive/90 hover:bg-destructive rounded-full" title="Delete">
+                      <Trash2 className="h-3.5 w-3.5" style={{color: "white"}}/>
                     </Button>
                   </form>
                 </div>

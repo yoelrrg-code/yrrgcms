@@ -21,6 +21,8 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
       subtitle: "The powerful Headless CMS",
       ctaText: "Get Started",
       ctaUrl: "/",
+      paddingTop: "pt-12",
+      paddingBottom: "pb-12",
     },
   },
   {
@@ -32,6 +34,8 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
       imageUrl: "",
       imageAlt: "",
       imagePosition: "left",
+      paddingTop: "pt-12",
+      paddingBottom: "pb-12",
     },
   },
   {
@@ -40,6 +44,8 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     description: "Standard text content block",
     defaultProps: {
       content: null,
+      paddingTop: "pt-12",
+      paddingBottom: "pb-12",
     },
   },
   {
@@ -50,6 +56,8 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
       title: "Recent News",
       count: 6,
       layout: "grid",
+      paddingTop: "pt-12",
+      paddingBottom: "pb-12",
     },
   },
   {
@@ -59,6 +67,8 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     defaultProps: {
       title: "Contact Us",
       formId: "",
+      paddingTop: "pt-12",
+      paddingBottom: "pb-12",
     },
   },
   {
@@ -68,6 +78,8 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     defaultProps: {
       title: "Our Plans",
       plans: [],
+      paddingTop: "pt-12",
+      paddingBottom: "pb-12",
     },
   },
   {
@@ -77,6 +89,8 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
     defaultProps: {
       images: [],
       columns: 3,
+      paddingTop: "pt-12",
+      paddingBottom: "pb-12",
     },
   },
   {
@@ -88,6 +102,8 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
       buttonText: "Sign Up",
       buttonUrl: "/",
       style: "primary",
+      paddingTop: "pt-12",
+      paddingBottom: "pb-12",
     },
   },
 ];

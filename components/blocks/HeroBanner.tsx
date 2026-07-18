@@ -1,7 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export interface HeroBannerProps {
+  paddingTop?: string;
+  paddingBottom?: string;
   title: string;
   subtitle?: string;
   ctaText?: string;
@@ -11,6 +14,8 @@ export interface HeroBannerProps {
 }
 
 export default function HeroBanner({
+  paddingTop,
+  paddingBottom,
   title,
   subtitle,
   ctaText,
@@ -21,7 +26,7 @@ export default function HeroBanner({
   const overlay = overlayColor ?? "rgba(0,0,0,0.55)";
 
   return (
-    <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
+    <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} relative flex min-h-screen items-center justify-center overflow-hidden`}>
       {/* Background */}
       {backgroundImage ? (
         <Image
@@ -36,7 +41,7 @@ export default function HeroBanner({
         /* Gradient fallback */
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-br from-slate-900 via-violet-950 to-slate-900"
+          className="absolute inset-0 bg-gradient-to-br from-slate-900 via-theme-primary to-slate-900"
         />
       )}
 
@@ -59,16 +64,7 @@ export default function HeroBanner({
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-4xl px-6 py-24 text-center">
-        <h1
-          className="mb-6 text-5xl font-extrabold leading-tight tracking-tight text-white sm:text-6xl lg:text-7xl"
-          style={{
-            backgroundImage:
-              "linear-gradient(135deg, #fff 20%, #a78bfa 60%, #38bdf8 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-          }}
-        >
+        <h1 className="mb-6 text-5xl font-extrabold leading-tight tracking-tight text-white sm:text-6xl lg:text-7xl">
           {title}
         </h1>
 
@@ -79,11 +75,8 @@ export default function HeroBanner({
         )}
 
         {ctaText && ctaUrl && (
-          <Link
-            href={ctaUrl}
-            className="inline-flex items-center gap-2 rounded-full bg-violet-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-violet-500/30 ring-1 ring-violet-400/20 transition-all duration-200 hover:bg-violet-500 hover:shadow-violet-500/50 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400"
-          >
-            {ctaText}
+          <Button render={<Link href={ctaUrl} />}>
+            {ctaText} 
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-4 w-4"
@@ -98,7 +91,7 @@ export default function HeroBanner({
                 d="M17 8l4 4m0 0l-4 4m4-4H3"
               />
             </svg>
-          </Link>
+          </Button>
         )}
       </div>
 

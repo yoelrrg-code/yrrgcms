@@ -5,6 +5,18 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* Theme Engine Colors */
+  --color-theme-primary: var(--theme-primary, var(--primary));
+  --color-theme-secondary: var(--theme-secondary, var(--secondary));
+  --color-theme-background: var(--theme-background, var(--background));
+  --color-theme-text: var(--theme-text, var(--foreground));
+  --color-theme-link: var(--theme-link, var(--primary));
+  --color-theme-menu-link: var(--theme-menu-link, var(--foreground));
+  --color-theme-button: var(--theme-button-bg, var(--primary));
+  --color-theme-button-text: var(--theme-button-text, var(--primary-foreground));
+  --color-theme-header: var(--theme-header-bg, var(--background));
+  --color-theme-footer: var(--theme-footer-bg, var(--muted));
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-poppins, ui-sans-serif, system-ui, sans-serif);
@@ -127,4 +139,55 @@
   html {
     @apply font-sans;
   }
+}
+@layer base {
+  a:not([class]) {
+    color: var(--theme-link, inherit);
+    text-decoration: underline;
+  }
+  p {
+    color: var(--theme-p-color, inherit);
+    padding: var(--theme-p-padding, 0);
+  }
+  h1 {
+    color: var(--theme-h1-color, inherit);
+    padding: var(--theme-h1-padding, 0);
+  }
+  h2 {
+    color: var(--theme-h2-color, inherit);
+    padding: var(--theme-h2-padding, 0);
+  }
+  h3 {
+    color: var(--theme-h3-color, inherit);
+    padding: var(--theme-h3-padding, 0);
+  }
+  h4 {
+    color: var(--theme-h4-color, inherit);
+    padding: var(--theme-h4-padding, 0);
+  }
+  h5 {
+    color: var(--theme-h5-color, inherit);
+    padding: var(--theme-h5-padding, 0);
+  }
+  h6 {
+    color: var(--theme-h6-color, inherit);
+    padding: var(--theme-h6-padding, 0);
+  }
+}
+
+/* Admin Dashboard Specific Button Overrides */
+.admin-dashboard [data-slot="button"] {
+  padding: 18px 12px !important;
+  border-radius: 10px !important;
+}
+
+.admin-dashboard {
+  --admin-badge-bg: #058405;
+  --admin-badge-secondary-bg: #058405;
+  --admin-badge-secondary-color: #fff;
+}
+
+.admin-dashboard [data-slot="badge"][data-variant="secondary"] {
+  background-color: #737373 !important;
+  color: #fff !important;
 }

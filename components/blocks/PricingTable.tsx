@@ -12,13 +12,17 @@ export interface PricingPlan {
 }
 
 export interface PricingTableProps {
+  paddingTop?: string;
+  paddingBottom?: string;
   title?: string;
   plans: PricingPlan[];
 }
 
-export default function PricingTable({ title, plans }: PricingTableProps) {
+export default function PricingTable({
+  paddingTop,
+  paddingBottom, title, plans }: PricingTableProps) {
   return (
-    <section className="py-20 px-6">
+    <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} py-20 px-6`}>
       <div className="mx-auto max-w-6xl">
         {title && (
           <h2 className="mb-14 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
@@ -51,7 +55,7 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
     <div
       className={`relative flex flex-col rounded-2xl p-8 transition-shadow duration-300 ${
         highlighted
-          ? "bg-gradient-to-b from-violet-600 to-violet-800 text-white shadow-2xl shadow-violet-500/30 ring-2 ring-violet-400/50"
+          ? "bg-gradient-to-b from-theme-primary to-theme-primary text-white shadow-2xl shadow-theme-primary/50 ring-2 ring-theme-primary/50"
           : "bg-card border border-border shadow-sm hover:shadow-lg"
       }`}
     >
@@ -85,7 +89,7 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
         </span>
         <span
           className={`mb-1.5 text-sm ${
-            highlighted ? "text-violet-200" : "text-muted-foreground"
+            highlighted ? "text-theme-primary" : "text-muted-foreground"
           }`}
         >
           /{plan.period}
@@ -98,13 +102,13 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
           <li
             key={idx}
             className={`flex items-start gap-3 text-sm ${
-              highlighted ? "text-violet-100" : "text-muted-foreground"
+              highlighted ? "text-theme-primary" : "text-muted-foreground"
             }`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className={`mt-0.5 h-4 w-4 shrink-0 ${
-                highlighted ? "text-violet-200" : "text-violet-500"
+                highlighted ? "text-theme-primary" : "text-theme-primary"
               }`}
               fill="none"
               viewBox="0 0 24 24"
@@ -123,9 +127,9 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
         href={plan.ctaUrl}
         className={`inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 ${
           highlighted
-            ? "bg-white text-violet-700 shadow-lg hover:bg-violet-50 hover:shadow-xl"
-            : "bg-violet-600 text-white shadow-md shadow-violet-500/20 hover:bg-violet-500 hover:shadow-violet-500/40"
-        } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400`}
+            ? "bg-white text-theme-primary shadow-lg hover:bg-slate-50 hover:shadow-xl"
+            : "bg-theme-primary text-white shadow-md shadow-theme-primary/50 hover:bg-theme-primary/90 hover:shadow-theme-primary/50"
+        } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary`}
       >
         {plan.ctaText}
       </Link>

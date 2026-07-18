@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 export interface CallToActionProps {
+  paddingTop?: string;
+  paddingBottom?: string;
   title: string;
   description?: string;
   buttonText: string;
@@ -9,6 +11,8 @@ export interface CallToActionProps {
 }
 
 export default function CallToAction({
+  paddingTop,
+  paddingBottom,
   title,
   description,
   buttonText,
@@ -17,7 +21,7 @@ export default function CallToAction({
 }: CallToActionProps) {
   const wrapperClass =
     style === "primary"
-      ? "bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600"
+      ? "bg-gradient-to-r from-theme-primary via-purple-600 to-indigo-600"
       : style === "dark"
       ? "bg-slate-950 dark:bg-black"
       : "bg-slate-50 dark:bg-slate-900 border-y border-border";
@@ -29,17 +33,17 @@ export default function CallToAction({
 
   const descClass =
     style === "primary"
-      ? "text-violet-100"
+      ? "text-white/80"
       : style === "dark"
       ? "text-slate-400"
       : "text-muted-foreground";
 
   const btnClass =
     style === "primary"
-      ? "bg-white text-violet-700 hover:bg-violet-50 shadow-lg hover:shadow-xl"
+      ? "bg-white text-theme-primary hover:bg-slate-50 shadow-lg hover:shadow-xl"
       : style === "dark"
-      ? "bg-violet-600 text-white hover:bg-violet-500 shadow-lg shadow-violet-500/20 hover:shadow-violet-500/40"
-      : "bg-violet-600 text-white hover:bg-violet-500 shadow-md shadow-violet-500/20 hover:shadow-violet-500/40";
+      ? "bg-theme-primary text-white hover:bg-theme-primary/90 shadow-lg shadow-theme-primary/50 hover:shadow-theme-primary/50"
+      : "bg-theme-primary text-white hover:bg-theme-primary/90 shadow-md shadow-theme-primary/50 hover:shadow-theme-primary/50";
 
   return (
     <section className={`py-24 px-6 ${wrapperClass}`}>
@@ -47,7 +51,7 @@ export default function CallToAction({
       {(style === "primary" || style === "dark") && (
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.06]"
+          className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} pointer-events-none absolute inset-0 opacity-[0.06]`}
           style={{
             backgroundImage:
               "radial-gradient(circle, currentColor 1px, transparent 1px)",
@@ -69,7 +73,7 @@ export default function CallToAction({
 
         <Link
           href={buttonUrl}
-          className={`inline-flex items-center gap-2 rounded-full px-8 py-4 text-base font-semibold transition-all duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-violet-400 ${btnClass}`}
+          className={`inline-flex items-center gap-2 rounded-full px-8 py-4 text-base font-semibold transition-all duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-theme-primary ${btnClass}`}
         >
           {buttonText}
           <svg

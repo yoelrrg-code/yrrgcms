@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getGlobal } from "@/lib/actions/globals";
 import { getMenuByLocation } from "@/lib/actions/menus";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,7 @@ export interface NavItem {
   children?: NavItem[];
 }
 
-export default async function Header() {
+export default async function Header({ transparency }: { transparency?: number }) {
   const headerData = ((await getGlobal("header")) as HeaderConfig) || {};
   const menuData = await getMenuByLocation("header");
 
@@ -38,12 +39,25 @@ export default async function Header() {
 
   const navItems = menuData?.items || [];
 
+  // Use an inline style for background transparency if provided, otherwise default.
+  // Note: we're replacing the default bg-background/95 with the dynamic theme color.
+  const headerStyle: React.CSSProperties = {
+    backgroundColor: transparency !== undefined 
+      ? `color-mix(in srgb, var(--theme-header-bg, var(--background)) ${transparency * 100}%, transparent)` 
+      : 'var(--theme-header-bg, var(--background))',
+    backdropFilter: 'blur(var(--theme-header-blur, 8px))',
+    padding: 'var(--theme-header-padding, 0)'
+  };
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+    <header 
+      className="sticky top-0 z-50 w-full border-b"
+      style={headerStyle}
+    >
+      <div className="container mx-auto flex h-16 items-center justify-between px-4" style={{ padding: 'inherit' }}>
         <Link href="/" className="flex items-center space-x-2">
           {logoUrl ? (
-            <img src={logoUrl} alt={siteName} className="h-8 w-auto" />
+            <Image src={logoUrl} alt={siteName} width={120} height={32} className="h-8 w-auto object-contain" />
           ) : (
             <span className="font-bold text-xl">{siteName}</span>
           )}
@@ -58,7 +72,7 @@ export default async function Header() {
             if (hren) {
               return (
                 <DropdownMenu key={item.id}>
-                  <DropdownMenuTrigger className="flex items-center gap-1 hover:text-primary">
+                  <DropdownMenuTrigger className="flex items-center gap-1 text-theme-menu-link hover:text-theme-menu-link/80">
                     {item.label} <ChevronDown className="h-4 w-4" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
@@ -78,7 +92,7 @@ export default async function Header() {
             }
 
             return (
-              <Link key={item.id} href={href} target={item.target || undefined} className="hover:text-primary transition-colors">
+              <Link key={item.id} href={href} target={item.target || undefined} className="text-theme-menu-link hover:text-theme-menu-link/80 transition-colors">
                 {item.label}
               </Link>
             );
@@ -88,8 +102,8 @@ export default async function Header() {
         <div className="flex items-center gap-4">
           {ctaText && ctaUrl && (
             <div className="hidden md:block">
-              <Button >
-                <Link href={ctaUrl}>{ctaText}</Link>
+              <Button render={<Link href={ctaUrl} />}>
+                {ctaText}
               </Button>
             </div>
           )}
@@ -127,7 +141,7 @@ export default async function Header() {
                   }
 
                   return (
-                    <Link key={item.id} href={href} target={item.target || undefined} className="font-medium hover:text-primary">
+                    <Link key={item.id} href={href} target={item.target || undefined} className="font-medium text-theme-menu-link hover:text-theme-menu-link/80">
                       {item.label}
                     </Link>
                   );
