@@ -137,3 +137,41 @@ export async function deleteUser(id: string) {
 
   await db.delete(users).where(eq(users.id, id));
 }
+
+// Updates the logged-in user's profile (name & optionally password)
+export async function updateProfile(data: {
+  name: string;
+  password?: string;
+}) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error("You must be logged in to update your profile.");
+  }
+
+  const id = session.user.id;
+  const updatePayload: Record<string, unknown> = {
+    name: data.name,
+    updatedAt: new Date(),
+  };
+
+  if (data.password && data.password.trim() !== "") {
+    updatePayload.passwordHash = await bcrypt.hash(data.password, SALT_ROUNDS);
+  }
+
+  const [updated] = await db
+    .update(users)
+    .set(updatePayload)
+    .where(eq(users.id, id))
+    .returning({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      role: users.role,
+      createdAt: users.createdAt,
+      updatedAt: users.updatedAt,
+      lastLogin: users.lastLogin,
+    });
+
+  return updated;
+}
+

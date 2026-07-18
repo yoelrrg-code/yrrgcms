@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { SignOutButton } from "@/components/admin/sign-out-button";
+import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
   FileText,
@@ -29,6 +30,7 @@ import {
   Globe,
   Image,
   Users,
+  User,
   Zap,
   Palette,
 } from "lucide-react";
@@ -94,7 +96,7 @@ export default async function AdminLayout({
             <div className="flex items-center justify-center size-7 rounded-lg bg-primary text-primary-foreground text-xs font-bold">
               <Zap className="size-4" />
             </div>
-            <Link href="/dashboard" className="text-sm font-semibold tracking-tight hover:underline">
+            <Link href="/" target="_blank" className="text-sm font-semibold tracking-tight hover:underline">
               YRRG CMS
             </Link>
           </div>
@@ -135,6 +137,15 @@ export default async function AdminLayout({
               {userRole}
             </span>
           </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground"
+            render={<Link href="/admin/profile" />}
+          >
+            <User className="size-4" />
+            Editar Perfil
+          </Button>
           <SignOutButton />
         </SidebarFooter>
       </Sidebar>

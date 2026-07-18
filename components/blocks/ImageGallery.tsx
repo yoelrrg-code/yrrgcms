@@ -82,7 +82,7 @@ export default function ImageGallery({
                 className="group relative overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary focus-visible:ring-offset-2"
                 aria-label={`Open image: ${img.alt || `Image ${idx + 1}`}`}
               >
-                <div className="aspect-square">
+                <div className="relative aspect-square">
                   <Image
                     src={img.url}
                     alt={img.alt}

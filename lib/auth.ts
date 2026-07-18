@@ -57,11 +57,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    // Persist role in JWT so we don't need a DB query on every request
-    jwt({ token, user }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.name = user.name;
         token.role = (user as { role?: string }).role;
+      } else if (token.id) {
+        // Fetch latest user data from DB to ensure updates are reflected
+        const [dbUser] = await db
+          .select({
+            name: users.name,
+            role: users.role,
+          })
+          .from(users)
+          .where(eq(users.id, token.id as string))
+          .limit(1);
+        if (dbUser) {
+          token.name = dbUser.name;
+          token.role = dbUser.role;
+        }
       }
       return token;
     },
@@ -69,6 +83,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.name = token.name as string;
         (session.user as { role?: string }).role = token.role as string;
       }
       return session;
