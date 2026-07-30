@@ -94,8 +94,8 @@ export default async function PostsGrid({
             </h2>
           )}
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {postRows.map((post) => (
-              <PostCard key={post.id} post={post} />
+            {postRows.map((post, idx) => (
+              <PostCard key={post.id} post={post} delay={idx * 100} />
             ))}
           </div>
         </div>
@@ -113,8 +113,8 @@ export default async function PostsGrid({
           </h2>
         )}
         <div className="divide-y divide-border">
-          {postRows.map((post) => (
-            <PostListItem key={post.id} post={post} />
+          {postRows.map((post, idx) => (
+            <PostListItem key={post.id} post={post} delay={idx * 100} />
           ))}
         </div>
       </div>
@@ -136,9 +136,13 @@ type PostRow = {
   categorySlug: string | null;
 };
 
-function PostCard({ post }: { post: PostRow }) {
+function PostCard({ post, delay }: { post: PostRow; delay?: number }) {
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-shadow hover:shadow-lg">
+    <article
+      data-aos="fade-up"
+      data-aos-delay={delay}
+      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-muted-foreground/10"
+    >
       {/* Featured image */}
       <Link href={`/blog/${post.slug}`} className="block overflow-hidden">
         {post.featuredImageUrl ? (
@@ -217,9 +221,13 @@ function PostCard({ post }: { post: PostRow }) {
   );
 }
 
-function PostListItem({ post }: { post: PostRow }) {
+function PostListItem({ post, delay }: { post: PostRow; delay?: number }) {
   return (
-    <article className="group flex gap-6 py-8">
+    <article
+      data-aos="fade-up"
+      data-aos-delay={delay}
+      className="group flex gap-6 py-8"
+    >
       {/* Thumbnail */}
       {post.featuredImageUrl && (
         <Link

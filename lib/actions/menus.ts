@@ -17,9 +17,6 @@ export async function getMenus() {
 
 // Returns a menu by id with items
 export async function getMenuById(id: string) {
-  const session = await auth();
-  requireCan(session, "manage", "menus");
-
   const [menu] = await db
     .select()
     .from(menus)

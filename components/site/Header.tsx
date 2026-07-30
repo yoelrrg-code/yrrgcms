@@ -72,15 +72,15 @@ export default async function Header({ transparency }: { transparency?: number }
             if (hren) {
               return (
                 <DropdownMenu key={item.id}>
-                  <DropdownMenuTrigger className="flex items-center gap-1 text-theme-menu-link hover:text-theme-menu-link/80">
-                    {item.label} <ChevronDown className="h-4 w-4" />
+                  <DropdownMenuTrigger className="flex items-center gap-1 text-theme-menu-link hover:text-primary transition-colors duration-300 focus:outline-none">
+                    {item.label} <ChevronDown className="h-4 w-4 transition-transform duration-300 group-data-[state=open]:rotate-180" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent>
+                  <DropdownMenuContent className="animate-in fade-in-50 slide-in-from-top-1 duration-200">
                     {item.children?.map((child: NavItem) => {
                       const childHref = child.url || (child.pageSlug ? (child.pageSlug === "home" ? "/" : `/${child.pageSlug}`) : "#");
                       return (
-                        <DropdownMenuItem key={child.id} >
-                          <Link href={childHref} target={child.target || undefined}>
+                        <DropdownMenuItem key={child.id} className="cursor-pointer">
+                          <Link href={childHref} target={child.target || undefined} className="w-full">
                             {child.label}
                           </Link>
                         </DropdownMenuItem>
@@ -92,7 +92,12 @@ export default async function Header({ transparency }: { transparency?: number }
             }
 
             return (
-              <Link key={item.id} href={href} target={item.target || undefined} className="text-theme-menu-link hover:text-theme-menu-link/80 transition-colors">
+              <Link
+                key={item.id}
+                href={href}
+                target={item.target || undefined}
+                className="relative py-1 text-theme-menu-link transition-colors duration-300 hover:text-primary after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
+              >
                 {item.label}
               </Link>
             );
@@ -102,7 +107,10 @@ export default async function Header({ transparency }: { transparency?: number }
         <div className="flex items-center gap-4">
           {ctaText && ctaUrl && (
             <div className="hidden md:block">
-              <Button render={<Link href={ctaUrl} />}>
+              <Button
+                render={<Link href={ctaUrl} />}
+                className="shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
+              >
                 {ctaText}
               </Button>
             </div>

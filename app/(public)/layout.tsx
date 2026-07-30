@@ -1,6 +1,7 @@
 import Header from "@/components/site/Header";
 import Footer from "@/components/site/Footer";
 import { getActiveTheme } from "@/lib/actions/themes";
+import { AosInitializer } from "@/components/site/aos-initializer";
 
 type HeadingConfig = {
   color?: string;
@@ -54,6 +55,10 @@ export default async function PublicLayout({
       background?: string;
       textColor?: string;
       padding?: string;
+      linkColor?: string;
+      headingColor?: string;
+      socialIconColor?: string;
+      useBrandSocialColors?: boolean;
     };
   } | undefined;
 
@@ -107,6 +112,9 @@ export default async function PublicLayout({
                 ${themeConfig.footer?.background ? `--theme-footer-bg: ${themeConfig.footer.background};` : ""}
                 ${themeConfig.footer?.textColor ? `--theme-footer-text: ${themeConfig.footer.textColor};` : ""}
                 ${themeConfig.footer?.padding ? `--theme-footer-padding: ${themeConfig.footer.padding};` : ""}
+                ${themeConfig.footer?.linkColor ? `--theme-footer-link: ${themeConfig.footer.linkColor};` : ""}
+                ${themeConfig.footer?.headingColor ? `--theme-footer-heading: ${themeConfig.footer.headingColor};` : ""}
+                ${themeConfig.footer?.socialIconColor ? `--theme-footer-social: ${themeConfig.footer.socialIconColor};` : ""}
                 
                 ${themeConfig.layout?.contentPadding ? `--theme-content-padding: ${themeConfig.layout.contentPadding};` : ""}
               }
@@ -121,6 +129,7 @@ export default async function PublicLayout({
           }}
         />
       )}
+      <AosInitializer />
       <Header transparency={themeConfig?.header?.transparency} />
       <div 
         className="flex-1"

@@ -39,8 +39,8 @@ export default function PricingTable({
               : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
           }`}
         >
-          {plans.map((plan) => (
-            <PricingCard key={plan.id} plan={plan} />
+          {plans.map((plan, idx) => (
+            <PricingCard key={plan.id} plan={plan} delay={idx * 150} />
           ))}
         </div>
       </div>
@@ -48,20 +48,22 @@ export default function PricingTable({
   );
 }
 
-function PricingCard({ plan }: { plan: PricingPlan }) {
+function PricingCard({ plan, delay }: { plan: PricingPlan; delay: number }) {
   const { highlighted } = plan;
 
   return (
     <div
-      className={`relative flex flex-col rounded-2xl p-8 transition-shadow duration-300 ${
+      data-aos="fade-up"
+      data-aos-delay={delay}
+      className={`relative flex flex-col rounded-2xl p-8 transition-all duration-300 hover:-translate-y-1 ${
         highlighted
-          ? "bg-gradient-to-b from-theme-primary to-theme-primary text-white shadow-2xl shadow-theme-primary/50 ring-2 ring-theme-primary/50"
-          : "bg-card border border-border shadow-sm hover:shadow-lg"
+          ? "bg-gradient-to-b from-theme-primary via-theme-primary to-theme-primary/90 text-white shadow-xl shadow-theme-primary/30 ring-2 ring-theme-primary/50 hover:shadow-2xl hover:shadow-theme-primary/40"
+          : "bg-card border border-border shadow-sm hover:shadow-xl hover:border-muted-foreground/20"
       }`}
     >
       {highlighted && (
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-          <span className="rounded-full bg-amber-400 px-4 py-1 text-xs font-bold uppercase tracking-widest text-amber-900">
+          <span className="rounded-full bg-amber-400 px-4 py-1 text-xs font-bold uppercase tracking-widest text-amber-950 shadow-sm">
             Most Popular
           </span>
         </div>
@@ -89,7 +91,7 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
         </span>
         <span
           className={`mb-1.5 text-sm ${
-            highlighted ? "text-theme-primary" : "text-muted-foreground"
+            highlighted ? "text-white/80" : "text-muted-foreground"
           }`}
         >
           /{plan.period}
@@ -102,13 +104,13 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
           <li
             key={idx}
             className={`flex items-start gap-3 text-sm ${
-              highlighted ? "text-theme-primary" : "text-muted-foreground"
+              highlighted ? "text-white/90" : "text-muted-foreground"
             }`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className={`mt-0.5 h-4 w-4 shrink-0 ${
-                highlighted ? "text-theme-primary" : "text-theme-primary"
+                highlighted ? "text-white" : "text-theme-primary"
               }`}
               fill="none"
               viewBox="0 0 24 24"
@@ -125,10 +127,10 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
       {/* CTA */}
       <Link
         href={plan.ctaUrl}
-        className={`inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 ${
+        className={`inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300 hover:scale-105 active:scale-95 ${
           highlighted
-            ? "bg-white text-theme-primary shadow-lg hover:bg-slate-50 hover:shadow-xl"
-            : "bg-theme-primary text-white shadow-md shadow-theme-primary/50 hover:bg-theme-primary/90 hover:shadow-theme-primary/50"
+            ? "bg-white text-theme-primary shadow-md hover:bg-slate-50 hover:shadow-lg"
+            : "bg-theme-primary text-white shadow-md shadow-theme-primary/20 hover:bg-theme-primary/95 hover:shadow-lg hover:shadow-theme-primary/30"
         } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary`}
       >
         {plan.ctaText}

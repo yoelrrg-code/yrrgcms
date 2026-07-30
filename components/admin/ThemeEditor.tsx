@@ -90,6 +90,10 @@ export function ThemeEditor({ theme }: { theme: Theme }) {
   const [footerBackground, setFooterBackground] = useState(footer.background || "#f3f4f6");
   const [footerTextColor, setFooterTextColor] = useState(footer.textColor || "");
   const [footerPadding, setFooterPadding] = useState(footer.padding || "3rem 0");
+  const [footerLinkColor, setFooterLinkColor] = useState((footer.linkColor as string) || "");
+  const [footerHeadingColor, setFooterHeadingColor] = useState((footer.headingColor as string) || "");
+  const [footerSocialColor, setFooterSocialColor] = useState((footer.socialIconColor as string) || "");
+  const [useBrandSocialColors, setUseBrandSocialColors] = useState(Boolean(footer.useBrandSocialColors));
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -137,6 +141,10 @@ export function ThemeEditor({ theme }: { theme: Theme }) {
           background: footerBackground,
           textColor: footerTextColor,
           padding: footerPadding,
+          linkColor: footerLinkColor,
+          headingColor: footerHeadingColor,
+          socialIconColor: footerSocialColor,
+          useBrandSocialColors: useBrandSocialColors,
         }
       };
 
@@ -437,6 +445,7 @@ export function ThemeEditor({ theme }: { theme: Theme }) {
               <Label htmlFor="footerBackground">Background Color</Label>
               <input type="color" id="footerBackground" value={footerBackground} onChange={(e) => setFooterBackground(e.target.value)} className="w-8 h-8 rounded cursor-pointer p-0 border-0" />
             </div>
+            
             <div className="flex items-center justify-between">
               <Label htmlFor="footerTextColor">Paragraph Text Color</Label>
               <div className="flex items-center gap-2">
@@ -444,6 +453,44 @@ export function ThemeEditor({ theme }: { theme: Theme }) {
                 <Button variant="outline" size="sm" onClick={() => setFooterTextColor("")}>Theme Default</Button>
               </div>
             </div>
+
+            <div className="flex items-center justify-between">
+              <Label htmlFor="footerHeadingColor">Headings Color</Label>
+              <div className="flex items-center gap-2">
+                <input type="color" id="footerHeadingColor" value={footerHeadingColor || "#000000"} onChange={(e) => setFooterHeadingColor(e.target.value)} className="w-8 h-8 rounded cursor-pointer p-0 border-0" />
+                <Button variant="outline" size="sm" onClick={() => setFooterHeadingColor("")}>Theme Default</Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <Label htmlFor="footerLinkColor">Links Color</Label>
+              <div className="flex items-center gap-2">
+                <input type="color" id="footerLinkColor" value={footerLinkColor || "#000000"} onChange={(e) => setFooterLinkColor(e.target.value)} className="w-8 h-8 rounded cursor-pointer p-0 border-0" />
+                <Button variant="outline" size="sm" onClick={() => setFooterLinkColor("")}>Theme Default</Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <Label htmlFor="footerSocialColor">Social Icons Color</Label>
+              <div className="flex items-center gap-2">
+                <input type="color" id="footerSocialColor" value={footerSocialColor || "#000000"} onChange={(e) => setFooterSocialColor(e.target.value)} className="w-8 h-8 rounded cursor-pointer p-0 border-0" disabled={useBrandSocialColors} />
+                <Button variant="outline" size="sm" onClick={() => setFooterSocialColor("")} disabled={useBrandSocialColors}>Theme Default</Button>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 pt-2 border-t">
+              <input
+                type="checkbox"
+                id="useBrandSocialColors"
+                checked={useBrandSocialColors}
+                onChange={(e) => setUseBrandSocialColors(e.target.checked)}
+                className="h-4 w-4 rounded border-border"
+              />
+              <Label htmlFor="useBrandSocialColors" className="text-xs font-medium text-muted-foreground cursor-pointer">
+                Use brand default colors for social icons (ignore custom color)
+              </Label>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="footerPadding">Footer Padding</Label>
               <Input

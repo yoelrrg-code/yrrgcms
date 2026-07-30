@@ -19,12 +19,14 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { BLOCK_DEFINITIONS, type Block, type BlockDefinition } from "@/components/blocks/definitions";
+import type { HeroSlide } from "@/components/blocks/HeroBanner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import MediaPicker from "@/components/admin/MediaPicker/MediaPicker";
 import RichTextEditor from "@/components/admin/RichTextEditor/RichTextEditor";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Sheet,
   SheetContent,
@@ -144,9 +146,238 @@ function PropEditor({ block, onChange, onClose }: PropEditorProps) {
         </Button>
       </div>
 
+      {block.type === "HeroBanner" && !localProps.slides && (
+        <div className="p-3 bg-primary/10 border border-primary/20 rounded-md text-xs space-y-2">
+          <p className="font-semibold text-primary">Convert to Multi-Slide Slider</p>
+          <p className="text-muted-foreground">Create a slider with multiple slides. The current single slide settings will be converted into Slide #1.</p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="w-full text-xs"
+            onClick={() => {
+              const initialSlide: HeroSlide = {
+                title: String(localProps.title || "Welcome to YRRG CMS"),
+                subtitle: String(localProps.subtitle || ""),
+                ctaText: String(localProps.ctaText || ""),
+                ctaUrl: String(localProps.ctaUrl || ""),
+                backgroundImage: String(localProps.backgroundImage || ""),
+                overlayColor: String(localProps.overlayColor || ""),
+              };
+              handleChange("slides", [initialSlide]);
+            }}
+          >
+            Create Slider
+          </Button>
+        </div>
+      )}
+
       <div className="space-y-3">
         {Object.entries(localProps).map(([key, value]) => {
           const label = key.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase());
+
+          // Custom visual slide editor for HeroBanner
+          if (key === "slides") {
+            const slideItems = (value as HeroSlide[]) || [];
+            return (
+              <div key={key} className="space-y-3 border-t pt-4 mt-4">
+                {/* Carousel-wide Settings */}
+                <div className="grid grid-cols-2 gap-4 p-3 bg-muted/40 rounded-md border text-xs">
+                  <div className="space-y-1">
+                    <label className="font-semibold text-muted-foreground">Transition Effect</label>
+                    <Select
+                      value={String(localProps.transitionEffect || "fade")}
+                      onValueChange={(val) => handleChange("transitionEffect", val)}
+                    >
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue placeholder="Select effect" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="fade">Fade (Disolver)</SelectItem>
+                        <SelectItem value="slide">Slide (Deslizar)</SelectItem>
+                        <SelectItem value="zoom">Zoom (Acercar)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="font-semibold text-muted-foreground">Autoplay Speed (seconds)</label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={60}
+                      value={Number(localProps.autoplaySpeed ?? 6)}
+                      onChange={(e) => handleChange("autoplaySpeed", Number(e.target.value))}
+                      className="h-8 text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Slides Carousel</label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-7 text-xs gap-1"
+                    onClick={() => {
+                      const newSlide: HeroSlide = {
+                        title: "New Slide",
+                        subtitle: "Subtitle goes here",
+                        ctaText: "Learn More",
+                        ctaUrl: "/",
+                      };
+                      handleChange(key, [...slideItems, newSlide]);
+                    }}
+                  >
+                    <Plus className="h-3 w-3" /> Add Slide
+                  </Button>
+                </div>
+
+                {slideItems.length === 0 ? (
+                  <p className="text-xs text-muted-foreground italic py-2 text-center border border-dashed rounded-md">
+                    No slides yet. Click &quot;Add Slide&quot; to build a slider.
+                  </p>
+                ) : (
+                  <div className="space-y-4">
+                    {slideItems.map((slide, slideIdx) => (
+                      <div key={slideIdx} className="border rounded-md p-3 bg-muted/40 space-y-3 relative">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold">Slide #{slideIdx + 1}</span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            onClick={() => {
+                              const updated = slideItems.filter((_, i) => i !== slideIdx);
+                              handleChange(key, updated);
+                            }}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+
+                        {/* Slide Title */}
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-medium text-muted-foreground">Title</label>
+                          <Input
+                            value={slide.title}
+                            onChange={(e) => {
+                              const updated = [...slideItems];
+                              updated[slideIdx] = { ...slide, title: e.target.value };
+                              handleChange(key, updated);
+                            }}
+                            className="h-8 text-xs"
+                          />
+                        </div>
+
+                        {/* Slide Subtitle */}
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-medium text-muted-foreground">Subtitle</label>
+                          <Input
+                            value={slide.subtitle || ""}
+                            onChange={(e) => {
+                              const updated = [...slideItems];
+                              updated[slideIdx] = { ...slide, subtitle: e.target.value };
+                              handleChange(key, updated);
+                            }}
+                            className="h-8 text-xs"
+                          />
+                        </div>
+
+                        {/* Slide CTA */}
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-medium text-muted-foreground">CTA Text</label>
+                            <Input
+                              value={slide.ctaText || ""}
+                              onChange={(e) => {
+                                const updated = [...slideItems];
+                                updated[slideIdx] = { ...slide, ctaText: e.target.value };
+                                handleChange(key, updated);
+                              }}
+                              className="h-8 text-xs"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-medium text-muted-foreground">CTA URL</label>
+                            <Input
+                              value={slide.ctaUrl || ""}
+                              onChange={(e) => {
+                                const updated = [...slideItems];
+                                updated[slideIdx] = { ...slide, ctaUrl: e.target.value };
+                                handleChange(key, updated);
+                              }}
+                              className="h-8 text-xs"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Slide Background Image */}
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-medium text-muted-foreground">Background Image</label>
+                          <div className="flex gap-2">
+                            <Input
+                              value={slide.backgroundImage || ""}
+                              onChange={(e) => {
+                                const updated = [...slideItems];
+                                updated[slideIdx] = { ...slide, backgroundImage: e.target.value };
+                                handleChange(key, updated);
+                              }}
+                              className="h-8 text-xs flex-1"
+                            />
+                            <MediaPicker
+                              onSelect={(url) => {
+                                const updated = [...slideItems];
+                                updated[slideIdx] = { ...slide, backgroundImage: url };
+                                handleChange(key, updated);
+                              }}
+                              trigger={
+                                <Button type="button" variant="outline" size="sm" className="h-8 text-xs">
+                                  Browse
+                                </Button>
+                              }
+                            />
+                          </div>
+                        </div>
+
+                        {/* Background Color & Overlay Color */}
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-medium text-muted-foreground">Bg Color (Hex/Class)</label>
+                            <Input
+                              value={slide.backgroundColor || ""}
+                              onChange={(e) => {
+                                const updated = [...slideItems];
+                                updated[slideIdx] = { ...slide, backgroundColor: e.target.value };
+                                handleChange(key, updated);
+                              }}
+                              className="h-8 text-xs"
+                              placeholder="#1e293b"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-medium text-muted-foreground">Overlay Color</label>
+                            <Input
+                              value={slide.overlayColor || ""}
+                              onChange={(e) => {
+                                const updated = [...slideItems];
+                                updated[slideIdx] = { ...slide, overlayColor: e.target.value };
+                                handleChange(key, updated);
+                              }}
+                              className="h-8 text-xs"
+                              placeholder="rgba(0,0,0,0.5)"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          }
 
           const isImageField =
             typeof value === "string" &&

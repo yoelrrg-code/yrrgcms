@@ -178,7 +178,7 @@ export default function ContactFormBlock({
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-6 rounded-2xl border border-border bg-card p-8 shadow-sm"
+          className="space-y-6 rounded-2xl border border-border bg-card/50 backdrop-blur-sm p-8 shadow-md hover:shadow-lg transition-all duration-300"
           noValidate
         >
           {config!.fields.map((field) => (
@@ -199,6 +199,7 @@ export default function ContactFormBlock({
           <Button
             type="submit"
             disabled={status === "loading"}
+            className="w-full md:w-auto shadow-sm hover:shadow-md transition-all duration-300 hover:scale-102 active:scale-98"
           >
             {status === "loading" && (
               <svg

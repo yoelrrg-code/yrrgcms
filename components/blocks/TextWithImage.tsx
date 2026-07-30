@@ -22,12 +22,12 @@ export default function TextWithImage({
   const html = tiptapToHtml(content);
 
   const imageCol = (
-    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10">
+    <div className="group relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 ring-1 ring-black/5 dark:ring-white/10">
       <Image
         src={imageUrl}
         alt={imageAlt}
         fill
-        className="object-cover transition-transform duration-700 hover:scale-105"
+        className="object-cover transition-transform duration-700 group-hover:scale-105"
         sizes="(max-width: 768px) 100vw, 50vw"
       />
     </div>
@@ -48,8 +48,8 @@ export default function TextWithImage({
             imagePosition === "right" ? "lg:flex-row-reverse" : ""
           }`}
         >
-          <div className="w-full lg:w-1/2">{imageCol}</div>
-          <div className="w-full lg:w-1/2">{textCol}</div>
+          <div className="w-full lg:w-1/2" data-aos={imagePosition === "right" ? "fade-left" : "fade-right"}>{imageCol}</div>
+          <div className="w-full lg:w-1/2" data-aos={imagePosition === "right" ? "fade-right" : "fade-left"}>{textCol}</div>
         </div>
       </div>
     </section>

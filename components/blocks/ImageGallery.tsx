@@ -79,7 +79,9 @@ export default function ImageGallery({
                 key={idx}
                 type="button"
                 onClick={() => setLightboxIndex(idx)}
-                className="group relative overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary focus-visible:ring-offset-2"
+                data-aos="zoom-in"
+                data-aos-delay={(idx % columns) * 100}
+                className="group relative overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800 shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-theme-primary focus-visible:ring-offset-2"
                 aria-label={`Open image: ${img.alt || `Image ${idx + 1}`}`}
               >
                 <div className="relative aspect-square">
@@ -127,7 +129,7 @@ export default function ImageGallery({
           role="dialog"
           aria-modal="true"
           aria-label="Image lightbox"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 backdrop-blur-md animate-in fade-in duration-300"
           onClick={closeLightbox}
         >
           {/* Image container */}

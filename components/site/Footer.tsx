@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getGlobal } from "@/lib/actions/globals";
 import { getMenuById } from "@/lib/actions/menus";
+import { getActiveTheme } from "@/lib/actions/themes";
 import { tiptapToHtml } from "@/lib/tiptap-render";
 import { Globe } from "lucide-react";
 
@@ -30,12 +31,23 @@ export interface FooterColumn {
   richText?: unknown;
 }
 
+function getBrandColor(url: string, label: string) {
+  const t = (url + " " + label).toLowerCase();
+  if (t.includes("twitter") || t.includes("x.com")) return "#1DA1F2"; // X / Twitter blue
+  if (t.includes("facebook")) return "#1877F2";
+  if (t.includes("instagram") || t.includes("ig")) return "#E4405F";
+  if (t.includes("linkedin")) return "#0077B5";
+  if (t.includes("youtube")) return "#FF0000";
+  if (t.includes("github")) return "#24292e";
+  return undefined;
+}
+
 async function FooterColumnRenderer({ col }: { col: FooterColumn }) {
   if (col.type === "richText") {
     const html = tiptapToHtml(col.richText);
     return (
       <div className="space-y-4">
-        <h3 className="font-medium text-foreground">{col.title}</h3>
+        <h3 className="font-medium text-foreground" style={{ color: "var(--theme-footer-heading)" }}>{col.title}</h3>
         <div 
           className="prose prose-sm dark:prose-invert text-muted-foreground"
           style={{ color: "var(--theme-footer-text)" }}
@@ -50,14 +62,15 @@ async function FooterColumnRenderer({ col }: { col: FooterColumn }) {
     const items = menu?.items || [];
     return (
       <div className="space-y-4">
-        <h3 className="font-medium text-foreground">{col.title}</h3>
+        <h3 className="font-medium text-foreground" style={{ color: "var(--theme-footer-heading)" }}>{col.title}</h3>
         <ul className="space-y-2 text-sm text-muted-foreground">
           {items.map((item, idx) => (
             <li key={idx}>
               <Link
                 href={item.url || "/"}
                 target={item.target || "_self"}
-                className="hover:text-primary transition-colors"
+                className="transition-all duration-300 hover:text-primary hover:underline hover:underline-offset-4"
+                style={{ color: "var(--theme-footer-link)" }}
               >
                 {item.label}
               </Link>
@@ -71,13 +84,14 @@ async function FooterColumnRenderer({ col }: { col: FooterColumn }) {
   // Default to links
   return (
     <div className="space-y-4">
-      <h3 className="font-medium text-foreground">{col.title}</h3>
+      <h3 className="font-medium text-foreground" style={{ color: "var(--theme-footer-heading)" }}>{col.title}</h3>
       <ul className="space-y-2 text-sm text-muted-foreground">
         {col.links?.map((link: FooterLink, linkIdx: number) => (
           <li key={linkIdx}>
             <Link
               href={link.url}
-              className="hover:text-primary transition-colors"
+              className="transition-all duration-300 hover:text-primary hover:underline hover:underline-offset-4"
+              style={{ color: "var(--theme-footer-link)" }}
             >
               {link.label}
             </Link>
@@ -154,6 +168,11 @@ export default async function Footer() {
   const socialLinks = footerData.socialLinks || [];
   const columns = footerData.columns || [];
 
+  const activeTheme = await getActiveTheme();
+  const themeConfig = activeTheme?.config as Record<string, Record<string, string | boolean>> | undefined;
+  const footerTheme = themeConfig?.footer || {};
+  const useBrandColors = !!footerTheme.useBrandSocialColors;
+
   return (
     <footer 
       className="border-t"
@@ -166,24 +185,28 @@ export default async function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand & Socials */}
           <div className="space-y-4 lg:col-span-1">
-            <h3 className="font-semibold text-lg">{siteName}</h3>
+            <h3 className="font-semibold text-lg" style={{ color: "var(--theme-footer-heading)" }}>{siteName}</h3>
             <p className="text-sm text-muted-foreground" style={{ color: "var(--theme-footer-text)" }}>
               {siteDescription}
             </p>
             {socialLinks.length > 0 && (
               <div className="flex flex-wrap gap-4 pt-2">
-                {socialLinks.map((social: SocialLink, idx: number) => (
-                  <a
-                    key={idx}
-                    href={social.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-muted-foreground hover:text-primary transition-colors"
-                    title={social.label}
-                  >
-                    <SocialIcon url={social.url} label={social.label} />
-                  </a>
-                ))}
+                {socialLinks.map((social: SocialLink, idx: number) => {
+                  const brandColor = useBrandColors ? getBrandColor(social.url, social.label) : undefined;
+                  return (
+                    <a
+                      key={idx}
+                      href={social.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-muted-foreground hover:text-primary transition-all duration-300 transform hover:scale-110"
+                      style={{ color: brandColor || "var(--theme-footer-social)" }}
+                      title={social.label}
+                    >
+                      <SocialIcon url={social.url} label={social.label} />
+                    </a>
+                  );
+                })}
               </div>
             )}
           </div>
