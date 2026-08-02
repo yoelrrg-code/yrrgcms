@@ -211,6 +211,94 @@ export const themes = pgTable("themes", {
 });
 
 // ============================================================
+// SERVICES & APPOINTMENTS MODULE
+// ============================================================
+
+export const serviceStatusEnum = pgEnum("service_status", ["draft", "active", "inactive"]);
+export const bookingTypeEnum = pgEnum("booking_type", ["single", "pack", "subscription"]);
+export const appointmentStatusEnum = pgEnum("appointment_status", ["confirmed", "completed", "cancelled", "no_show"]);
+export const appointmentPaymentStatusEnum = pgEnum("appointment_payment_status", ["pending_onsite", "paid"]);
+
+export const services = pgTable("services", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: text("title").notNull(),
+  slug: text("slug").notNull().unique(),
+  shortDescription: text("short_description"),
+  detailedDescription: jsonb("detailed_description").notNull().default({}),
+  mainImage: text("main_image"),
+  gallery: jsonb("gallery").notNull().default([]),
+  categoryId: uuid("category_id").references(() => categories.id, { onDelete: "set null" }),
+  status: serviceStatusEnum("status").notNull().default("draft"),
+  tags: jsonb("tags").notNull().default([]),
+  durationMinutes: integer("duration_minutes").notNull().default(45),
+  bufferTimeMinutes: integer("buffer_time_minutes").notNull().default(15),
+  pricingOptions: jsonb("pricing_options").notNull().default({
+    singleSession: { durationMinutes: 45, price: 30000, currency: "CLP" },
+    packs: [],
+    subscriptions: []
+  }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const availabilitySettings = pgTable("availability_settings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  serviceId: uuid("service_id").references(() => services.id, { onDelete: "cascade" }),
+  weeklySchedule: jsonb("weekly_schedule").notNull().default([
+    { day: 1, active: true, slots: [{ start: "09:00", end: "18:00" }] },
+    { day: 2, active: true, slots: [{ start: "09:00", end: "18:00" }] },
+    { day: 3, active: true, slots: [{ start: "09:00", end: "18:00" }] },
+    { day: 4, active: true, slots: [{ start: "09:00", end: "18:00" }] },
+    { day: 5, active: true, slots: [{ start: "09:00", end: "18:00" }] },
+    { day: 6, active: false, slots: [] },
+    { day: 0, active: false, slots: [] }
+  ]),
+  allowWeekends: boolean("allow_weekends").notNull().default(false),
+  countryHolidays: jsonb("country_holidays").notNull().default(["CL"]),
+  customDisabledDates: jsonb("custom_disabled_dates").notNull().default([]),
+  workStartHour: text("work_start_hour"),
+  workEndHour: text("work_end_hour"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const availabilityExceptions = pgTable("availability_exceptions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  serviceId: uuid("service_id").references(() => services.id, { onDelete: "cascade" }),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  isFullDay: boolean("is_full_day").notNull().default(true),
+  reason: text("reason"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const appointments = pgTable("appointments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  serviceId: uuid("service_id").references(() => services.id, { onDelete: "cascade" }).notNull(),
+  customerName: text("customer_name").notNull(),
+  customerEmail: text("customer_email").notNull(),
+  customerPhone: text("customer_phone").notNull(),
+  customerNotes: text("customer_notes"),
+  bookingType: bookingTypeEnum("booking_type").notNull().default("single"),
+  selectedPricingOptionId: text("selected_pricing_option_id"),
+  status: appointmentStatusEnum("status").notNull().default("confirmed"),
+  paymentStatus: appointmentPaymentStatusEnum("payment_status").notNull().default("pending_onsite"),
+  totalAmount: integer("total_amount").notNull().default(0),
+  currency: text("currency").notNull().default("CLP"),
+  sessionsDates: jsonb("sessions_dates").notNull().default([]),
+  prepaidMonths: integer("prepaid_months"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const holidaysCache = pgTable("holidays_cache", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  countryCode: text("country_code").notNull(),
+  date: text("date").notNull(),
+  name: text("name").notNull(),
+});
+
+// ============================================================
 // RELATIONS
 // ============================================================
 
@@ -234,6 +322,7 @@ export const categoriesRelations = relations(categories, ({ one, many }) => ({
   parent: one(categories, { fields: [categories.parentId], references: [categories.id], relationName: "parent" }),
   children: many(categories, { relationName: "parent" }),
   postCategories: many(postCategories),
+  services: many(services),
 }));
 
 export const tagsRelations = relations(tags, ({ many }) => ({
@@ -271,6 +360,94 @@ export const mediaRelations = relations(media, ({ one }) => ({
   uploadedBy: one(users, { fields: [media.uploadedBy], references: [users.id] }),
 }));
 
+export const servicesRelations = relations(services, ({ one, many }) => ({
+  category: one(categories, { fields: [services.categoryId], references: [categories.id] }),
+  availabilitySettings: many(availabilitySettings),
+  availabilityExceptions: many(availabilityExceptions),
+  appointments: many(appointments),
+}));
+
+export const availabilitySettingsRelations = relations(availabilitySettings, ({ one }) => ({
+  service: one(services, { fields: [availabilitySettings.serviceId], references: [services.id] }),
+}));
+
+export const availabilityExceptionsRelations = relations(availabilityExceptions, ({ one }) => ({
+  service: one(services, { fields: [availabilityExceptions.serviceId], references: [services.id] }),
+}));
+
+export const appointmentsRelations = relations(appointments, ({ one }) => ({
+  service: one(services, { fields: [appointments.serviceId], references: [services.id] }),
+}));
+
+// ============================================================
+// TESTIMONIALS
+// ============================================================
+
+export const testimonials = pgTable("testimonials", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  role: text("role"), // e.g. "CEO at Company" or "Customer"
+  avatarUrl: text("avatar_url"),
+  content: text("content").notNull(),
+  rating: integer("rating").notNull().default(5),
+  isFeatured: boolean("is_featured").notNull().default(false),
+  order: integer("order").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export type Testimonial = typeof testimonials.$inferSelect;
+export type NewTestimonial = typeof testimonials.$inferInsert;
+
+// ============================================================
+// MARKETING & CAMPAIGNS
+// ============================================================
+
+export const campaignStatusEnum = pgEnum("campaign_status", ["draft", "scheduled", "published", "failed"]);
+export const socialPlatformEnum = pgEnum("social_platform", ["facebook", "instagram"]);
+
+export const campaigns = pgTable("campaigns", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: text("title").notNull(),
+  sourceType: text("source_type").notNull().default("custom"), // "post" | "page" | "service" | "custom"
+  sourceId: text("source_id"),
+  status: campaignStatusEnum("status").notNull().default("draft"),
+  emailSubject: text("email_subject"),
+  emailHtmlContent: text("email_html_content"),
+  scheduledAt: timestamp("scheduled_at"),
+  publishedAt: timestamp("published_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const socialPosts = pgTable("social_posts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  campaignId: uuid("campaign_id").references(() => campaigns.id, { onDelete: "cascade" }),
+  platform: socialPlatformEnum("platform").notNull(),
+  caption: text("caption").notNull(),
+  imageUrl: text("image_url"),
+  status: campaignStatusEnum("status").notNull().default("draft"),
+  metaPostId: text("meta_post_id"),
+  errorMessage: text("error_message"),
+  scheduledAt: timestamp("scheduled_at"),
+  publishedAt: timestamp("published_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const campaignsRelations = relations(campaigns, ({ many }) => ({
+  socialPosts: many(socialPosts),
+}));
+
+export const socialPostsRelations = relations(socialPosts, ({ one }) => ({
+  campaign: one(campaigns, { fields: [socialPosts.campaignId], references: [campaigns.id] }),
+}));
+
+export type Campaign = typeof campaigns.$inferSelect;
+export type NewCampaign = typeof campaigns.$inferInsert;
+export type SocialPost = typeof socialPosts.$inferSelect;
+export type NewSocialPost = typeof socialPosts.$inferInsert;
+
 // ============================================================
 // TYPE EXPORTS
 // ============================================================
@@ -294,3 +471,14 @@ export type Media = typeof media.$inferSelect;
 export type Global = typeof globals.$inferSelect;
 export type Theme = typeof themes.$inferSelect;
 export type NewTheme = typeof themes.$inferInsert;
+export type Service = typeof services.$inferSelect;
+export type NewService = typeof services.$inferInsert;
+export type AvailabilitySetting = typeof availabilitySettings.$inferSelect;
+export type NewAvailabilitySetting = typeof availabilitySettings.$inferInsert;
+export type AvailabilityException = typeof availabilityExceptions.$inferSelect;
+export type NewAvailabilityException = typeof availabilityExceptions.$inferInsert;
+export type Appointment = typeof appointments.$inferSelect;
+export type NewAppointment = typeof appointments.$inferInsert;
+export type HolidayCache = typeof holidaysCache.$inferSelect;
+
+

@@ -17,7 +17,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-import { SignOutButton } from "@/components/admin/sign-out-button";
+import { SignOutButton } from "@/components/admin/SignOutButton";
 import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
@@ -33,6 +33,8 @@ import {
   User,
   Zap,
   Palette,
+  Quote,
+  Megaphone,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -44,8 +46,12 @@ type NavItem = {
 
 const ADMIN_NAV: NavItem[] = [
   { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+  { label: "Marketing & AI", href: "/admin/marketing", icon: Megaphone },
   { label: "Pages", href: "/admin/pages", icon: FileText },
   { label: "Posts", href: "/admin/posts", icon: Newspaper },
+  { label: "Services", href: "/admin/services", icon: Zap },
+  { label: "Schedule & Bookings", href: "/admin/schedule", icon: ClipboardList },
+  { label: "Testimonials", href: "/admin/testimonials", icon: Quote },
   { label: "Categories", href: "/admin/categories", icon: FolderTree },
   { label: "Tags", href: "/admin/tags", icon: Tags },
   { label: "Forms", href: "/admin/forms", icon: ClipboardList },

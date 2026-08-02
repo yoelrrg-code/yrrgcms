@@ -25,7 +25,7 @@ export default function PricingTable({
     <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} py-20 px-6`}>
       <div className="mx-auto max-w-6xl">
         {title && (
-          <h2 className="mb-14 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          <h2 className="mb-14 text-center text-3xl font-bold tracking-tight text-[var(--theme-h2-color,currentColor)] sm:text-4xl">
             {title}
           </h2>
         )}

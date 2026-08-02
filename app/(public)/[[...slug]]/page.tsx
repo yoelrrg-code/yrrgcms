@@ -1,6 +1,7 @@
 import { getPageBySlug } from "@/lib/actions/pages";
 import { notFound } from "next/navigation";
 import { BLOCK_REGISTRY, Block } from "@/components/blocks";
+import { AnimatedBlockWrapper } from "@/components/blocks/AnimatedBlockWrapper";
 import { Metadata } from "next";
 
 interface SeoData {
@@ -55,16 +56,20 @@ export default async function PublicPage({
   const blocks = (page.blocks as Block[]) || [];
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen overflow-x-hidden">
       {blocks.length === 0 && (
         <div className="py-20 text-center text-muted-foreground">
           This page has no content.
         </div>
       )}
-      {blocks.map((block) => {
+      {blocks.map((block, idx) => {
         const Component = BLOCK_REGISTRY[block.type];
         if (!Component) return null;
-        return <Component key={block.id} {...block.props} />;
+        return (
+          <AnimatedBlockWrapper key={block.id} index={idx} animation={idx === 0 ? "fade-in" : "fade-up"}>
+            <Component {...block.props} />
+          </AnimatedBlockWrapper>
+        );
       })}
     </main>
   );

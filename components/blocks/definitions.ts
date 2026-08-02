@@ -106,4 +106,28 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
       paddingBottom: "pb-12",
     },
   },
+  {
+    type: "ServicesBlock",
+    label: "Services and Booking",
+    description: "Display service listings with booking modal and calendar",
+    defaultProps: {
+      title: "Our Services and Plans",
+      subtitle: "Select a service and book your sessions quickly and easily.",
+      layout: "rows",
+    },
+  },
+  {
+    type: "TestimonialsBlock",
+    label: "Testimonials",
+    description: "Display client feedback in a slider or grid format",
+    defaultProps: {
+      title: "What Our Clients Say",
+      subtitle: "Real feedback from our satisfied customers and partners.",
+      layout: "slider",
+      onlyFeatured: false,
+      limit: 6,
+      paddingTop: "pt-12",
+      paddingBottom: "pb-12",
+    },
+  },
 ];

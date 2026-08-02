@@ -123,7 +123,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Nueva Contraseña */}
+              {/* New Password */}
               <div className="space-y-1.5">
                 <Label htmlFor="password">New Password</Label>
                 <Input
@@ -135,7 +135,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 />
               </div>
 
-              {/* Confirmar Contraseña */}
+              {/* Confirm Password */}
               <div className="space-y-1.5">
                 <Label htmlFor="confirmPassword">Confirm New Password</Label>
                 <Input

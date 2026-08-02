@@ -58,7 +58,7 @@ export default async function PostsGrid({
     return (
       <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} py-20 px-6`}>
         {title && (
-          <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-[var(--theme-h2-color,currentColor)] sm:text-4xl">
             {title}
           </h2>
         )}
@@ -86,10 +86,10 @@ export default async function PostsGrid({
   // ── Grid layout ──────────────────────────────────────────────
   if (layout === "grid") {
     return (
-      <section className="py-20 px-6">
+      <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} py-20 px-6`}>
         <div className="mx-auto max-w-6xl">
           {title && (
-            <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-[var(--theme-h2-color,currentColor)] sm:text-4xl">
               {title}
             </h2>
           )}
@@ -105,10 +105,10 @@ export default async function PostsGrid({
 
   // ── List layout ──────────────────────────────────────────────
   return (
-    <section className="py-20 px-6">
+    <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} py-20 px-6`}>
       <div className="mx-auto max-w-4xl">
         {title && (
-          <h2 className="mb-12 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          <h2 className="mb-12 text-3xl font-bold tracking-tight text-[var(--theme-h2-color,currentColor)] sm:text-4xl">
             {title}
           </h2>
         )}
@@ -188,20 +188,20 @@ function PostCard({ post, delay }: { post: PostRow; delay?: number }) {
 
         {/* Title */}
         <Link href={`/blog/${post.slug}`}>
-          <h3 className="text-lg font-bold leading-snug text-foreground transition-colors group-hover:text-theme-primary line-clamp-2">
+          <h3 className="text-lg font-bold leading-snug text-[var(--theme-h3-color,currentColor)] transition-colors group-hover:text-[var(--theme-primary,var(--primary))] line-clamp-2">
             {post.title}
           </h3>
         </Link>
 
         {/* Excerpt */}
         {post.excerpt && (
-          <p className="flex-1 text-sm text-muted-foreground line-clamp-3">
+          <p className="flex-1 text-sm text-[var(--theme-p-color,var(--muted-foreground,currentColor))] line-clamp-3">
             {post.excerpt}
           </p>
         )}
 
         {/* Meta */}
-        <div className="mt-auto flex items-center gap-2 pt-2 text-xs text-muted-foreground">
+        <div className="mt-auto flex items-center gap-2 pt-2 text-xs text-[var(--theme-p-color,var(--muted-foreground,currentColor))] opacity-80">
           {post.authorName && <span>{post.authorName}</span>}
           {post.authorName && post.publishedAt && (
             <span className="text-border">·</span>
@@ -250,26 +250,27 @@ function PostListItem({ post, delay }: { post: PostRow; delay?: number }) {
         {post.categoryName && (
           <Link
             href={`/blog/category/${post.categorySlug}`}
-            className="w-fit text-xs font-semibold uppercase tracking-wide text-theme-primary hover:underline"
+            className="w-fit rounded-full bg-theme-primary/10 px-3 py-0.5 text-xs font-semibold text-[var(--theme-primary,var(--primary))] ring-1 ring-theme-primary/20 transition-colors hover:bg-theme-primary/20"
           >
             {post.categoryName}
           </Link>
         )}
+
         <Link href={`/blog/${post.slug}`}>
-          <h3 className="text-xl font-bold leading-snug text-foreground transition-colors group-hover:text-theme-primary">
+          <h3 className="text-xl font-bold leading-snug text-[var(--theme-h3-color,currentColor)] transition-colors group-hover:text-[var(--theme-primary,var(--primary))]">
             {post.title}
           </h3>
         </Link>
+
         {post.excerpt && (
-          <p className="text-sm text-muted-foreground line-clamp-2">
+          <p className="text-sm text-[var(--theme-p-color,var(--muted-foreground,currentColor))] line-clamp-2">
             {post.excerpt}
           </p>
         )}
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+
+        <div className="flex items-center gap-2 text-xs text-[var(--theme-p-color,var(--muted-foreground,currentColor))] opacity-80">
           {post.authorName && <span>{post.authorName}</span>}
-          {post.authorName && post.publishedAt && (
-            <span className="text-border">·</span>
-          )}
+          {post.authorName && post.publishedAt && <span>·</span>}
           {post.publishedAt && (
             <time dateTime={post.publishedAt.toISOString()}>
               {new Intl.DateTimeFormat("en-US", {

@@ -46,12 +46,12 @@ export default function CallToAction({
       : "bg-theme-primary text-white hover:bg-theme-primary/90 shadow-md shadow-theme-primary/50 hover:shadow-theme-primary/50";
 
   return (
-    <section className={`py-24 px-6 ${wrapperClass}`}>
+    <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} py-24 px-6 ${wrapperClass} relative`}>
       {/* Subtle grid pattern for primary/dark */}
       {(style === "primary" || style === "dark") && (
         <div
           aria-hidden
-          className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} pointer-events-none absolute inset-0 opacity-[0.06]`}
+          className="pointer-events-none absolute inset-0 opacity-[0.06]"
           style={{
             backgroundImage:
               "radial-gradient(circle, currentColor 1px, transparent 1px)",

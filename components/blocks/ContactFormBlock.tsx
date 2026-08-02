@@ -168,10 +168,10 @@ export default function ContactFormBlock({
 
   // ── Form ──────────────────────────────────────────────────
   return (
-    <section className="py-20 px-6">
+    <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} py-20 px-6`}>
       <div className="mx-auto max-w-2xl">
         {title && (
-          <h2 className="mb-10 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          <h2 className="mb-10 text-3xl font-bold tracking-tight text-[var(--theme-h2-color,currentColor)] sm:text-4xl">
             {title}
           </h2>
         )}

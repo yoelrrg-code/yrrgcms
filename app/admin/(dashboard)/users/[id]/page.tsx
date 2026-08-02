@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getUserById } from "@/lib/actions/users";
-import { UserForm } from "@/components/admin/user-form";
+import { UserForm } from "@/components/admin/UserForm";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 

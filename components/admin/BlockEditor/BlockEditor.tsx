@@ -28,13 +28,19 @@ import RichTextEditor from "@/components/admin/RichTextEditor/RichTextEditor";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { GripVertical, Pencil, Trash2, Plus, X } from "lucide-react";
+import { GripVertical, Pencil, Trash2, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { nanoid } from "./nanoid";
 
@@ -137,13 +143,10 @@ function PropEditor({ block, onChange, onClose }: PropEditorProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-sm">
+      <div className="flex items-center justify-between pb-2 border-b">
+        <h3 className="font-bold text-base">
           Editing: {BLOCK_DEFINITIONS.find((d: BlockDefinition) => d.type === block.type)?.label ?? block.type}
         </h3>
-        <Button type="button" variant="ghost" size="icon" onClick={onClose} className="h-7 w-7">
-          <X className="h-4 w-4" />
-        </Button>
       </div>
 
       {block.type === "HeroBanner" && !localProps.slides && (
@@ -174,13 +177,32 @@ function PropEditor({ block, onChange, onClose }: PropEditorProps) {
 
       <div className="space-y-3">
         {Object.entries(localProps).map(([key, value]) => {
+          const isSliderMode = block.type === "HeroBanner" && Array.isArray(localProps.slides);
+
+          // Hide single-slide properties when HeroBanner is converted to Slider
+          if (
+            isSliderMode &&
+            [
+              "title",
+              "subtitle",
+              "ctaText",
+              "ctaUrl",
+              "backgroundImage",
+              "overlayColor",
+              "transitionEffect",
+              "autoplaySpeed",
+            ].includes(key)
+          ) {
+            return null;
+          }
+
           const label = key.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase());
 
           // Custom visual slide editor for HeroBanner
           if (key === "slides") {
             const slideItems = (value as HeroSlide[]) || [];
             return (
-              <div key={key} className="space-y-3 border-t pt-4 mt-4">
+              <div key={key} className="space-y-3 pt-4 mt-4">
                 {/* Carousel-wide Settings */}
                 <div className="grid grid-cols-2 gap-4 p-3 bg-muted/40 rounded-md border text-xs">
                   <div className="space-y-1">
@@ -410,6 +432,47 @@ function PropEditor({ block, onChange, onClose }: PropEditorProps) {
             );
           }
 
+          // Layout Selector (tailored per block type)
+          if (key === "layout") {
+            const layoutOptions =
+              block.type === "TestimonialsBlock"
+                ? [
+                    { value: "slider", label: "Slider (Carousel)" },
+                    { value: "grid", label: "Grid (Columns)" },
+                  ]
+                : block.type === "ServicesBlock"
+                ? [
+                    { value: "rows", label: "Rows" },
+                    { value: "grid", label: "Grid (Columns)" },
+                  ]
+                : [
+                    { value: "slider", label: "Slider (Carousel)" },
+                    { value: "grid", label: "Grid (Columns)" },
+                    { value: "rows", label: "Rows" },
+                  ];
+
+            return (
+              <div key={key} className="space-y-1">
+                <label className="text-xs font-medium text-muted-foreground">{label}</label>
+                <Select
+                  value={String(value || layoutOptions[0].value)}
+                  onValueChange={(val) => handleChange(key, val)}
+                >
+                  <SelectTrigger className="h-8 text-sm">
+                    <SelectValue placeholder="Select layout" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {layoutOptions.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            );
+          }
+
           // Use RichTextEditor for 'content' key
           if (key === "content") {
             let editorContent = value;
@@ -551,6 +614,21 @@ export default function BlockEditor({ blocks, onChange }: BlockEditorProps) {
   );
 
   // ── Block operations ───────────────────────────────────────────────────
+  const handleSelectBlock = (targetId: string) => {
+    if (selectedId && selectedId !== targetId) {
+      // First close the active block form
+      setSelectedId(null);
+      // Then open the clicked block form after a brief transition reset
+      setTimeout(() => {
+        setSelectedId(targetId);
+      }, 100);
+    } else if (selectedId === targetId) {
+      setSelectedId(null);
+    } else {
+      setSelectedId(targetId);
+    }
+  };
+
   const addBlock = (type: string) => {
     const def = BLOCK_DEFINITIONS.find((d: BlockDefinition) => d.type === type);
     if (!def) return;
@@ -560,8 +638,16 @@ export default function BlockEditor({ blocks, onChange }: BlockEditorProps) {
       props: { ...(def.defaultProps as Record<string, unknown>) },
     };
     onChange([...blocks, newBlock]);
-    setSelectedId(newBlock.id);
     setPaletteOpen(false);
+
+    if (selectedId) {
+      setSelectedId(null);
+      setTimeout(() => {
+        setSelectedId(newBlock.id);
+      }, 100);
+    } else {
+      setSelectedId(newBlock.id);
+    }
   };
 
   const deleteBlock = (id: string) => {
@@ -574,9 +660,9 @@ export default function BlockEditor({ blocks, onChange }: BlockEditorProps) {
   };
 
   return (
-    <div className="flex gap-4 min-h-[400px]">
-      {/* ── Left: block list ─────────────────────────────────────────── */}
-      <div className="w-72 shrink-0 flex flex-col gap-2">
+    <div className="w-full space-y-4">
+      {/* ── Block list (Full Width) ─────────────────────────────────── */}
+      <div className="w-full flex flex-col gap-3">
         <DndContext
           id="dnd-block-editor"
           sensors={sensors}
@@ -587,10 +673,10 @@ export default function BlockEditor({ blocks, onChange }: BlockEditorProps) {
             items={blocks.map((b: Block) => b.id)}
             strategy={verticalListSortingStrategy}
           >
-            <div className="flex flex-col gap-2 flex-1">
+            <div className="flex flex-col gap-2.5 w-full">
               {blocks.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-8 border border-dashed border-border rounded-md">
-                  No blocks yet. Add one below.
+                <p className="text-sm text-muted-foreground text-center py-10 border border-dashed border-border rounded-lg bg-card/50">
+                  No content blocks added yet. Click &quot;Add Block&quot; below to add your first section.
                 </p>
               )}
               {blocks.map((block: Block) => (
@@ -598,9 +684,7 @@ export default function BlockEditor({ blocks, onChange }: BlockEditorProps) {
                   key={block.id}
                   block={block}
                   isSelected={selectedId === block.id}
-                  onSelect={() =>
-                    setSelectedId((prev) => (prev === block.id ? null : block.id))
-                  }
+                  onSelect={() => handleSelectBlock(block.id)}
                   onDelete={() => deleteBlock(block.id)}
                 />
               ))}
@@ -611,7 +695,7 @@ export default function BlockEditor({ blocks, onChange }: BlockEditorProps) {
         {/* Add block button */}
         <Sheet open={paletteOpen} onOpenChange={setPaletteOpen}>
           <SheetTrigger
-            render={<Button type="button" variant="outline" className="w-full mt-2 gap-2" />}
+            render={<Button type="button" variant="outline" className="w-full mt-2 gap-2 font-semibold" />}
           >
             <Plus className="h-4 w-4" />
             Add Block
@@ -639,20 +723,22 @@ export default function BlockEditor({ blocks, onChange }: BlockEditorProps) {
         </Sheet>
       </div>
 
-      {/* ── Right: prop editor ───────────────────────────────────────── */}
-      <div className="flex-1 border border-border rounded-md p-4 overflow-y-auto">
-        {selectedBlock ? (
-          <PropEditor
-            block={selectedBlock}
-            onChange={(props) => updateBlockProps(selectedBlock.id, props)}
-            onClose={() => setSelectedId(null)}
-          />
-        ) : (
-          <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
-            Select a block to edit its properties.
-          </div>
-        )}
-      </div>
+      {/* ── Prop editor Modal ───────────────────────────────────────── */}
+      <Dialog open={!!selectedBlock} onOpenChange={(open) => !open && setSelectedId(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto p-6">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Edit Block Properties</DialogTitle>
+          </DialogHeader>
+          {selectedBlock && (
+            <PropEditor
+              key={selectedBlock.id}
+              block={selectedBlock}
+              onChange={(props) => updateBlockProps(selectedBlock.id, props)}
+              onClose={() => setSelectedId(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

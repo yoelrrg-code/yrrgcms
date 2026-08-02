@@ -214,3 +214,40 @@
     background-position: 0% 50%;
   }
 }
+
+@layer base {
+  h1 {
+    color: var(--theme-h1-color, inherit);
+    padding: var(--theme-h1-padding, 0);
+  }
+  h2 {
+    color: var(--theme-h2-color, inherit);
+    padding: var(--theme-h2-padding, 0);
+  }
+  h3 {
+    color: var(--theme-h3-color, inherit);
+    padding: var(--theme-h3-padding, 0);
+  }
+  h4 {
+    color: var(--theme-h4-color, inherit);
+    padding: var(--theme-h4-padding, 0);
+  }
+  h5 {
+    color: var(--theme-h5-color, inherit);
+    padding: var(--theme-h5-padding, 0);
+  }
+  h6 {
+    color: var(--theme-h6-color, inherit);
+    padding: var(--theme-h6-padding, 0);
+  }
+  p {
+    color: var(--theme-p-color, inherit);
+    padding: var(--theme-p-padding, 0);
+  }
+}
+
+/* Sileo Toast description override */
+[data-sileo-description],
+[data-sileo-viewport] [data-sileo-description] {
+  color: #ffffff !important;
+}

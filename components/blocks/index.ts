@@ -18,6 +18,8 @@ import ContactFormBlock from "./ContactFormBlock";
 import PricingTable from "./PricingTable";
 import ImageGallery from "./ImageGallery";
 import CallToAction from "./CallToAction";
+import { ServicesBlock } from "./ServicesBlock";
+import { TestimonialsBlock } from "./TestimonialsBlock";
 
 // Block component registry
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,6 +32,8 @@ export const BLOCK_REGISTRY: Record<string, React.ComponentType<any>> = {
   PricingTable,
   ImageGallery,
   CallToAction,
+  ServicesBlock,
+  TestimonialsBlock,
 };
 
 export * from "./definitions";

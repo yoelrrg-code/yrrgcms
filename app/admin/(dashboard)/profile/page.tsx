@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { ProfileForm } from "@/components/admin/profile-form";
+import { ProfileForm } from "@/components/admin/ProfileForm";
 
 export const metadata = {
   title: "Edit Profile | YRRG CMS",

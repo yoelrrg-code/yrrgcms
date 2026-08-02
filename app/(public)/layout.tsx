@@ -36,6 +36,8 @@ export default async function PublicLayout({
       radius?: string;
     };
     typography?: {
+      fontSans?: string;
+      fontHeading?: string;
       paragraphColor?: string;
       paragraphPadding?: string;
       h1?: HeadingConfig;
@@ -76,10 +78,10 @@ export default async function PublicLayout({
           dangerouslySetInnerHTML={{
             __html: `
               :root {
+                --theme-text: ${themeConfig.typography?.paragraphColor || themeConfig.colors?.text || "#0f172a"};
                 ${themeConfig.colors?.primary ? `--theme-primary: ${themeConfig.colors.primary};` : ""}
                 ${themeConfig.colors?.secondary ? `--theme-secondary: ${themeConfig.colors.secondary};` : ""}
                 ${themeConfig.colors?.background ? `--theme-background: ${themeConfig.colors.background};` : ""}
-                ${themeConfig.colors?.text ? `--theme-text: ${themeConfig.colors.text};` : ""}
                 ${themeConfig.colors?.link ? `--theme-link: ${themeConfig.colors.link};` : ""}
                 ${themeConfig.colors?.menuLink ? `--theme-menu-link: ${themeConfig.colors.menuLink};` : ""}
                 
@@ -89,20 +91,23 @@ export default async function PublicLayout({
                 ${btnPadding ? `--theme-button-padding: ${btnPadding};` : ""}
                 ${btnRadius ? `--theme-button-radius: ${btnRadius};` : ""}
 
-                ${themeConfig.typography?.paragraphColor ? `--theme-p-color: ${themeConfig.typography.paragraphColor};` : ""}
+                ${themeConfig.typography?.fontSans ? `--font-sans: ${themeConfig.typography.fontSans};` : ""}
+                ${themeConfig.typography?.fontHeading ? `--font-heading: ${themeConfig.typography.fontHeading};` : ""}
+
+                --theme-p-color: ${themeConfig.typography?.paragraphColor || themeConfig.colors?.text || "currentColor"};
                 ${themeConfig.typography?.paragraphPadding ? `--theme-p-padding: ${themeConfig.typography.paragraphPadding};` : ""}
                 
-                ${themeConfig.typography?.h1?.color ? `--theme-h1-color: ${themeConfig.typography.h1.color};` : ""}
+                --theme-h1-color: ${themeConfig.typography?.h1?.color || "var(--theme-p-color)"};
                 ${themeConfig.typography?.h1?.padding ? `--theme-h1-padding: ${themeConfig.typography.h1.padding};` : ""}
-                ${themeConfig.typography?.h2?.color ? `--theme-h2-color: ${themeConfig.typography.h2.color};` : ""}
+                --theme-h2-color: ${themeConfig.typography?.h2?.color || "var(--theme-p-color)"};
                 ${themeConfig.typography?.h2?.padding ? `--theme-h2-padding: ${themeConfig.typography.h2.padding};` : ""}
-                ${themeConfig.typography?.h3?.color ? `--theme-h3-color: ${themeConfig.typography.h3.color};` : ""}
+                --theme-h3-color: ${themeConfig.typography?.h3?.color || "var(--theme-p-color)"};
                 ${themeConfig.typography?.h3?.padding ? `--theme-h3-padding: ${themeConfig.typography.h3.padding};` : ""}
-                ${themeConfig.typography?.h4?.color ? `--theme-h4-color: ${themeConfig.typography.h4.color};` : ""}
+                --theme-h4-color: ${themeConfig.typography?.h4?.color || "var(--theme-p-color)"};
                 ${themeConfig.typography?.h4?.padding ? `--theme-h4-padding: ${themeConfig.typography.h4.padding};` : ""}
-                ${themeConfig.typography?.h5?.color ? `--theme-h5-color: ${themeConfig.typography.h5.color};` : ""}
+                --theme-h5-color: ${themeConfig.typography?.h5?.color || "var(--theme-p-color)"};
                 ${themeConfig.typography?.h5?.padding ? `--theme-h5-padding: ${themeConfig.typography.h5.padding};` : ""}
-                ${themeConfig.typography?.h6?.color ? `--theme-h6-color: ${themeConfig.typography.h6.color};` : ""}
+                --theme-h6-color: ${themeConfig.typography?.h6?.color || "var(--theme-p-color)"};
                 ${themeConfig.typography?.h6?.padding ? `--theme-h6-padding: ${themeConfig.typography.h6.padding};` : ""}
 
                 ${themeConfig.header?.background ? `--theme-header-bg: ${themeConfig.header.background};` : ""}

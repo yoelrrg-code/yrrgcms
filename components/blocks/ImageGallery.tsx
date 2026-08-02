@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 export interface GalleryImage {
   url: string;
@@ -22,6 +23,11 @@ export default function ImageGallery({
   columns = 3,
 }: ImageGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
 
@@ -68,6 +74,112 @@ export default function ImageGallery({
       : columns === 4
       ? "grid-cols-2 sm:grid-cols-4"
       : "grid-cols-2 sm:grid-cols-3";
+
+  const lightboxContent =
+    lightboxIndex !== null ? (
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Image lightbox"
+        className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/95 p-4 sm:p-8 backdrop-blur-md animate-in fade-in duration-300"
+        onClick={closeLightbox}
+      >
+        {/* Main image container */}
+        <div
+          className="relative flex flex-col items-center justify-center max-h-[85vh] max-w-6xl w-full h-full"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="relative w-full h-full flex items-center justify-center">
+            <Image
+              src={images[lightboxIndex].url}
+              alt={images[lightboxIndex].alt || `Image ${lightboxIndex + 1}`}
+              fill
+              className="object-contain"
+              sizes="100vw"
+              priority
+            />
+          </div>
+
+          {/* Caption */}
+          {images[lightboxIndex].alt && (
+            <p className="mt-3 text-center text-sm font-medium text-slate-200 bg-black/60 px-4 py-1.5 rounded-full max-w-lg backdrop-blur-sm">
+              {images[lightboxIndex].alt}
+            </p>
+          )}
+        </div>
+
+        {/* Close button */}
+        <button
+          type="button"
+          onClick={closeLightbox}
+          className="absolute right-6 top-6 z-[100000] rounded-full bg-white/10 p-3 text-white backdrop-blur-md transition-all hover:bg-white/20 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          aria-label="Close lightbox"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        {/* Prev / Next buttons */}
+        {images.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                goPrev();
+              }}
+              className="absolute left-6 top-1/2 -translate-y-1/2 z-[100000] rounded-full bg-white/10 p-3.5 text-white backdrop-blur-md transition-all hover:bg-white/20 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              aria-label="Previous image"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                goNext();
+              }}
+              className="absolute right-6 top-1/2 -translate-y-1/2 z-[100000] rounded-full bg-white/10 p-3.5 text-white backdrop-blur-md transition-all hover:bg-white/20 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              aria-label="Next image"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </>
+        )}
+
+        {/* Counter */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[100000] rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold text-white backdrop-blur-md tracking-wider">
+          {lightboxIndex + 1} / {images.length}
+        </div>
+      </div>
+    ) : null;
 
   return (
     <>
@@ -123,111 +235,8 @@ export default function ImageGallery({
         </div>
       </section>
 
-      {/* Lightbox */}
-      {lightboxIndex !== null && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Image lightbox"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 backdrop-blur-md animate-in fade-in duration-300"
-          onClick={closeLightbox}
-        >
-          {/* Image container */}
-          <div
-            className="relative max-h-[90vh] max-w-5xl w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="relative h-[80vh]">
-              <Image
-                src={images[lightboxIndex].url}
-                alt={images[lightboxIndex].alt}
-                fill
-                className="object-contain"
-                sizes="100vw"
-                priority
-              />
-            </div>
-
-            {/* Caption */}
-            {images[lightboxIndex].alt && (
-              <p className="mt-3 text-center text-sm text-slate-300">
-                {images[lightboxIndex].alt}
-              </p>
-            )}
-          </div>
-
-          {/* Close button */}
-          <button
-            type="button"
-            onClick={closeLightbox}
-            className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-            aria-label="Close lightbox"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-
-          {/* Prev / Next */}
-          {images.length > 1 && (
-            <>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  goPrev();
-                }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                aria-label="Previous image"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  goNext();
-                }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                aria-label="Next image"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </>
-          )}
-
-          {/* Counter */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-medium text-white backdrop-blur-sm">
-            {lightboxIndex + 1} / {images.length}
-          </div>
-        </div>
-      )}
+      {/* Lightbox rendered via React Portal at document.body level */}
+      {mounted && lightboxContent ? createPortal(lightboxContent, document.body) : null}
     </>
   );
 }
