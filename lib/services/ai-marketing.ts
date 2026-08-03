@@ -16,7 +16,7 @@ export async function generateMarketingCampaign(input: {
   imageUrl?: string;
   customInstructions?: string;
 }): Promise<GeneratedMarketingContent> {
-  const apiKey = process.env.GEMINI_API_KEY || process.env.OPENAI_API_KEY;
+  const apiKey = process.env.OPENROUTER_API_KEY;
 
   const promptText = `
 You are an Elite AI Marketing Specialist and Technology Copywriter.
@@ -34,7 +34,7 @@ YOUR MISSION:
 CRITICAL: Detect the language of the request "${input.sourceContent}" (e.g. Spanish).
 You MUST generate ALL output fields (emailSubject, emailHtmlContent, facebookCaption, instagramCaption) IN THAT EXACT SAME LANGUAGE.
 
-Respond ONLY with a valid JSON object matching this structure (no extra text):
+Respond ONLY with a valid JSON object matching this structure (no extra text or markdown formatting):
 {
   "emailSubject": "...",
   "emailHtmlContent": "...",
@@ -73,44 +73,51 @@ Respond ONLY with a valid JSON object matching this structure (no extra text):
 
   // Check if API key is valid or missing
   if (!apiKey || apiKey.includes("tu_")) {
-    console.warn("Using smart fallback generator: GEMINI_API_KEY is not configured in .env");
+    console.warn("Using smart fallback generator: OPENROUTER_API_KEY is not configured in .env");
     return buildFallbackContent(input.sourceContent || input.sourceTitle, input.sourceUrl || "");
   }
 
-  // Model fallback chain
-  const candidateModels = ["gemini-3.5-flash", "gemini-2.0-flash", "gemini-2.5-flash"];
+  const modelName = "deepseek/deepseek-v4-flash:0731-cloud";
 
-  for (const modelName of candidateModels) {
-    try {
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${process.env.GEMINI_API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: promptText }] }],
-            generationConfig: { responseMimeType: "application/json" },
-          }),
-        }
-      );
+  try {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+        "X-Title": process.env.NEXT_PUBLIC_SITE_NAME || "YRRG CMS",
+      },
+      body: JSON.stringify({
+        model: modelName,
+        response_format: { type: "json_object" },
+        messages: [
+          {
+            role: "user",
+            content: promptText,
+          },
+        ],
+      }),
+    });
 
-      if (!response.ok) {
-        console.warn(`Gemini API model ${modelName} returned HTTP ${response.status}`);
-        continue;
-      }
-
-      const resData = await response.json();
-      const rawJson = resData.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (rawJson) {
-        let cleanJson = rawJson.trim();
-        if (cleanJson.startsWith("```")) {
-          cleanJson = cleanJson.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
-        }
-        return JSON.parse(cleanJson);
-      }
-    } catch (err: unknown) {
-      console.warn(`Gemini model ${modelName} call failed:`, err);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.warn(`OpenRouter API model ${modelName} returned HTTP ${response.status}: ${errorText}`);
+      return buildFallbackContent(input.sourceContent || input.sourceTitle, input.sourceUrl || "");
     }
+
+    const resData = await response.json();
+    const rawJson = resData.choices?.[0]?.message?.content;
+
+    if (rawJson) {
+      let cleanJson = rawJson.trim();
+      if (cleanJson.startsWith("```")) {
+        cleanJson = cleanJson.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+      }
+      return JSON.parse(cleanJson);
+    }
+  } catch (err: unknown) {
+    console.warn(`OpenRouter model ${modelName} call failed:`, err);
   }
 
   return buildFallbackContent(input.sourceContent || input.sourceTitle, input.sourceUrl || "");

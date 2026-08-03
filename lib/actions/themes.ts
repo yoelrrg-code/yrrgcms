@@ -7,13 +7,18 @@ import { revalidatePath } from "next/cache";
 
 // Gets the currently active theme config
 export async function getActiveTheme() {
-  const [theme] = await db
-    .select()
-    .from(themes)
-    .where(eq(themes.isActive, true))
-    .limit(1);
+  try {
+    const [theme] = await db
+      .select()
+      .from(themes)
+      .where(eq(themes.isActive, true))
+      .limit(1);
 
-  return theme ?? null;
+    return theme ?? null;
+  } catch (error) {
+    console.error("getActiveTheme error:", error);
+    return null;
+  }
 }
 
 export async function getThemes() {

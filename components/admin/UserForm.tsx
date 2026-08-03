@@ -20,7 +20,7 @@ interface UserFormProps {
     id: string;
     name: string;
     email: string;
-    role: "admin" | "author";
+    role: "admin" | "author" | "customer";
   } | null;
 }
 
@@ -32,7 +32,7 @@ export function UserForm({ user }: UserFormProps) {
   const [name, setName] = useState(user?.name ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<"admin" | "author">(user?.role ?? "author");
+  const [role, setRole] = useState<"admin" | "author" | "customer">(user?.role ?? "customer");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 

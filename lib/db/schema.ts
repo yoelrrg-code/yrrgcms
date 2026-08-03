@@ -5,7 +5,7 @@ import { relations } from "drizzle-orm";
 // ENUMS
 // ============================================================
 
-export const userRoleEnum = pgEnum("user_role", ["admin", "author"]);
+export const userRoleEnum = pgEnum("user_role", ["admin", "author", "customer"]);
 export const pageStatusEnum = pgEnum("page_status", ["draft", "published"]);
 export const postStatusEnum = pgEnum("post_status", ["draft", "published"]);
 export const menuLocationEnum = pgEnum("menu_location", ["header", "footer", "sidebar"]);
@@ -23,7 +23,7 @@ export const users = pgTable("users", {
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
-  role: userRoleEnum("role").notNull().default("author"),
+  role: userRoleEnum("role").notNull().default("customer"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   lastLogin: timestamp("last_login"),

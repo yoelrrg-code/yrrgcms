@@ -66,14 +66,34 @@ export async function approveOrderAction(orderId: string) {
     // Get order items
     const items = await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
 
-    // If order.userId is missing, fallback to search user by email
+    // Find or create target user for enrollment
     let targetUserId = order.userId;
-    if (!targetUserId && order.customerEmail) {
-      const [userByEmail] = await db.select().from(users).where(eq(users.email, order.customerEmail));
-      if (userByEmail) {
-        targetUserId = userByEmail.id;
-        // Optionally associate order with user
-        await db.update(orders).set({ userId: targetUserId }).where(eq(orders.id, order.id));
+
+    // Search user by email regardless of current order.userId to ensure existing users (admin, author, customer) are matched
+    if (order.customerEmail) {
+      const [existingUser] = await db.select().from(users).where(eq(users.email, order.customerEmail));
+      if (existingUser) {
+        targetUserId = existingUser.id;
+        if (order.userId !== existingUser.id) {
+          await db.update(orders).set({ userId: existingUser.id }).where(eq(orders.id, order.id));
+        }
+      } else if (!targetUserId) {
+        // Create new user with customer role if no user exists with this email
+        const bcrypt = (await import("bcryptjs")).default;
+        const tempPasswordHash = await bcrypt.hash(Math.random().toString(36).slice(-8) + "Aa1!", 10);
+        
+        const [newUser] = await db
+          .insert(users)
+          .values({
+            name: order.customerName,
+            email: order.customerEmail,
+            passwordHash: tempPasswordHash,
+            role: "customer",
+          })
+          .returning();
+        
+        targetUserId = newUser.id;
+        await db.update(orders).set({ userId: newUser.id }).where(eq(orders.id, order.id));
       }
     }
 

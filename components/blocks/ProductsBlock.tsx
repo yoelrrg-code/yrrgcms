@@ -97,7 +97,7 @@ export async function ProductsBlock({
                 </div>
                 <div className="mt-6 flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-4">
                   <span className="text-xl font-extrabold text-slate-900 dark:text-white">
-                    ${(prod.price / 100).toFixed(2)}
+                    ${prod.price.toLocaleString()}
                   </span>
                   <Link
                     href={`/cursos/${prod.slug}`}

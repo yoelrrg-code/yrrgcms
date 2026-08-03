@@ -51,9 +51,9 @@ export default async function CheckoutPage({ params }: CheckoutProps) {
                 </p>
               </div>
             </div>
-            <div className="border-t border-slate-100 dark:border-slate-800 pt-4 flex justify-between items-center font-bold text-lg">
+            <div className="flex items-center justify-between text-lg font-bold border-t border-slate-100 dark:border-slate-800 pt-4">
               <span>Total:</span>
-              <span className="text-indigo-600 dark:text-indigo-400">${(product.price / 100).toFixed(2)} {product.currency}</span>
+              <span className="text-indigo-600 dark:text-indigo-400">${product.price.toLocaleString()} {product.currency}</span>
             </div>
 
             <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 rounded-2xl p-4 text-sm text-amber-800 dark:text-amber-300">

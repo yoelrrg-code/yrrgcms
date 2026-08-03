@@ -58,7 +58,7 @@ export default async function PostsGrid({
     return (
       <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} py-20 px-6`}>
         {title && (
-          <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-[var(--theme-h2-color,currentColor)] sm:text-4xl">
+          <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-[var(--theme-h2-color,currentColor)] sm:text-4xl" data-aos="fade-down">
             {title}
           </h2>
         )}
@@ -89,7 +89,7 @@ export default async function PostsGrid({
       <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} py-20 px-6`}>
         <div className="mx-auto max-w-6xl">
           {title && (
-            <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-[var(--theme-h2-color,currentColor)] sm:text-4xl">
+            <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-[var(--theme-h2-color,currentColor)] sm:text-4xl" data-aos="fade-down">
               {title}
             </h2>
           )}

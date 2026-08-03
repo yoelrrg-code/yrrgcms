@@ -148,6 +148,7 @@
   p {
     color: var(--theme-p-color, inherit);
     padding: var(--theme-p-padding, 0);
+    margin-bottom: 0 !important;
   }
   h1 {
     color: var(--theme-h1-color, inherit);

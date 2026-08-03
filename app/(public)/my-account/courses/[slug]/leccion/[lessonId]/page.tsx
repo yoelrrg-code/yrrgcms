@@ -47,12 +47,20 @@ export default async function LessonViewerPage({ params }: LessonViewerProps) {
             <span className="text-xs text-indigo-400 font-bold uppercase">{product.title}</span>
             <h1 className="text-2xl font-black">{lesson.title}</h1>
           </div>
-          <Link href="/my-account/courses" className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-sm font-semibold">
-            ← Volver a Mis Cursos
+          <Link 
+            href="/my-account/courses" 
+            className="px-4 py-2 rounded-xl text-sm font-semibold transition"
+            style={{
+              backgroundColor: "var(--theme-button-bg, var(--theme-primary, #1e293b))",
+              color: "var(--theme-button-text, #ffffff)",
+              borderRadius: "var(--theme-button-radius, 0.75rem)",
+            }}
+          >
+            ← Back to My Courses
           </Link>
         </div>
 
-        {/* Reproductor / Visor según contentType */}
+        {/* Player / Viewer depending on contentType */}
         <div className="bg-slate-950 border border-slate-800 rounded-3xl overflow-hidden aspect-video flex items-center justify-center">
           {lesson.contentType === "VIDEO" && (
             <iframe
@@ -65,28 +73,33 @@ export default async function LessonViewerPage({ params }: LessonViewerProps) {
 
           {lesson.contentType === "PDF_DOCUMENT" && (
             <div className="p-8 text-center space-y-4">
-              <p className="text-lg font-semibold">Documento / Material en PDF</p>
+              <p className="text-lg font-semibold">PDF Document / Learning Material</p>
               <a
                 href={lesson.contentUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-block px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl"
+                className="inline-block px-6 py-3 font-bold rounded-xl transition"
+                style={{
+                  backgroundColor: "var(--theme-button-bg, var(--theme-primary, #4f46e5))",
+                  color: "var(--theme-button-text, #ffffff)",
+                  borderRadius: "var(--theme-button-radius, 0.75rem)",
+                }}
               >
-                Abrir PDF en nueva pestaña ↗
+                Open PDF in new tab ↗
               </a>
             </div>
           )}
 
           {lesson.contentType === "WEBINAR_LINK" && (
             <div className="p-8 text-center space-y-4">
-              <p className="text-lg font-semibold">Enlace de Conexión a Webinar / Sesión en Vivo</p>
+              <p className="text-lg font-semibold">Webinar / Live Session Link</p>
               <a
                 href={lesson.contentUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-block px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl"
+                className="inline-block px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl"
               >
-                Unirme al Webinar ↗
+                Join Live Webinar ↗
               </a>
             </div>
           )}

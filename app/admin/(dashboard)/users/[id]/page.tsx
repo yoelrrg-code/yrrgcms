@@ -17,7 +17,7 @@ export default async function UserEditPage({ params }: UserEditPageProps) {
     id: string;
     name: string;
     email: string;
-    role: "admin" | "author";
+    role: "admin" | "author" | "customer";
   } | null = null;
 
   if (!isNew) {

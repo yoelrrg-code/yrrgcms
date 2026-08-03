@@ -57,7 +57,7 @@ export async function createUser(data: {
   name: string;
   email: string;
   password: string;
-  role: "admin" | "author";
+  role: "admin" | "author" | "customer";
 }) {
   const session = await auth();
   requireCan(session, "manage", "users");
@@ -85,14 +85,14 @@ export async function createUser(data: {
   return newUser;
 }
 
-// Updates a user; hashes password only if a new one is supplied
+// Updates an existing user's name, email, role, and optionally password
 export async function updateUser(
   id: string,
   data: {
     name?: string;
     email?: string;
     password?: string;
-    role?: "admin" | "author";
+    role?: "admin" | "author" | "customer";
   }
 ) {
   const session = await auth();

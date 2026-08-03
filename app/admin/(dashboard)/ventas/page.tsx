@@ -1,11 +1,32 @@
 import React from "react";
 import { db } from "@/lib/db";
-import { orders } from "@/lib/db/schema";
-import { desc } from "drizzle-orm";
+import { orders, orderItems, products } from "@/lib/db/schema";
+import { desc, eq } from "drizzle-orm";
 import SalesTable from "./SalesTable";
 
 export default async function SalesAdminPage() {
-  const sales = await db.select().from(orders).orderBy(desc(orders.createdAt));
+  const salesOrders = await db.select().from(orders).orderBy(desc(orders.createdAt));
+
+  const sales = await Promise.all(
+    salesOrders.map(async (order) => {
+      const items = await db
+        .select({
+          id: orderItems.id,
+          productId: orderItems.productId,
+          productTitle: products.title,
+          productSlug: products.slug,
+          productType: products.type,
+        })
+        .from(orderItems)
+        .leftJoin(products, eq(orderItems.productId, products.id))
+        .where(eq(orderItems.orderId, order.id));
+
+      return {
+        ...order,
+        items,
+      };
+    })
+  );
 
   return (
     <div className="p-6 space-y-6">
