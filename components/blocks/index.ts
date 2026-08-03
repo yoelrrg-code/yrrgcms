@@ -20,6 +20,7 @@ import ImageGallery from "./ImageGallery";
 import CallToAction from "./CallToAction";
 import { ServicesBlock } from "./ServicesBlock";
 import { TestimonialsBlock } from "./TestimonialsBlock";
+import { ProductsBlock } from "./ProductsBlock";
 
 // Block component registry
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,6 +35,8 @@ export const BLOCK_REGISTRY: Record<string, React.ComponentType<any>> = {
   CallToAction,
   ServicesBlock,
   TestimonialsBlock,
+  ProductsBlock,
 };
 
 export * from "./definitions";
+

@@ -481,4 +481,151 @@ export type Appointment = typeof appointments.$inferSelect;
 export type NewAppointment = typeof appointments.$inferInsert;
 export type HolidayCache = typeof holidaysCache.$inferSelect;
 
+// ============================================================
+// E-COMMERCE & ONLINE COURSES
+// ============================================================
+
+export const productTypeEnum = pgEnum("product_type", ["VIRTUAL_COURSE", "PHYSICAL", "DIGITAL_DOWNLOAD"]);
+export const productStatusEnum = pgEnum("product_status", ["DRAFT", "PUBLISHED"]);
+export const courseLevelEnum = pgEnum("course_level", ["BEGINNER", "INTERMEDIATE", "ADVANCED"]);
+export const lessonContentTypeEnum = pgEnum("lesson_content_type", ["VIDEO", "WEBINAR_LINK", "PDF_DOCUMENT"]);
+export const orderStatusEnum = pgEnum("order_status", ["PENDING_PAYMENT", "APPROVED", "REJECTED", "CANCELLED"]);
+
+export const products = pgTable("products", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: text("title").notNull(),
+  slug: text("slug").notNull().unique(),
+  description: text("description"),
+  price: integer("price").notNull().default(0), // stored in cents/integers
+  currency: text("currency").notNull().default("USD"),
+  type: productTypeEnum("type").notNull().default("VIRTUAL_COURSE"),
+  status: productStatusEnum("status").notNull().default("DRAFT"),
+  imageUrl: text("image_url"),
+  categoryId: uuid("category_id").references(() => categories.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const productCategories = pgTable("product_categories", {
+  productId: uuid("product_id").notNull().references(() => products.id, { onDelete: "cascade" }),
+  categoryId: uuid("category_id").notNull().references(() => categories.id, { onDelete: "cascade" }),
+});
+
+export const courses = pgTable("courses", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  productId: uuid("product_id").notNull().references(() => products.id, { onDelete: "cascade" }),
+  level: courseLevelEnum("level").notNull().default("BEGINNER"),
+  totalDuration: text("total_duration"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const courseModules = pgTable("course_modules", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  courseId: uuid("course_id").notNull().references(() => courses.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  order: integer("order").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const courseLessons = pgTable("course_lessons", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  moduleId: uuid("module_id").notNull().references(() => courseModules.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  contentType: lessonContentTypeEnum("content_type").notNull().default("VIDEO"),
+  contentUrl: text("content_url").notNull(),
+  duration: text("duration"),
+  isFreePreview: boolean("is_free_preview").notNull().default(false),
+  order: integer("order").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const orders = pgTable("orders", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+  customerName: text("customer_name").notNull(),
+  customerEmail: text("customer_email").notNull(),
+  totalAmount: integer("total_amount").notNull(),
+  currency: text("currency").notNull().default("USD"),
+  status: orderStatusEnum("status").notNull().default("PENDING_PAYMENT"),
+  paymentMethod: text("payment_method").notNull().default("BANK_TRANSFER"),
+  proofOfPaymentUrl: text("proof_of_payment_url"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const orderItems = pgTable("order_items", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  orderId: uuid("order_id").notNull().references(() => orders.id, { onDelete: "cascade" }),
+  productId: uuid("product_id").notNull().references(() => products.id, { onDelete: "cascade" }),
+  priceAtPurchase: integer("price_at_purchase").notNull(),
+});
+
+export const enrollments = pgTable("enrollments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  courseId: uuid("course_id").notNull().references(() => courses.id, { onDelete: "cascade" }),
+  orderId: uuid("order_id").references(() => orders.id, { onDelete: "set null" }),
+  grantedAt: timestamp("granted_at").notNull().defaultNow(),
+  isActive: boolean("is_active").notNull().default(true),
+});
+
+// RELATIONS
+export const productsRelations = relations(products, ({ one, many }) => ({
+  course: one(courses, { fields: [products.id], references: [courses.productId] }),
+  category: one(categories, { fields: [products.categoryId], references: [categories.id] }),
+  categories: many(productCategories),
+}));
+
+export const productCategoriesRelations = relations(productCategories, ({ one }) => ({
+  product: one(products, { fields: [productCategories.productId], references: [products.id] }),
+  category: one(categories, { fields: [productCategories.categoryId], references: [categories.id] }),
+}));
+
+export const coursesRelations = relations(courses, ({ one, many }) => ({
+  product: one(products, { fields: [courses.productId], references: [products.id] }),
+  modules: many(courseModules),
+  enrollments: many(enrollments),
+}));
+
+export const courseModulesRelations = relations(courseModules, ({ one, many }) => ({
+  course: one(courses, { fields: [courseModules.courseId], references: [courses.id] }),
+  lessons: many(courseLessons),
+}));
+
+export const courseLessonsRelations = relations(courseLessons, ({ one }) => ({
+  module: one(courseModules, { fields: [courseLessons.moduleId], references: [courseModules.id] }),
+}));
+
+export const ordersRelations = relations(orders, ({ one, many }) => ({
+  user: one(users, { fields: [orders.userId], references: [users.id] }),
+  items: many(orderItems),
+}));
+
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, { fields: [orderItems.orderId], references: [orders.id] }),
+  product: one(products, { fields: [orderItems.productId], references: [products.id] }),
+}));
+
+export const enrollmentsRelations = relations(enrollments, ({ one }) => ({
+  user: one(users, { fields: [enrollments.userId], references: [users.id] }),
+  course: one(courses, { fields: [enrollments.courseId], references: [courses.id] }),
+  order: one(orders, { fields: [enrollments.orderId], references: [orders.id] }),
+}));
+
+// TYPE EXPORTS
+export type Product = typeof products.$inferSelect;
+export type NewProduct = typeof products.$inferInsert;
+export type Course = typeof courses.$inferSelect;
+export type NewCourse = typeof courses.$inferInsert;
+export type CourseModule = typeof courseModules.$inferSelect;
+export type CourseLesson = typeof courseLessons.$inferSelect;
+export type Order = typeof orders.$inferSelect;
+export type OrderItem = typeof orderItems.$inferSelect;
+export type Enrollment = typeof enrollments.$inferSelect;
+
+
 

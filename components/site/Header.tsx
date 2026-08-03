@@ -57,7 +57,7 @@ export default async function Header({ transparency }: { transparency?: number }
       <div className="container mx-auto flex h-16 items-center justify-between px-4" style={{ padding: 'inherit' }}>
         <Link href="/" className="flex items-center space-x-2">
           {logoUrl ? (
-            <Image src={logoUrl} alt={siteName} width={65} height={40} className="object-contain" />
+            <Image src={logoUrl} alt={siteName} width={65} height={40} className="object-contain" priority />
           ) : (
             <span className="font-bold text-xl">{siteName}</span>
           )}

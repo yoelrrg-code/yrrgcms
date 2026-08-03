@@ -35,6 +35,9 @@ import {
   Palette,
   Quote,
   Megaphone,
+  ShoppingBag,
+  GraduationCap,
+  CreditCard,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -46,6 +49,9 @@ type NavItem = {
 
 const ADMIN_NAV: NavItem[] = [
   { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+  { label: "Products", href: "/admin/products", icon: ShoppingBag },
+  { label: "LMS Courses", href: "/admin/courses", icon: GraduationCap },
+  { label: "Sales & Payments", href: "/admin/ventas", icon: CreditCard },
   { label: "Marketing & AI", href: "/admin/marketing", icon: Megaphone },
   { label: "Pages", href: "/admin/pages", icon: FileText },
   { label: "Posts", href: "/admin/posts", icon: Newspaper },
@@ -162,7 +168,7 @@ export default async function AdminLayout({
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="h-4" />
         </header>
-        <main className="flex-1 overflow-auto p-6">{children}</main>
+        <div className="flex-1 overflow-auto p-6">{children}</div>
       </SidebarInset>
     </SidebarProvider>
     </div>

@@ -15,12 +15,19 @@ export default async function GlobalsPage() {
   const header = (await getGlobal("header")) || {};
   const footer = (await getGlobal("footer")) || {};
   const seo = (await getGlobal("seo_defaults")) || {};
+  const paymentMethods = (await getGlobal("payment_methods")) || {};
   const menus = await getMenus();
 
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold tracking-tight">Global Settings</h1>
-      <GlobalsClient initialHeader={header} initialFooter={footer} initialSeo={seo} initialMenus={menus} />
+      <GlobalsClient
+        initialHeader={header}
+        initialFooter={footer}
+        initialSeo={seo}
+        initialPaymentMethods={paymentMethods}
+        initialMenus={menus}
+      />
     </div>
   );
 }

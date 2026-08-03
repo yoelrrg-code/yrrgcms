@@ -6,7 +6,7 @@ import { globals } from "@/lib/db/schema";
 import { requireCan } from "@/lib/permissions";
 import { eq } from "drizzle-orm";
 
-type GlobalKey = "header" | "footer" | "seo_defaults";
+type GlobalKey = "header" | "footer" | "seo_defaults" | "payment_methods";
 
 // Returns the value jsonb for a given global key
 export async function getGlobal(key: GlobalKey) {

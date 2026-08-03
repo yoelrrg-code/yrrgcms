@@ -9,7 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Trash2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Plus, Trash2, CreditCard, Building2, Wallet } from "lucide-react";
 import MediaPicker from "@/components/admin/MediaPicker/MediaPicker";
 import RichTextEditor from "@/components/admin/RichTextEditor/RichTextEditor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -48,15 +50,40 @@ type SeoConfig = {
   favicon?: string;
 };
 
+export type BankTransferConfig = {
+  bankName: string;
+  cbuAlias: string;
+  accountHolder: string;
+  accountNumber?: string;
+  accountType?: string;
+  instructions?: string;
+};
+
+export type CustomPaymentMethod = {
+  id: string;
+  name: string;
+  description?: string;
+  instructions?: string;
+  enabled: boolean;
+};
+
+export type PaymentMethodsConfig = {
+  bankTransferEnabled?: boolean;
+  bankTransfer?: BankTransferConfig;
+  customMethods?: CustomPaymentMethod[];
+};
+
 export default function GlobalsClient({
   initialHeader,
   initialFooter,
   initialSeo,
+  initialPaymentMethods,
   initialMenus,
 }: {
   initialHeader: Partial<HeaderConfig> | null;
   initialFooter: Partial<FooterConfig> | null;
   initialSeo: Partial<SeoConfig> | null;
+  initialPaymentMethods?: Partial<PaymentMethodsConfig> | null;
   initialMenus?: { id: string; name: string; location: string }[];
 }) {
   const router = useRouter();
@@ -68,9 +95,24 @@ export default function GlobalsClient({
     ...(initialFooter || {}),
   });
   const [seo, setSeo] = useState<SeoConfig>(initialSeo || {});
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodsConfig>({
+    bankTransferEnabled: initialPaymentMethods?.bankTransferEnabled ?? true,
+    bankTransfer: {
+      bankName: initialPaymentMethods?.bankTransfer?.bankName ?? "Banco Central",
+      cbuAlias: initialPaymentMethods?.bankTransfer?.cbuAlias ?? "00000031000847291048 / YRRG.CMS.PAGOS",
+      accountHolder: initialPaymentMethods?.bankTransfer?.accountHolder ?? "YRRG CMS Inc.",
+      accountNumber: initialPaymentMethods?.bankTransfer?.accountNumber ?? "",
+      accountType: initialPaymentMethods?.bankTransfer?.accountType ?? "",
+      instructions: initialPaymentMethods?.bankTransfer?.instructions ?? "",
+    },
+    customMethods: initialPaymentMethods?.customMethods ?? [],
+  });
   const [saving, setSaving] = useState(false);
 
-  const handleSave = async (key: "header" | "footer" | "seo_defaults", data: Record<string, unknown>) => {
+  const handleSave = async (
+    key: "header" | "footer" | "seo_defaults" | "payment_methods",
+    data: Record<string, unknown>
+  ) => {
     setSaving(true);
     try {
       await saveGlobal(key, data);
@@ -84,12 +126,45 @@ export default function GlobalsClient({
     }
   };
 
+  const addCustomPaymentMethod = () => {
+    const newMethod: CustomPaymentMethod = {
+      id: `method_${Date.now()}`,
+      name: "New Payment Method",
+      description: "",
+      instructions: "",
+      enabled: true,
+    };
+    setPaymentMethods({
+      ...paymentMethods,
+      customMethods: [...(paymentMethods.customMethods || []), newMethod],
+    });
+  };
+
+  const updateCustomMethod = (id: string, updated: Partial<CustomPaymentMethod>) => {
+    setPaymentMethods({
+      ...paymentMethods,
+      customMethods: (paymentMethods.customMethods || []).map((m) =>
+        m.id === id ? { ...m, ...updated } : m
+      ),
+    });
+  };
+
+  const removeCustomMethod = (id: string) => {
+    setPaymentMethods({
+      ...paymentMethods,
+      customMethods: (paymentMethods.customMethods || []).filter((m) => m.id !== id),
+    });
+  };
+
   return (
     <Tabs defaultValue="header" className="space-y-4">
       <TabsList>
         <TabsTrigger value="header">Header</TabsTrigger>
         <TabsTrigger value="footer">Footer</TabsTrigger>
         <TabsTrigger value="seo">SEO Defaults</TabsTrigger>
+        <TabsTrigger value="payments" className="gap-1.5">
+          <CreditCard className="h-4 w-4" /> Payment Methods
+        </TabsTrigger>
       </TabsList>
 
       <TabsContent value="header" className="space-y-4 max-w-2xl">
@@ -121,22 +196,24 @@ export default function GlobalsClient({
               />
             </div>
           </div>
-          <div className="space-y-2">
-            <Label>CTA Button Text</Label>
-            <Input
-              value={header.ctaText || ""}
-              onChange={(e) => setHeader({ ...header, ctaText: e.target.value })}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>CTA Button URL</Label>
-            <Input
-              value={header.ctaUrl || ""}
-              onChange={(e) => setHeader({ ...header, ctaUrl: e.target.value })}
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>CTA Text</Label>
+              <Input
+                value={header.ctaText || ""}
+                onChange={(e) => setHeader({ ...header, ctaText: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>CTA URL</Label>
+              <Input
+                value={header.ctaUrl || ""}
+                onChange={(e) => setHeader({ ...header, ctaUrl: e.target.value })}
+              />
+            </div>
           </div>
           <Button onClick={() => handleSave("header", header)} disabled={saving} className="w-fit">
-            Save Header
+            Save Header Settings
           </Button>
         </div>
       </TabsContent>
@@ -150,13 +227,12 @@ export default function GlobalsClient({
               onChange={(e) => setFooter({ ...footer, copyright: e.target.value })}
             />
           </div>
-
-          <div className="space-y-4">
+          <div className="space-y-2">
             <Label>Social Links</Label>
             {footer.socialLinks.map((link: SocialLink, idx: number) => (
               <div key={idx} className="flex gap-2 items-center">
                 <Input
-                  placeholder="Label (e.g. Twitter)"
+                  placeholder="Platform (e.g. Twitter)"
                   value={link.label}
                   onChange={(e) => {
                     const newLinks = [...footer.socialLinks];
@@ -249,118 +325,115 @@ export default function GlobalsClient({
                       setFooter({ ...footer, columns: newCols });
                     }}
                   >
-                    <SelectTrigger className="w-full h-8 text-xs">
+                    <SelectTrigger>
                       <SelectValue placeholder="Column Type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="links">Manual Links</SelectItem>
-                      <SelectItem value="menu">Select Menu</SelectItem>
+                      <SelectItem value="links">Custom Links</SelectItem>
+                      <SelectItem value="menu">Navigation Menu</SelectItem>
                       <SelectItem value="richText">Rich Text</SelectItem>
                     </SelectContent>
                   </Select>
-
-                  {(!col.type || col.type === "links") && (
-                    <div className="space-y-2 pt-2">
-                      {col.links.map((link: { label: string; url: string }, linkIdx: number) => (
-                        <div key={linkIdx} className="flex gap-2">
-                          <Input
-                            value={link.label}
-                            placeholder="Label"
-                            className="h-8 text-sm"
-                            onChange={(e) => {
-                              const newCols = [...footer.columns];
-                              newCols[colIdx].links[linkIdx].label = e.target.value;
-                              setFooter({ ...footer, columns: newCols });
-                            }}
-                          />
-                          <Input
-                            value={link.url}
-                            placeholder="URL"
-                            className="h-8 text-sm"
-                            onChange={(e) => {
-                              const newCols = [...footer.columns];
-                              newCols[colIdx].links[linkIdx].url = e.target.value;
-                              setFooter({ ...footer, columns: newCols });
-                            }}
-                          />
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={() => {
-                              const newCols = [...footer.columns];
-                              newCols[colIdx].links = newCols[colIdx].links.filter(
-                                (_: unknown, i: number) => i !== linkIdx
-                              );
-                              setFooter({ ...footer, columns: newCols });
-                            }}
-                          >
-                            <Trash2 className="h-3 w-3 text-destructive" />
-                          </Button>
-                        </div>
-                      ))}
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        className="w-full text-xs h-8"
-                        onClick={() => {
-                          const newCols = [...footer.columns];
-                          newCols[colIdx].links.push({ label: "", url: "" });
-                          setFooter({ ...footer, columns: newCols });
-                        }}
-                      >
-                        <Plus className="mr-2 h-3 w-3" /> Add Link
-                      </Button>
-                    </div>
-                  )}
-
-                  {col.type === "menu" && (
-                    <div className="pt-2">
-                      <Select
-                        value={col.menuId || ""}
-                        onValueChange={(val) => {
-                          if (!val) return;
-                          const newCols = [...footer.columns];
-                          newCols[colIdx].menuId = val;
-                          setFooter({ ...footer, columns: newCols });
-                        }}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Choose a menu..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {initialMenus?.map((menu) => (
-                            <SelectItem key={menu.id} value={menu.id}>
-                              {menu.name} ({menu.location})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-
-                  {col.type === "richText" && (
-                    <div className="pt-2">
-                      <RichTextEditor
-                        content={col.richText}
-                        onChange={(content) => {
-                          const newCols = [...footer.columns];
-                          newCols[colIdx].richText = content;
-                          setFooter({ ...footer, columns: newCols });
-                        }}
-                        placeholder="Write column content here..."
-                      />
-                    </div>
-                  )}
                 </div>
+
+                {col.type === "menu" && (
+                  <div className="space-y-2">
+                    <Label>Select Menu</Label>
+                    <Select
+                      value={col.menuId || ""}
+                      onValueChange={(val) => {
+                        const newCols = [...footer.columns];
+                        newCols[colIdx].menuId = val || undefined;
+                        setFooter({ ...footer, columns: newCols });
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a menu" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {initialMenus?.map((m) => (
+                          <SelectItem key={m.id} value={m.id}>
+                            {m.name} ({m.location})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {col.type === "richText" && (
+                  <div className="space-y-2">
+                    <Label>Content</Label>
+                    <RichTextEditor
+                      content={col.richText}
+                      onChange={(val) => {
+                        const newCols = [...footer.columns];
+                        newCols[colIdx].richText = val;
+                        setFooter({ ...footer, columns: newCols });
+                      }}
+                    />
+                  </div>
+                )}
+
+                {(!col.type || col.type === "links") && (
+                  <div className="space-y-2">
+                    <Label>Links</Label>
+                    {col.links.map((link: { label: string; url: string }, linkIdx: number) => (
+                      <div key={linkIdx} className="flex gap-2">
+                        <Input
+                          placeholder="Label"
+                          value={link.label}
+                          onChange={(e) => {
+                            const newCols = [...footer.columns];
+                            newCols[colIdx].links[linkIdx].label = e.target.value;
+                            setFooter({ ...footer, columns: newCols });
+                          }}
+                        />
+                        <Input
+                          placeholder="URL"
+                          value={link.url}
+                          onChange={(e) => {
+                            const newCols = [...footer.columns];
+                            newCols[colIdx].links[linkIdx].url = e.target.value;
+                            setFooter({ ...footer, columns: newCols });
+                          }}
+                        />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            const newCols = [...footer.columns];
+                            newCols[colIdx].links = newCols[colIdx].links.filter(
+                              (_: unknown, i: number) => i !== linkIdx
+                            );
+                            setFooter({ ...footer, columns: newCols });
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const newCols = [...footer.columns];
+                        newCols[colIdx].links.push({ label: "", url: "" });
+                        setFooter({ ...footer, columns: newCols });
+                      }}
+                    >
+                      <Plus className="mr-2 h-4 w-4" /> Add Link
+                    </Button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
-
-          <Button onClick={() => handleSave("footer", footer)} disabled={saving} className="w-fit mt-4">
-            Save Footer
-          </Button>
         </div>
+
+        <Button onClick={() => handleSave("footer", footer)} disabled={saving} className="w-fit">
+          Save Footer Settings
+        </Button>
       </TabsContent>
 
       <TabsContent value="seo" className="space-y-4 max-w-2xl">
@@ -409,6 +482,231 @@ export default function GlobalsClient({
             Save SEO Defaults
           </Button>
         </div>
+      </TabsContent>
+
+      {/* PAYMENT METHODS TAB */}
+      <TabsContent value="payments" className="space-y-6 max-w-4xl">
+        {/* Bank Transfer Card */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <div className="space-y-1">
+              <CardTitle className="text-xl flex items-center gap-2">
+                <Building2 className="h-5 w-5 text-primary" />
+                Bank Transfer (Datos para Transferencia Bancaria)
+              </CardTitle>
+              <CardDescription>
+                Configure the bank details shown to customers when opting for bank transfer payments.
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="bt-enabled" className="text-sm font-medium">Enable</Label>
+              <Switch
+                id="bt-enabled"
+                checked={paymentMethods.bankTransferEnabled}
+                onCheckedChange={(val: boolean) =>
+                  setPaymentMethods({ ...paymentMethods, bankTransferEnabled: val })
+                }
+              />
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="bank-name">Banco (Bank Name)</Label>
+                <Input
+                  id="bank-name"
+                  value={paymentMethods.bankTransfer?.bankName || ""}
+                  onChange={(e) =>
+                    setPaymentMethods({
+                      ...paymentMethods,
+                      bankTransfer: {
+                        ...paymentMethods.bankTransfer!,
+                        bankName: e.target.value,
+                      },
+                    })
+                  }
+                  placeholder="e.g. Banco Central"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="account-holder">Titular (Account Holder)</Label>
+                <Input
+                  id="account-holder"
+                  value={paymentMethods.bankTransfer?.accountHolder || ""}
+                  onChange={(e) =>
+                    setPaymentMethods({
+                      ...paymentMethods,
+                      bankTransfer: {
+                        ...paymentMethods.bankTransfer!,
+                        accountHolder: e.target.value,
+                      },
+                    })
+                  }
+                  placeholder="e.g. YRRG CMS Inc."
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="cbu-alias">CBU / Alias</Label>
+                <Input
+                  id="cbu-alias"
+                  value={paymentMethods.bankTransfer?.cbuAlias || ""}
+                  onChange={(e) =>
+                    setPaymentMethods({
+                      ...paymentMethods,
+                      bankTransfer: {
+                        ...paymentMethods.bankTransfer!,
+                        cbuAlias: e.target.value,
+                      },
+                    })
+                  }
+                  placeholder="e.g. 00000031000847291048 / YRRG.CMS.PAGOS"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="account-number">Número de Cuenta (Account Number - Optional)</Label>
+                <Input
+                  id="account-number"
+                  value={paymentMethods.bankTransfer?.accountNumber || ""}
+                  onChange={(e) =>
+                    setPaymentMethods({
+                      ...paymentMethods,
+                      bankTransfer: {
+                        ...paymentMethods.bankTransfer!,
+                        accountNumber: e.target.value,
+                      },
+                    })
+                  }
+                  placeholder="e.g. 123-456789/0"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="bt-instructions">Instructions for Customer</Label>
+              <Textarea
+                id="bt-instructions"
+                rows={2}
+                value={paymentMethods.bankTransfer?.instructions || ""}
+                onChange={(e) =>
+                  setPaymentMethods({
+                    ...paymentMethods,
+                    bankTransfer: {
+                      ...paymentMethods.bankTransfer!,
+                      instructions: e.target.value,
+                    },
+                  })
+                }
+                placeholder="e.g. Please attach payment proof with order reference after transfer."
+              />
+            </div>
+
+            {/* Live Card Preview matching design */}
+            <div className="rounded-xl border border-amber-200 bg-amber-50/50 p-5 space-y-3 dark:border-amber-900/40 dark:bg-amber-950/20">
+              <h4 className="font-semibold text-base text-foreground">
+                Datos para Transferencia Bancaria:
+              </h4>
+              <div className="space-y-2 text-sm text-foreground/90">
+                <p><span className="font-medium">Banco:</span> {paymentMethods.bankTransfer?.bankName || "—"}</p>
+                <p><span className="font-medium">CBU / Alias:</span> {paymentMethods.bankTransfer?.cbuAlias || "—"}</p>
+                <p><span className="font-medium">Titular:</span> {paymentMethods.bankTransfer?.accountHolder || "—"}</p>
+                {paymentMethods.bankTransfer?.accountNumber && (
+                  <p><span className="font-medium">Cuenta:</span> {paymentMethods.bankTransfer.accountNumber}</p>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Custom / Additional Payment Methods */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <div className="space-y-1">
+              <CardTitle className="text-xl flex items-center gap-2">
+                <Wallet className="h-5 w-5 text-primary" />
+                Additional Payment Methods
+              </CardTitle>
+              <CardDescription>
+                Add custom payment gateways or manual payment instructions (PayPal, MercadoPago, Crypto, cash, etc.).
+              </CardDescription>
+            </div>
+            <Button type="button" variant="outline" size="sm" onClick={addCustomPaymentMethod} className="gap-2">
+              <Plus className="h-4 w-4" /> Add Payment Method
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {(!paymentMethods.customMethods || paymentMethods.customMethods.length === 0) ? (
+              <p className="text-sm text-muted-foreground italic py-4 text-center border rounded-md">
+                No custom payment methods added yet. Click &quot;Add Payment Method&quot; above to create one.
+              </p>
+            ) : (
+              paymentMethods.customMethods.map((method) => (
+                <div key={method.id} className="p-4 border rounded-md space-y-4 bg-background">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex-1 space-y-1">
+                      <Input
+                        value={method.name}
+                        onChange={(e) => updateCustomMethod(method.id, { name: e.target.value })}
+                        placeholder="Method Name (e.g. MercadoPago / PayPal)"
+                        className="font-semibold"
+                      />
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor={`enable-${method.id}`} className="text-xs">Enabled</Label>
+                        <Switch
+                          id={`enable-${method.id}`}
+                          checked={method.enabled}
+                          onCheckedChange={(val: boolean) => updateCustomMethod(method.id, { enabled: val })}
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeCustomMethod(method.id)}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs">Short Description</Label>
+                      <Input
+                        value={method.description || ""}
+                        onChange={(e) => updateCustomMethod(method.id, { description: e.target.value })}
+                        placeholder="e.g. Pay via credit card or digital wallet."
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs">Instructions / Payment Link</Label>
+                      <Input
+                        value={method.instructions || ""}
+                        onChange={(e) => updateCustomMethod(method.id, { instructions: e.target.value })}
+                        placeholder="e.g. https://mercadopago.com/link or email account"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </CardContent>
+        </Card>
+
+        <Button
+          type="button"
+          onClick={() => handleSave("payment_methods", paymentMethods as unknown as Record<string, unknown>)}
+          disabled={saving}
+          className="w-fit"
+        >
+          {saving ? "Saving Payment Settings…" : "Save Payment Methods"}
+        </Button>
       </TabsContent>
     </Tabs>
   );

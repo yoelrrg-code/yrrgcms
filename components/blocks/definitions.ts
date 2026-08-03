@@ -130,4 +130,18 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
       paddingBottom: "pb-12",
     },
   },
+  {
+    type: "ProductsBlock",
+    label: "Products & Courses",
+    description: "Display products or courses in Grid, Slider, or Row layouts",
+    defaultProps: {
+      title: "Nuestros Cursos y Productos",
+      subtitle: "Aprende con nuestros programas y contenidos digitales",
+      layout: "grid",
+      limit: 6,
+      paddingTop: "pt-12",
+      paddingBottom: "pb-12",
+    },
+  },
 ];
+

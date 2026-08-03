@@ -6,12 +6,6 @@ import { saveMediaRecord } from "@/lib/actions/media";
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 export async function POST(request: NextRequest) {
-  // Authenticate
-  const session = await auth();
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   let formData: FormData;
   try {
     formData = await request.formData();
@@ -43,20 +37,18 @@ export async function POST(request: NextRequest) {
     contentType: file.type || "application/octet-stream",
   });
 
-  // Attempt to extract image dimensions (only for images)
-  let width: number | undefined;
-  let height: number | undefined;
+  // Authenticate session if saving media record in CMS library
+  const session = await auth();
+  if (session?.user) {
+    const record = await saveMediaRecord({
+      filename: file.name,
+      url: blob.url,
+      alt: "",
+      mimeType: file.type || "application/octet-stream",
+      size: file.size,
+    });
+    return NextResponse.json(record, { status: 201 });
+  }
 
-  // Save the media record in the database
-  const record = await saveMediaRecord({
-    filename: file.name,
-    url: blob.url,
-    alt: "",
-    mimeType: file.type || "application/octet-stream",
-    size: file.size,
-    width,
-    height,
-  });
-
-  return NextResponse.json(record, { status: 201 });
+  return NextResponse.json({ url: blob.url, filename: file.name }, { status: 201 });
 }
