@@ -15,7 +15,7 @@ export default async function MisCursosPage() {
   const session = await auth();
 
   if (!session?.user?.id) {
-    redirect("/auth/signin?callbackUrl=/my-account/courses");
+    redirect("/admin/login?callbackUrl=/my-account/courses");
   }
 
   // Fetch active enrollments for user

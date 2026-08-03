@@ -97,12 +97,12 @@ export default function CheckoutForm({ product, user }: CheckoutFormProps) {
         <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-xl font-bold">
           ✓
         </div>
-        <h3 className="text-xl font-bold text-slate-900 dark:text-white">¡Orden Registrada!</h3>
+        <h3 className="text-xl font-bold text-slate-900 dark:text-white">Order Placed Successfully!</h3>
         <p className="text-sm text-slate-600 dark:text-slate-400">
-          Tu orden <span className="font-semibold text-slate-900 dark:text-white">#{successOrder.slice(0, 8)}</span> está en estado <span className="text-amber-600 font-bold">Pendiente de Pago</span>.
+          Your order <span className="font-semibold text-slate-900 dark:text-white">#{successOrder.slice(0, 8)}</span> is currently <span className="text-amber-600 font-bold">Pending Payment</span>.
         </p>
         <p className="text-xs text-slate-500">
-          Una vez que el administrador verifique tu comprobante de transferencia, el curso se activará en tu panel.
+          Once the administrator verifies your transfer receipt, the course will be activated on your account.
         </p>
         <button
           onClick={() => router?.push("/my-account/courses")}
@@ -113,7 +113,7 @@ export default function CheckoutForm({ product, user }: CheckoutFormProps) {
             borderRadius: "var(--theme-button-radius, 0.75rem)",
           }}
         >
-          Ir a Mis Cursos
+          Go to My Courses
         </button>
       </div>
     );
@@ -125,44 +125,44 @@ export default function CheckoutForm({ product, user }: CheckoutFormProps) {
 
       {!user?.id ? (
         <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-900/50 rounded-xl text-xs text-indigo-700 dark:text-indigo-300 flex items-center justify-between">
-          <span>¿Ya tienes cuenta? Inicia sesión para vincular tu compra automáticamente.</span>
-          <a href={`/auth/signin?callbackUrl=/checkout/${product.id}`} className="font-bold underline ml-2">
-            Iniciar sesión
+          <span>Already have an account? Sign in to link your purchase automatically.</span>
+          <a href={`/admin/login?callbackUrl=/checkout/${product.id}`} className="font-bold underline ml-2">
+            Sign In
           </a>
         </div>
       ) : (
         <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 rounded-xl text-xs text-emerald-700 dark:text-emerald-300">
-          Comprando como <span className="font-bold">{user.email}</span> (Sesión iniciada)
+          Purchasing as <span className="font-bold">{user.email}</span> (Logged in)
         </div>
       )}
 
       <div>
-        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Nombre Completo</label>
+        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
         <input
           name="customerName"
           defaultValue={user?.name || ""}
           required
           type="text"
-          placeholder="Juan Pérez"
+          placeholder="John Doe"
           className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Correo Electrónico</label>
+        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
         <input
           name="customerEmail"
           defaultValue={user?.email || ""}
           required
           type="email"
-          placeholder="juan@ejemplo.com"
+          placeholder="john@example.com"
           className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
       </div>
 
       <div>
         <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">
-          URL o Enlace del Comprobante (opcional)
+          Payment Receipt Link or File (optional)
         </label>
         <div className="space-y-2">
           <div className="flex gap-2">
@@ -171,7 +171,7 @@ export default function CheckoutForm({ product, user }: CheckoutFormProps) {
               type="url"
               value={proofUrl}
               onChange={(e) => setProofUrl(e.target.value)}
-              placeholder="https://mis-archivos.com/comprobante.pdf"
+              placeholder="https://my-files.com/receipt.pdf"
               className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
             <input
@@ -194,12 +194,12 @@ export default function CheckoutForm({ product, user }: CheckoutFormProps) {
               ) : (
                 <Upload className="h-4 w-4" />
               )}
-              {uploading ? "Subiendo..." : proofUrl ? "Subido" : "Subir Archivo"}
+              {uploading ? "Uploading..." : proofUrl ? "Uploaded" : "Upload File"}
             </button>
           </div>
           {proofUrl && (
             <p className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-medium">
-              ✓ Comprobante cargado correctamente
+              ✓ Receipt loaded successfully
             </p>
           )}
         </div>
@@ -215,7 +215,7 @@ export default function CheckoutForm({ product, user }: CheckoutFormProps) {
           borderRadius: "var(--theme-button-radius, 0.75rem)",
         }}
       >
-        {loading ? "Procesando..." : "Confirmar Orden y Registrar"}
+        {loading ? "Processing..." : "Confirm Order & Submit"}
       </button>
     </form>
   );

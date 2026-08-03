@@ -16,7 +16,7 @@ export default async function MyAccountPage() {
   const session = await auth();
 
   if (!session?.user?.id) {
-    redirect("/auth/signin?callbackUrl=/my-account");
+    redirect("/admin/login?callbackUrl=/my-account");
   }
 
   const [user] = await db
@@ -31,7 +31,7 @@ export default async function MyAccountPage() {
     .where(eq(users.id, session.user.id));
 
   if (!user) {
-    redirect("/auth/signin");
+    redirect("/admin/login");
   }
 
   return (
