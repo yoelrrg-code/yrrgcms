@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, ArrowLeft } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import MediaPicker from "@/components/admin/MediaPicker/MediaPicker";
 
@@ -75,6 +75,11 @@ export function ServiceForm({ initialService }: ServiceFormProps) {
   const [packs, setPacks] = useState<PackItem[]>(initialPricing.packs || []);
   const [subscriptions, setSubscriptions] = useState<SubscriptionItem[]>(initialPricing.subscriptions || []);
 
+  // SEO fields
+  const [seoTitle, setSeoTitle] = useState((initialService?.seo as Record<string, unknown>)?.title as string ?? "");
+  const [seoDescription, setSeoDescription] = useState((initialService?.seo as Record<string, unknown>)?.description as string ?? "");
+  const [seoOgImage, setSeoOgImage] = useState((initialService?.seo as Record<string, unknown>)?.ogImage as string ?? "");
+
   const handleTitleChange = (val: string) => {
     setTitle(val);
     if (!initialService) {
@@ -117,6 +122,7 @@ export function ServiceForm({ initialService }: ServiceFormProps) {
           packs,
           subscriptions,
         },
+        seo: { title: seoTitle, description: seoDescription, ogImage: seoOgImage },
       };
 
       if (initialService) {
@@ -379,6 +385,52 @@ export function ServiceForm({ initialService }: ServiceFormProps) {
                   <img src={mainImage} alt="Preview" className="object-cover w-full h-full" />
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          {/* SEO */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">SEO</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="service-seo-title">Meta Title</Label>
+                <Input
+                  id="service-seo-title"
+                  value={seoTitle}
+                  onChange={(e) => setSeoTitle(e.target.value)}
+                  placeholder="Overrides service title"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="service-seo-description">Meta Description</Label>
+                <Textarea
+                  id="service-seo-description"
+                  value={seoDescription}
+                  onChange={(e) => setSeoDescription(e.target.value)}
+                  placeholder="Brief description for search engines"
+                  rows={3}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>OG Image URL</Label>
+                <div className="flex gap-2">
+                  <Input
+                    value={seoOgImage}
+                    onChange={(e) => setSeoOgImage(e.target.value)}
+                    placeholder="https://..."
+                  />
+                  <MediaPicker
+                    onSelect={(url) => setSeoOgImage(url)}
+                    trigger={
+                      <Button type="button" variant="outline">
+                        Browse
+                      </Button>
+                    }
+                  />
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>

@@ -10,7 +10,7 @@ export default async function ServicesAdminPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
+        <div className="max-w-md lg:max-w-xl xl:max-w-full">
           <h1 className="text-2xl font-bold tracking-tight">Services Management</h1>
           <p className="text-sm text-muted-foreground">
             Manage offered services, pricing, modalities (sessions, packs, subscriptions), and status.

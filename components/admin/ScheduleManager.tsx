@@ -361,81 +361,165 @@ export function ScheduleManager({ initialAppointments, services }: ScheduleManag
         /* ============================================================ */
         /* LIST VIEW */
         /* ============================================================ */
-        <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Customer</TableHead>
-                <TableHead>Service</TableHead>
-                <TableHead>Booking Type</TableHead>
-                <TableHead>First Session</TableHead>
-                <TableHead>Payment Status</TableHead>
-                <TableHead>Appointment Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {appointmentsList.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
-                    No appointments booked yet.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                appointmentsList.map((app) => {
-                  const sessions = (app.sessionsDates as SessionItem[]) || [];
-                  const rawDate = sessions[0]?.date;
-                  const parsedDate = rawDate ? new Date(rawDate) : null;
-                  const firstSession = parsedDate && !isNaN(parsedDate.getTime())
-                    ? parsedDate.toLocaleString()
-                    : String(rawDate || "Pending date");
-
-                  return (
-                    <TableRow key={app.id}>
-                      <TableCell>
-                        <div className="font-semibold">{app.customerName}</div>
-                        <div className="text-xs text-muted-foreground">{app.customerEmail} | {app.customerPhone}</div>
-                      </TableCell>
-                      <TableCell className="font-medium">{getServiceName(app.serviceId)}</TableCell>
-                      <TableCell className="capitalize text-xs font-medium">
-                        <Badge variant="outline">{app.bookingType}</Badge>
-                      </TableCell>
-                      <TableCell className="text-xs">
-                        <div className="flex items-center gap-1.5">
-                          <CalendarIcon className="size-3.5 text-muted-foreground" />
-                          {firstSession}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={app.paymentStatus === "paid" ? "default" : "destructive"}>
-                          {app.paymentStatus === "paid" ? "Paid" : "Pending Onsite Payment"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            app.status === "completed"
-                              ? "default"
-                              : app.status === "cancelled"
-                              ? "destructive"
-                              : "secondary"
-                          }
-                          className={app.status === "cancelled" ? "bg-red-500/15 text-red-600 border-red-300 dark:border-red-900 dark:text-red-400 capitalize" : "capitalize"}
-                        >
-                          {app.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right space-x-2">
-                        <Button variant="ghost" size="sm" onClick={() => setSelectedAppointment(app)}>
-                          Details
-                        </Button>
+        <div className="space-y-4">
+          {/* Desktop table >=1024px */}
+          <div className="hidden lg:block rounded-2xl border border-border bg-card overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-slate-50/80 dark:bg-slate-900/80">
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="font-bold text-xs uppercase tracking-wider">Customer</TableHead>
+                    <TableHead className="font-bold text-xs uppercase tracking-wider">Service</TableHead>
+                    <TableHead className="font-bold text-xs uppercase tracking-wider">Booking Type</TableHead>
+                    <TableHead className="font-bold text-xs uppercase tracking-wider whitespace-nowrap">First Session</TableHead>
+                    <TableHead className="font-bold text-xs uppercase tracking-wider">Payment Status</TableHead>
+                    <TableHead className="font-bold text-xs uppercase tracking-wider">Appointment Status</TableHead>
+                    <TableHead className="text-right font-bold text-xs uppercase tracking-wider">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {appointmentsList.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
+                        No appointments booked yet.
                       </TableCell>
                     </TableRow>
-                  );
-                })
-              )}
-            </TableBody>
-          </Table>
+                  ) : (
+                    appointmentsList.map((app) => {
+                      const sessions = (app.sessionsDates as SessionItem[]) || [];
+                      const rawDate = sessions[0]?.date;
+                      const parsedDate = rawDate ? new Date(rawDate) : null;
+                      const firstSession = parsedDate && !isNaN(parsedDate.getTime())
+                        ? parsedDate.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })
+                        : String(rawDate || "Pending date");
+
+                      return (
+                        <TableRow key={app.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition">
+                          <TableCell className="font-medium">
+                            <div className="font-bold text-slate-900 dark:text-white">{app.customerName}</div>
+                            <div className="text-xs text-slate-500 font-mono">{app.customerEmail} | {app.customerPhone}</div>
+                          </TableCell>
+                          <TableCell className="font-bold text-slate-900 dark:text-white">{getServiceName(app.serviceId)}</TableCell>
+                          <TableCell className="capitalize text-xs font-medium">
+                            <Badge variant="outline" className="font-bold rounded-lg uppercase text-[10px]">{app.bookingType}</Badge>
+                          </TableCell>
+                          <TableCell className="text-xs text-slate-500 font-mono whitespace-nowrap">
+                            <div className="flex items-center gap-1.5">
+                              <CalendarIcon className="size-3.5 text-muted-foreground shrink-0" />
+                              {firstSession}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {app.paymentStatus === "paid" ? (
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
+                                Paid
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
+                                Pending Onsite
+                              </span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {app.status === "completed" ? (
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 capitalize">
+                                Completed
+                              </span>
+                            ) : app.status === "cancelled" ? (
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 capitalize">
+                                Cancelled
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 capitalize">
+                                {app.status}
+                              </span>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button variant="ghost" size="sm" onClick={() => setSelectedAppointment(app)} className="rounded-xl text-xs font-bold">
+                              Details
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+
+          {/* Mobile cards <1024px */}
+          <div className="lg:hidden space-y-3">
+            {appointmentsList.length === 0 ? (
+              <div className="rounded-2xl border border-border bg-card p-8 text-center text-muted-foreground">
+                No appointments booked yet.
+              </div>
+            ) : (
+              appointmentsList.map((app) => {
+                const sessions = (app.sessionsDates as SessionItem[]) || [];
+                const rawDate = sessions[0]?.date;
+                const parsedDate = rawDate ? new Date(rawDate) : null;
+                const firstSession = parsedDate && !isNaN(parsedDate.getTime())
+                  ? parsedDate.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })
+                  : String(rawDate || "Pending date");
+
+                return (
+                  <div key={app.id} className="rounded-2xl border border-border bg-card shadow-sm p-4 space-y-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="font-bold text-sm text-slate-900 dark:text-white truncate">{app.customerName}</p>
+                        <p className="text-xs text-slate-500 font-mono mt-0.5">{app.customerEmail}</p>
+                      </div>
+                      <div className="shrink-0 flex items-center gap-1.5">
+                        <Badge variant="outline" className="font-bold rounded-lg uppercase text-[10px]">{app.bookingType}</Badge>
+                        {app.status === "completed" ? (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 whitespace-nowrap capitalize">
+                            Completed
+                          </span>
+                        ) : app.status === "cancelled" ? (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 whitespace-nowrap capitalize">
+                            Cancelled
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 whitespace-nowrap capitalize">
+                            {app.status}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 pt-1">
+                      <div>
+                        <span className="font-bold text-slate-900 dark:text-white">{getServiceName(app.serviceId)}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-slate-400 font-mono">
+                        <CalendarIcon className="size-3" />
+                        {firstSession}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-border">
+                      <div>
+                        {app.paymentStatus === "paid" ? (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
+                            Paid
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
+                            Pending Onsite
+                          </span>
+                        )}
+                      </div>
+                      <Button variant="outline" size="sm" onClick={() => setSelectedAppointment(app)} className="text-xs font-bold rounded-xl">
+                        Details
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
         </div>
       )}
 

@@ -237,6 +237,7 @@ export const services = pgTable("services", {
     packs: [],
     subscriptions: []
   }),
+  seo: jsonb("seo").notNull().default({}),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
