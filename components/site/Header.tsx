@@ -2,6 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { getGlobal } from "@/lib/actions/globals";
 import { getMenuByLocation } from "@/lib/actions/menus";
+import { auth } from "@/lib/auth";
+import { UserDrawer } from "@/components/site/UserDrawer";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, ChevronDown } from "lucide-react";
+import { Menu, ChevronDown, User } from "lucide-react";
 
 export interface HeaderConfig {
   siteName?: string;
@@ -31,6 +33,7 @@ export interface NavItem {
 export default async function Header({ transparency }: { transparency?: number }) {
   const headerData = ((await getGlobal("header")) as HeaderConfig) || {};
   const menuData = await getMenuByLocation("header");
+  const session = await auth();
 
   const siteName = headerData.siteName || "YRRG CMS";
   const logoUrl = headerData.logoUrl;
@@ -104,7 +107,7 @@ export default async function Header({ transparency }: { transparency?: number }
           })}
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {ctaText && ctaUrl && (
             <div className="hidden md:block">
               <Button
@@ -114,6 +117,24 @@ export default async function Header({ transparency }: { transparency?: number }
                 {ctaText}
               </Button>
             </div>
+          )}
+
+          {/* User Profile Drawer or Login Link */}
+          {session?.user ? (
+            <UserDrawer
+              user={{
+                name: session.user.name,
+                email: session.user.email,
+                role: (session.user as { role?: string }).role,
+              }}
+            />
+          ) : (
+            <Link
+              href="/admin/login"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            >
+              <User className="w-4 h-4" /> Sign In
+            </Link>
           )}
 
           {/* Mobile Nav */}

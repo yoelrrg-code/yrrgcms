@@ -128,6 +128,17 @@ export default function SalesTable({ sales }: SalesTableProps) {
   const [selectedOrder, setSelectedOrder] = useState<OrderWithItems | null>(null);
   const router = useRouter();
 
+  // Auto-refresh sales data and KPI counters every 10 seconds
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      startTransition(() => {
+        router.refresh();
+      });
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [router]);
+
   function triggerApproveConfirmation(orderId: string, customerName: string) {
     sileo.action({
       title: "Approve Order?",

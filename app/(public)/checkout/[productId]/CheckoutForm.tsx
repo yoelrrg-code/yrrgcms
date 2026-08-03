@@ -10,6 +10,7 @@ interface CheckoutFormProps {
     id: string;
     title: string;
     price: number;
+    type: string;
   };
   user?: {
     id?: string;
@@ -42,13 +43,24 @@ export default function CheckoutForm({ product, user }: CheckoutFormProps) {
         body: formData,
       });
 
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.error || "Fallo la subida del comprobante");
+      const responseText = await res.text();
+      let data: Record<string, unknown> = {};
+      try {
+        data = responseText ? JSON.parse(responseText) : {};
+      } catch {
+        throw new Error(
+          !res.ok
+            ? `Error del servidor (${res.status}): ${responseText || "Sin respuesta"}`
+            : "Formato de respuesta inválido del servidor"
+        );
       }
 
-      const data = await res.json();
-      const uploadedUrl = data.url || data.media?.url;
+      if (!res.ok) {
+        const errorMsg = (data.error as string) || `Fallo la subida del comprobante (${res.status})`;
+        throw new Error(errorMsg);
+      }
+
+      const uploadedUrl = (data.url as string) || ((data.media as { url?: string })?.url);
       if (uploadedUrl) {
         setProofUrl(uploadedUrl);
       }
@@ -102,10 +114,10 @@ export default function CheckoutForm({ product, user }: CheckoutFormProps) {
           Your order <span className="font-semibold text-slate-900 dark:text-white">#{successOrder.slice(0, 8)}</span> is currently <span className="text-amber-600 font-bold">Pending Payment</span>.
         </p>
         <p className="text-xs text-slate-500">
-          Once the administrator verifies your transfer receipt, the course will be activated on your account.
+          Once the administrator verifies your transfer receipt, your order will be approved and you will receive an email with your access link or shipping confirmation.
         </p>
         <button
-          onClick={() => router?.push("/my-account/courses")}
+          onClick={() => router?.push(product.type === "VIRTUAL_COURSE" ? "/my-account/courses" : "/my-account")}
           className="mt-4 px-6 py-2.5 font-bold text-sm transition"
           style={{
             backgroundColor: "var(--theme-button-bg, var(--theme-primary, #4f46e5))",
@@ -113,7 +125,7 @@ export default function CheckoutForm({ product, user }: CheckoutFormProps) {
             borderRadius: "var(--theme-button-radius, 0.75rem)",
           }}
         >
-          Go to My Courses
+          Go to My Account
         </button>
       </div>
     );
@@ -124,12 +136,28 @@ export default function CheckoutForm({ product, user }: CheckoutFormProps) {
       {error && <div className="p-3 text-sm bg-red-50 text-red-600 rounded-xl">{error}</div>}
 
       {!user?.id ? (
-        <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-900/50 rounded-xl text-xs text-indigo-700 dark:text-indigo-300 flex items-center justify-between">
-          <span>Already have an account? Sign in to link your purchase automatically.</span>
-          <a href={`/admin/login?callbackUrl=/checkout/${product.id}`} className="font-bold underline ml-2">
-            Sign In
-          </a>
-        </div>
+        <>
+          <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-900/50 rounded-xl text-xs text-indigo-700 dark:text-indigo-300 flex items-center justify-between">
+            <span>Already have an account? Sign in to link your purchase automatically.</span>
+            <a href={`/admin/login?callbackUrl=/checkout/${product.id}`} className="font-bold underline ml-2">
+              Sign In
+            </a>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">
+              Account Password (for tracking your order)
+            </label>
+            <input
+              name="password"
+              required
+              type="password"
+              minLength={6}
+              placeholder="Create a password"
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+        </>
       ) : (
         <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 rounded-xl text-xs text-emerald-700 dark:text-emerald-300">
           Purchasing as <span className="font-bold">{user.email}</span> (Logged in)
@@ -159,6 +187,21 @@ export default function CheckoutForm({ product, user }: CheckoutFormProps) {
           className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
       </div>
+
+      {product.type === "PHYSICAL" && (
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            Shipping Address (Street, Number, City, Zip Code) *
+          </label>
+          <textarea
+            name="shippingAddress"
+            required
+            rows={3}
+            placeholder="Av. Providencia 1234, Apt 42, Santiago, Chile"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+      )}
 
       <div>
         <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">

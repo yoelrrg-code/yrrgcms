@@ -6,6 +6,7 @@ import { enrollments, courses, products } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
 import Link from "next/link";
 import { GraduationCap, PlayCircle } from "lucide-react";
+import { AccountBreadcrumbs } from "@/components/AccountBreadcrumbs";
 
 export const metadata = {
   title: "My Courses | My Account",
@@ -41,9 +42,11 @@ export default async function MisCursosPage() {
 
   return (
     <div className="container max-w-5xl mx-auto py-10 px-4 space-y-8">
+      <AccountBreadcrumbs />
+
       <div data-aos="fade-down">
-        <h1 className="text-3xl font-extrabold tracking-tight">My Courses</h1>
-        <p className="text-slate-500 text-sm mt-1">
+        <h1 className="text-3xl font-extrabold tracking-tight" style={{ color: "var(--theme-h1-color, var(--theme-text, inherit))" }}>My Courses</h1>
+        <p className="text-sm mt-1" style={{ color: "var(--theme-p-color, inherit)" }}>
           Access all virtual courses and educational materials active on your account.
         </p>
       </div>
@@ -51,15 +54,15 @@ export default async function MisCursosPage() {
       {userEnrollments.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 p-12 text-center space-y-4" data-aos="zoom-in">
           <GraduationCap className="h-12 w-12 mx-auto text-slate-400 opacity-60" />
-          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">
+          <h3 className="text-lg font-bold" style={{ color: "var(--theme-h3-color, var(--theme-text, inherit))" }}>
             No Enrolled Courses Yet
           </h3>
-          <p className="text-sm text-slate-500 max-w-md mx-auto">
+          <p className="text-sm max-w-md mx-auto" style={{ color: "var(--theme-p-color, inherit)" }}>
             Once you purchase a course and the payment is confirmed, your enrolled courses will appear listed here.
           </p>
           <Link
             href="/courses"
-            className="inline-flex items-center gap-2 px-5 py-2.5 font-semibold text-sm rounded-xl transition"
+            className="inline-flex items-center gap-2 px-5 py-2.5 font-semibold text-sm rounded-xl transition hover:opacity-50"
             style={{
               backgroundColor: "var(--theme-button-bg, var(--theme-primary, #4f46e5))",
               color: "var(--theme-button-text, #ffffff)",
@@ -80,22 +83,21 @@ export default async function MisCursosPage() {
             >
               <div className="space-y-2">
                 <span 
-                  className="inline-block px-2.5 py-0.5 text-xs font-bold uppercase rounded-md"
+                  className="inline-block px-2.5 py-0.5 text-xs font-bold uppercase rounded-md text-white"
                   style={{
                     backgroundColor: "var(--theme-primary, #4f46e5)",
-                    color: "#ffffff",
                   }}
                 >
                   {item.level}
                 </span>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white line-clamp-2">
+                <h2 className="text-xl font-bold line-clamp-2" style={{ color: "var(--theme-h2-color, var(--theme-text, inherit))" }}>
                   {item.productTitle}
                 </h2>
               </div>
 
               <Link
                 href={`/my-account/courses/${item.productSlug}`}
-                className="w-full py-3 font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition"
+                className="w-full py-3 font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition hover:opacity-50"
                 style={{
                   backgroundColor: "var(--theme-button-bg, var(--theme-primary, #4f46e5))",
                   color: "var(--theme-button-text, #ffffff)",

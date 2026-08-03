@@ -37,17 +37,23 @@ export async function POST(request: NextRequest) {
     contentType: file.type || "application/octet-stream",
   });
 
-  // Authenticate session if saving media record in CMS library
+  // Authenticate session if saving media record in CMS library (admin/author only)
   const session = await auth();
-  if (session?.user) {
-    const record = await saveMediaRecord({
-      filename: file.name,
-      url: blob.url,
-      alt: "",
-      mimeType: file.type || "application/octet-stream",
-      size: file.size,
-    });
-    return NextResponse.json(record, { status: 201 });
+  const userRole = (session?.user as { role?: string } | undefined)?.role;
+
+  if (session?.user && (userRole === "admin" || userRole === "author")) {
+    try {
+      const record = await saveMediaRecord({
+        filename: file.name,
+        url: blob.url,
+        alt: "",
+        mimeType: file.type || "application/octet-stream",
+        size: file.size,
+      });
+      return NextResponse.json(record, { status: 201 });
+    } catch (saveErr) {
+      console.warn("Could not save media record in library (continuing with blob url):", saveErr);
+    }
   }
 
   return NextResponse.json({ url: blob.url, filename: file.name }, { status: 201 });

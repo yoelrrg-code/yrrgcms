@@ -116,7 +116,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       <button
         type="submit"
         disabled={isPending}
-        className="w-full py-3 font-bold text-sm rounded-xl transition disabled:opacity-50"
+        className="w-full py-3 font-bold text-sm rounded-xl transition disabled:opacity-50 hover:opacity-50"
         style={{
           backgroundColor: "var(--theme-button-bg, var(--theme-primary, #4f46e5))",
           color: "var(--theme-button-text, #ffffff)",

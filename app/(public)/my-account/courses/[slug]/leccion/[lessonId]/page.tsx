@@ -54,7 +54,7 @@ export default async function LessonViewerPage({ params }: LessonViewerProps) {
           </div>
           <Link 
             href={`/my-account/courses/${slug}`}
-            className="px-4 py-2 text-sm font-semibold transition inline-flex items-center gap-1.5 shadow-sm"
+            className="px-4 py-2 text-sm font-semibold transition inline-flex items-center gap-1.5 shadow-sm hover:opacity-50"
             style={{
               backgroundColor: "var(--theme-button-bg, var(--theme-primary, #4f46e5))",
               color: "var(--theme-button-text, #ffffff)",

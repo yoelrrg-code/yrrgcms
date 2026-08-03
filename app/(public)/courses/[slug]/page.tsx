@@ -151,7 +151,7 @@ export default async function CourseDetailPage({ params }: CourseDetailProps) {
                 borderRadius: "var(--theme-button-radius, 1rem)",
               }}
             >
-              Enroll Now
+              {product.type === "PHYSICAL" || product.type === "DIGITAL_DOWNLOAD" ? "Buy Now" : "Enroll Now"}
             </Link>
 
             <div className="border-t border-slate-100 dark:border-slate-800 pt-4 text-xs text-slate-500 space-y-2">

@@ -78,15 +78,15 @@ export default async function CourseViewerPage({ params }: CourseViewerProps) {
       <div className="flex items-center justify-between gap-4">
         <Link
           href="/my-account/courses"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition"
+          className="inline-flex items-center gap-2 text-sm font-semibold transition hover:opacity-70"
+          style={{ color: "var(--theme-primary, var(--theme-link, inherit))" }}
         >
           <ArrowLeft className="h-4 w-4" /> Back to My Courses
         </Link>
         <span
-          className="px-3 py-1 text-xs font-bold uppercase rounded-full"
+          className="px-3 py-1 text-xs font-bold uppercase rounded-full text-white"
           style={{
             backgroundColor: "var(--theme-primary, #4f46e5)",
-            color: "#ffffff",
           }}
         >
           {course.level} Level
@@ -97,12 +97,13 @@ export default async function CourseViewerPage({ params }: CourseViewerProps) {
       <div className="bg-card border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-sm space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
-            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            <h1 className="text-3xl font-extrabold tracking-tight" style={{ color: "var(--theme-h1-color, var(--theme-text, inherit))" }}>
               {product.title}
             </h1>
             {product.description && (
               <div
-                className="text-slate-600 dark:text-slate-300 text-sm line-clamp-3 prose dark:prose-invert max-w-none"
+                className="text-sm line-clamp-3 prose dark:prose-invert max-w-none"
+                style={{ color: "var(--theme-p-color, inherit)" }}
                 dangerouslySetInnerHTML={{ __html: tiptapToHtml(product.description) }}
               />
             )}
@@ -111,7 +112,7 @@ export default async function CourseViewerPage({ params }: CourseViewerProps) {
           {firstLesson && (
             <Link
               href={`/my-account/courses/${slug}/leccion/${firstLesson.id}`}
-              className="shrink-0 px-6 py-3.5 font-bold text-sm rounded-2xl flex items-center justify-center gap-2 transition shadow-md"
+              className="shrink-0 px-6 py-3.5 font-bold text-sm rounded-2xl flex items-center justify-center gap-2 transition shadow-md hover:opacity-70"
               style={{
                 backgroundColor: "var(--theme-button-bg, var(--theme-primary, #4f46e5))",
                 color: "var(--theme-button-text, #ffffff)",
@@ -126,8 +127,8 @@ export default async function CourseViewerPage({ params }: CourseViewerProps) {
 
       {/* Course Content / Modules */}
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-          <GraduationCap className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+        <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2" style={{ color: "var(--theme-h2-color, var(--theme-text, inherit))" }}>
+          <GraduationCap className="h-6 w-6" style={{ color: "var(--theme-primary, #4f46e5)" }} />
           Course Lessons & Content
         </h2>
 
@@ -142,7 +143,7 @@ export default async function CourseViewerPage({ params }: CourseViewerProps) {
                 key={mod.id}
                 className="bg-card border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm"
               >
-                <div className="bg-slate-50 dark:bg-slate-900/60 px-6 py-4 border-b border-slate-200 dark:border-slate-800 font-bold text-slate-900 dark:text-white flex items-center justify-between">
+                <div className="bg-slate-50 dark:bg-slate-900/60 px-6 py-4 border-b border-slate-200 dark:border-slate-800 font-bold flex items-center justify-between" style={{ color: "var(--theme-h3-color, var(--theme-text, inherit))" }}>
                   <span>
                     Module {modIdx + 1}: {mod.title}
                   </span>
@@ -164,7 +165,7 @@ export default async function CourseViewerPage({ params }: CourseViewerProps) {
                         className="px-6 py-4 flex items-center justify-between hover:bg-slate-50/80 dark:hover:bg-slate-900/40 transition group"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">
+                          <div className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 group-hover:opacity-70 transition" style={{ color: "var(--theme-primary, inherit)" }}>
                             {les.contentType === "VIDEO" ? (
                               <Video className="h-4 w-4" />
                             ) : les.contentType === "PDF_DOCUMENT" ? (
@@ -174,17 +175,17 @@ export default async function CourseViewerPage({ params }: CourseViewerProps) {
                             )}
                           </div>
                           <div>
-                            <span className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition block">
+                            <span className="text-sm font-semibold transition block group-hover:opacity-70" style={{ color: "var(--theme-text, inherit)" }}>
                               {les.title}
                             </span>
-                            <span className="text-xs text-slate-400 capitalize">
+                            <span className="text-xs opacity-60 capitalize" style={{ color: "var(--theme-p-color, inherit)" }}>
                               {les.contentType.toLowerCase().replace(/_/g, " ")}
                               {les.duration && ` • ${les.duration}`}
                             </span>
                           </div>
                         </div>
 
-                        <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 group-hover:underline flex items-center gap-1">
+                        <span className="text-xs font-bold transition flex items-center gap-1 group-hover:opacity-70" style={{ color: "var(--theme-primary, var(--theme-link, inherit))" }}>
                           Open <PlayCircle className="h-3.5 w-3.5" />
                         </span>
                       </Link>

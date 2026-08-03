@@ -31,7 +31,7 @@ const ADMIN_NAV = [
   { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { label: "Products", href: "/admin/products", icon: ShoppingBag },
   { label: "LMS Courses", href: "/admin/courses", icon: GraduationCap },
-  { label: "Sales & Payments", href: "/admin/ventas", icon: CreditCard },
+  { label: "Sales & Payments", href: "/admin/payments", icon: CreditCard },
   { label: "Marketing & AI", href: "/admin/marketing", icon: Megaphone },
   { label: "Pages", href: "/admin/pages", icon: FileText },
   { label: "Posts", href: "/admin/posts", icon: Newspaper },
@@ -68,7 +68,7 @@ export function SidebarNav({ isAdmin, pendingOrdersCount }: SidebarNavProps) {
   return (
     <SidebarMenu>
       {navItems.map((item) => {
-        const isSales = item.href === "/admin/ventas";
+        const isSales = item.href === "/admin/payments";
         const showBadge = isSales && pendingOrdersCount > 0;
 
         const isActive =

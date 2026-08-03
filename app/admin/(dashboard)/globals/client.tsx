@@ -492,7 +492,7 @@ export default function GlobalsClient({
             <div className="space-y-1">
               <CardTitle className="text-xl flex items-center gap-2">
                 <Building2 className="h-5 w-5 text-primary" />
-                Bank Transfer (Datos para Transferencia Bancaria)
+                Bank Transfer Information
               </CardTitle>
               <CardDescription>
                 Configure the bank details shown to customers when opting for bank transfer payments.
@@ -512,7 +512,7 @@ export default function GlobalsClient({
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="bank-name">Banco (Bank Name)</Label>
+                <Label htmlFor="bank-name">Bank Name</Label>
                 <Input
                   id="bank-name"
                   value={paymentMethods.bankTransfer?.bankName || ""}
@@ -525,12 +525,12 @@ export default function GlobalsClient({
                       },
                     })
                   }
-                  placeholder="e.g. Banco Central"
+                  placeholder="e.g. Central Bank"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="account-holder">Titular (Account Holder)</Label>
+                <Label htmlFor="account-holder">Account Holder</Label>
                 <Input
                   id="account-holder"
                   value={paymentMethods.bankTransfer?.accountHolder || ""}
@@ -550,7 +550,7 @@ export default function GlobalsClient({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="cbu-alias">CBU / Alias</Label>
+                <Label htmlFor="cbu-alias">Routing / CBU / Alias</Label>
                 <Input
                   id="cbu-alias"
                   value={paymentMethods.bankTransfer?.cbuAlias || ""}
@@ -563,12 +563,12 @@ export default function GlobalsClient({
                       },
                     })
                   }
-                  placeholder="e.g. 00000031000847291048 / YRRG.CMS.PAGOS"
+                  placeholder="e.g. 00000031000847291048 / YRRG.CMS.PAYMENTS"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="account-number">Número de Cuenta (Account Number - Optional)</Label>
+                <Label htmlFor="account-number">Account Number (Optional)</Label>
                 <Input
                   id="account-number"
                   value={paymentMethods.bankTransfer?.accountNumber || ""}
@@ -608,14 +608,14 @@ export default function GlobalsClient({
             {/* Live Card Preview matching design */}
             <div className="rounded-xl border border-amber-200 bg-amber-50/50 p-5 space-y-3 dark:border-amber-900/40 dark:bg-amber-950/20">
               <h4 className="font-semibold text-base text-foreground">
-                Datos para Transferencia Bancaria:
+                Bank Transfer Information:
               </h4>
               <div className="space-y-2 text-sm text-foreground/90">
-                <p><span className="font-medium">Banco:</span> {paymentMethods.bankTransfer?.bankName || "—"}</p>
+                <p><span className="font-medium">Bank:</span> {paymentMethods.bankTransfer?.bankName || "—"}</p>
                 <p><span className="font-medium">CBU / Alias:</span> {paymentMethods.bankTransfer?.cbuAlias || "—"}</p>
-                <p><span className="font-medium">Titular:</span> {paymentMethods.bankTransfer?.accountHolder || "—"}</p>
+                <p><span className="font-medium">Account Holder:</span> {paymentMethods.bankTransfer?.accountHolder || "—"}</p>
                 {paymentMethods.bankTransfer?.accountNumber && (
-                  <p><span className="font-medium">Cuenta:</span> {paymentMethods.bankTransfer.accountNumber}</p>
+                  <p><span className="font-medium">Account Number:</span> {paymentMethods.bankTransfer.accountNumber}</p>
                 )}
               </div>
             </div>

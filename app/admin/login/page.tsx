@@ -41,7 +41,19 @@ function LoginForm() {
       if (result?.error) {
         setError("Invalid email or password. Please try again.");
       } else if (result?.ok) {
-        router.push(callbackUrl);
+        const { getSession } = await import("next-auth/react");
+        const session = await getSession();
+        const userRole = (session?.user as { role?: string })?.role;
+
+        const hasCustomCallback = searchParams.has("callbackUrl");
+
+        if (userRole === "customer") {
+          const target = hasCustomCallback ? callbackUrl : "/my-account";
+          router.push(target);
+        } else {
+          const target = hasCustomCallback ? callbackUrl : "/admin/dashboard";
+          router.push(target);
+        }
         router.refresh();
       }
     } catch {

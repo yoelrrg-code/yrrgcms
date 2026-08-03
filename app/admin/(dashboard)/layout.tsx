@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { orders } from "@/lib/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { SidebarNav } from "@/components/admin/SidebarNav";
+import { UserDrawer } from "@/components/site/UserDrawer";
 import {
   Sidebar,
   SidebarContent,
@@ -19,9 +20,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-import { SignOutButton } from "@/components/admin/SignOutButton";
-import { Button } from "@/components/ui/button";
-import { Zap, User } from "lucide-react";
+import { Zap } from "lucide-react";
 import Link from "next/link";
 
 export default async function AdminLayout({
@@ -35,16 +34,15 @@ export default async function AdminLayout({
     redirect("/admin/login");
   }
 
+  const role = (session.user as { role?: string }).role;
+  if (role === "customer") {
+    redirect("/my-account");
+  }
+
   const adminUser = isAdmin(session);
   const userName = session.user.name ?? "Unknown User";
   const userEmail = session.user.email ?? "";
-  const userRole = (session.user as { role?: string }).role ?? "author";
-  const userInitials = userName
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+  const userRole = role ?? "author";
 
   const pendingOrdersCount = isAdmin(session)
     ? (
@@ -87,39 +85,33 @@ export default async function AdminLayout({
         </SidebarContent>
 
         {/* User footer */}
-        <SidebarFooter className="border-t border-sidebar-border p-3 space-y-2">
-          <div className="flex items-center gap-2.5 px-1">
-            <div className="flex items-center justify-center size-8 rounded-full bg-muted text-muted-foreground text-xs font-semibold shrink-0">
-              {userInitials}
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-sm font-medium truncate">{userName}</span>
-              <span className="text-xs text-muted-foreground truncate">
-                {userEmail}
-              </span>
-            </div>
-            <span className="ml-auto text-xs capitalize text-muted-foreground bg-muted rounded px-1.5 py-0.5 shrink-0">
-              {userRole}
-            </span>
+        <SidebarFooter className="border-t border-sidebar-border p-3">
+          <div className="flex items-center justify-between px-2 py-1 text-xs text-muted-foreground">
+            <span>YRRG CMS Admin</span>
+            <span className="capitalize">{userRole}</span>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground"
-            render={<Link href="/admin/profile" />}
-          >
-            <User className="size-4" />
-            Edit Profile
-          </Button>
-          <SignOutButton />
         </SidebarFooter>
       </Sidebar>
 
       {/* Main content area */}
       <SidebarInset className="min-w-0 max-w-full overflow-x-hidden">
-        <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="h-4" />
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-border px-4">
+          <div className="flex items-center gap-2">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="h-4" />
+          </div>
+
+          <div className="flex items-center gap-3">
+            <UserDrawer
+              user={{
+                name: userName,
+                email: userEmail,
+                role: userRole,
+              }}
+              editHref="/admin/profile"
+              isAdminArea={true}
+            />
+          </div>
         </header>
         <div className="flex-1 overflow-x-auto p-4 md:p-6 lg:p-8 max-w-full min-w-0">{children}</div>
       </SidebarInset>

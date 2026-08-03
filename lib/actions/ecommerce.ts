@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { products, courses, orders, orderItems, enrollments, users } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, ilike } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 
@@ -23,15 +23,50 @@ export async function createOrderAction(formData: FormData) {
       return { success: false, error: "Product not found" };
     }
 
+    const normalizedEmail = customerEmail.trim().toLowerCase();
+    const normalizedName = customerName.trim();
+    const password = (formData.get("password") as string) || null;
+
+    let finalUserId = userId;
+
+    if (!finalUserId) {
+      const bcrypt = (await import("bcryptjs")).default;
+      const passwordHash = await bcrypt.hash(password || "TempPass123!", 10);
+
+      // Atomic upsert: insert if not exists, do nothing on conflict
+      await db
+        .insert(users)
+        .values({
+          name: normalizedName,
+          email: normalizedEmail,
+          passwordHash,
+          role: "customer",
+        })
+        .onConflictDoNothing({ target: users.email });
+
+      // Always fetch the user after upsert (new or existing)
+      const [resolvedUser] = await db
+        .select()
+        .from(users)
+        .where(ilike(users.email, normalizedEmail));
+
+      if (resolvedUser) {
+        finalUserId = resolvedUser.id;
+      }
+    }
+
+    const shippingAddress = (formData.get("shippingAddress") as string) || null;
+
     const [order] = await db.insert(orders).values({
-      userId: userId || undefined,
-      customerName,
-      customerEmail,
+      userId: finalUserId || undefined,
+      customerName: normalizedName,
+      customerEmail: normalizedEmail,
       totalAmount: product.price,
       currency: product.currency,
       status: "PENDING_PAYMENT",
       paymentMethod: "BANK_TRANSFER",
       proofOfPaymentUrl,
+      shippingAddress,
     }).returning();
 
     await db.insert(orderItems).values({
@@ -40,7 +75,7 @@ export async function createOrderAction(formData: FormData) {
       priceAtPurchase: product.price,
     });
 
-    revalidatePath("/admin/ventas");
+    revalidatePath("/admin/payments");
     return { success: true, orderId: order.id };
   } catch (err: unknown) {
     console.error("createOrderAction error:", err);
@@ -69,9 +104,10 @@ export async function approveOrderAction(orderId: string) {
     // Find or create target user for enrollment
     let targetUserId = order.userId;
 
-    // Search user by email regardless of current order.userId to ensure existing users (admin, author, customer) are matched
+    // Search user by email (case-insensitive) to ensure existing users are matched
     if (order.customerEmail) {
-      const [existingUser] = await db.select().from(users).where(eq(users.email, order.customerEmail));
+      const normalizedEmail = order.customerEmail.trim().toLowerCase();
+      const [existingUser] = await db.select().from(users).where(ilike(users.email, normalizedEmail));
       if (existingUser) {
         targetUserId = existingUser.id;
         if (order.userId !== existingUser.id) {
@@ -86,7 +122,7 @@ export async function approveOrderAction(orderId: string) {
           .insert(users)
           .values({
             name: order.customerName,
-            email: order.customerEmail,
+            email: normalizedEmail,
             passwordHash: tempPasswordHash,
             role: "customer",
           })
@@ -98,7 +134,20 @@ export async function approveOrderAction(orderId: string) {
     }
 
     for (const item of items) {
-      const [course] = await db.select().from(courses).where(eq(courses.productId, item.productId));
+      let [course] = await db.select().from(courses).where(eq(courses.productId, item.productId));
+      
+      // Fallback: If course record doesn't exist yet for this product, auto-create it
+      if (!course) {
+        const [prod] = await db.select().from(products).where(eq(products.id, item.productId));
+        if (prod && prod.type === "VIRTUAL_COURSE") {
+          const [newCourse] = await db.insert(courses).values({
+            productId: prod.id,
+            level: "BEGINNER",
+          }).returning();
+          course = newCourse;
+        }
+      }
+
       if (course && targetUserId) {
         // Check if enrollment exists
         const [existing] = await db.select().from(enrollments).where(
@@ -118,7 +167,34 @@ export async function approveOrderAction(orderId: string) {
       }
     }
 
-    revalidatePath("/admin/ventas");
+    // Trigger email notification to customer with product details / download URL / shipping details
+    try {
+      const { sendOrderApprovalEmail } = await import("@/lib/services/email-sender");
+      const emailItems = await Promise.all(
+        items.map(async (item) => {
+          const [p] = await db.select().from(products).where(eq(products.id, item.productId));
+          return {
+            productTitle: p?.title || "Producto",
+            productType: p?.type || "VIRTUAL_COURSE",
+            downloadUrl: p?.downloadUrl,
+          };
+        })
+      );
+
+      await sendOrderApprovalEmail({
+        customerName: order.customerName,
+        customerEmail: order.customerEmail,
+        orderId: order.id,
+        totalAmount: order.totalAmount,
+        currency: order.currency,
+        shippingAddress: order.shippingAddress,
+        items: emailItems,
+      });
+    } catch (emailErr) {
+      console.error("Failed to send order approval email notification:", emailErr);
+    }
+
+    revalidatePath("/admin/payments");
     revalidatePath("/my-account/courses");
     return { success: true };
   } catch (err: unknown) {
@@ -137,7 +213,7 @@ export async function rejectOrderAction(orderId: string) {
     }
 
     await db.update(orders).set({ status: "REJECTED", updatedAt: new Date() }).where(eq(orders.id, orderId));
-    revalidatePath("/admin/ventas");
+    revalidatePath("/admin/payments");
     return { success: true };
   } catch (err: unknown) {
     console.error("rejectOrderAction error:", err);

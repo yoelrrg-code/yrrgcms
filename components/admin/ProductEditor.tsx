@@ -23,7 +23,7 @@ import RichTextEditor from "@/components/admin/RichTextEditor/RichTextEditor";
 import MediaPicker from "@/components/admin/MediaPicker/MediaPicker";
 import { createProduct, updateProduct, publishProduct, ProductWithCategories } from "@/lib/actions/products";
 import type { productTypeEnum, productStatusEnum } from "@/lib/db/schema";
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, Upload } from "lucide-react";
 
 type ProductType = (typeof productTypeEnum.enumValues)[number];
 type ProductStatus = (typeof productStatusEnum.enumValues)[number];
@@ -69,6 +69,7 @@ export default function ProductEditor({ product, categories = [] }: ProductEdito
   const [type, setType] = useState<ProductType>(product?.type ?? "VIRTUAL_COURSE");
   const [status, setStatus] = useState<ProductStatus>(product?.status ?? "DRAFT");
   const [imageUrl, setImageUrl] = useState(product?.imageUrl ?? "");
+  const [downloadUrl, setDownloadUrl] = useState(product?.downloadUrl ?? "");
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>(
     product?.categories?.map((c) => c.categoryId) ?? []
   );
@@ -94,6 +95,7 @@ export default function ProductEditor({ product, categories = [] }: ProductEdito
     type,
     status,
     imageUrl: imageUrl || undefined,
+    downloadUrl: downloadUrl || undefined,
     categoryIds: selectedCategoryIds,
   });
 
@@ -221,6 +223,32 @@ export default function ProductEditor({ product, categories = [] }: ProductEdito
                   </Select>
                 </div>
               </div>
+
+              {type === "DIGITAL_DOWNLOAD" && (
+                <div className="space-y-1.5 pt-2">
+                  <Label htmlFor="download-url">Download URL / File Link</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="download-url"
+                      value={downloadUrl}
+                      onChange={(e) => setDownloadUrl(e.target.value)}
+                      placeholder="https://vercel-blob.com/my-digital-asset.zip"
+                      className="flex-1"
+                    />
+                    <MediaPicker
+                      onSelect={(url) => setDownloadUrl(url)}
+                      trigger={
+                        <Button type="button" variant="outline" size="sm" className="shrink-0 gap-1.5">
+                          <Upload className="h-4 w-4" /> Upload File
+                        </Button>
+                      }
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Direct download link or upload file. Sent automatically to customers via email when payment is approved.
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
 

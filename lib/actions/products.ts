@@ -37,6 +37,7 @@ export async function createProduct(data: {
   type: "VIRTUAL_COURSE" | "PHYSICAL" | "DIGITAL_DOWNLOAD";
   status: "DRAFT" | "PUBLISHED";
   imageUrl?: string;
+  downloadUrl?: string;
   categoryIds?: string[];
 }) {
   const [product] = await db
@@ -50,6 +51,7 @@ export async function createProduct(data: {
       type: data.type,
       status: data.status,
       imageUrl: data.imageUrl,
+      downloadUrl: data.downloadUrl,
     })
     .returning();
 
