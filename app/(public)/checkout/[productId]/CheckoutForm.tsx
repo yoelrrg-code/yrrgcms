@@ -106,7 +106,12 @@ export default function CheckoutForm({ product, user }: CheckoutFormProps) {
         </p>
         <button
           onClick={() => router?.push("/my-account/courses")}
-          className="mt-4 px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-sm"
+          className="mt-4 px-6 py-2.5 font-bold text-sm transition"
+          style={{
+            backgroundColor: "var(--theme-button-bg, var(--theme-primary, #4f46e5))",
+            color: "var(--theme-button-text, #ffffff)",
+            borderRadius: "var(--theme-button-radius, 0.75rem)",
+          }}
         >
           Ir a Mis Cursos
         </button>
@@ -203,7 +208,12 @@ export default function CheckoutForm({ product, user }: CheckoutFormProps) {
       <button
         type="submit"
         disabled={loading || uploading}
-        className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold rounded-xl transition"
+        className="w-full py-3 font-bold transition disabled:opacity-50"
+        style={{
+          backgroundColor: "var(--theme-button-bg, var(--theme-primary, #4f46e5))",
+          color: "var(--theme-button-text, #ffffff)",
+          borderRadius: "var(--theme-button-radius, 0.75rem)",
+        }}
       >
         {loading ? "Procesando..." : "Confirmar Orden y Registrar"}
       </button>

@@ -48,7 +48,7 @@ export default async function FormSubmissionsPage({
         </h1>
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>

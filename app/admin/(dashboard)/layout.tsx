@@ -1,6 +1,10 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { isAdmin } from "@/lib/permissions";
+import { db } from "@/lib/db";
+import { orders } from "@/lib/db/schema";
+import { eq, sql } from "drizzle-orm";
+import { SidebarNav } from "@/components/admin/SidebarNav";
 import {
   Sidebar,
   SidebarContent,
@@ -11,70 +15,14 @@ import {
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { SignOutButton } from "@/components/admin/SignOutButton";
 import { Button } from "@/components/ui/button";
-import {
-  LayoutDashboard,
-  FileText,
-  Newspaper,
-  Tags,
-  FolderTree,
-  ClipboardList,
-  Menu,
-  Globe,
-  Image,
-  Users,
-  User,
-  Zap,
-  Palette,
-  Quote,
-  Megaphone,
-  ShoppingBag,
-  GraduationCap,
-  CreditCard,
-} from "lucide-react";
+import { Zap, User } from "lucide-react";
 import Link from "next/link";
-
-type NavItem = {
-  label: string;
-  href: string;
-  icon: React.ElementType;
-};
-
-const ADMIN_NAV: NavItem[] = [
-  { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-  { label: "Products", href: "/admin/products", icon: ShoppingBag },
-  { label: "LMS Courses", href: "/admin/courses", icon: GraduationCap },
-  { label: "Sales & Payments", href: "/admin/ventas", icon: CreditCard },
-  { label: "Marketing & AI", href: "/admin/marketing", icon: Megaphone },
-  { label: "Pages", href: "/admin/pages", icon: FileText },
-  { label: "Posts", href: "/admin/posts", icon: Newspaper },
-  { label: "Services", href: "/admin/services", icon: Zap },
-  { label: "Schedule & Bookings", href: "/admin/schedule", icon: ClipboardList },
-  { label: "Testimonials", href: "/admin/testimonials", icon: Quote },
-  { label: "Categories", href: "/admin/categories", icon: FolderTree },
-  { label: "Tags", href: "/admin/tags", icon: Tags },
-  { label: "Forms", href: "/admin/forms", icon: ClipboardList },
-  { label: "Menus", href: "/admin/menus", icon: Menu },
-  { label: "Globals", href: "/admin/globals", icon: Globe },
-  { label: "Themes", href: "/admin/themes", icon: Palette },
-  { label: "Media", href: "/admin/media", icon: Image },
-  { label: "Users", href: "/admin/users", icon: Users },
-];
-
-const AUTHOR_NAV: NavItem[] = [
-  { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-  { label: "Pages", href: "/admin/pages", icon: FileText },
-  { label: "Posts", href: "/admin/posts", icon: Newspaper },
-  { label: "Tags", href: "/admin/tags", icon: Tags },
-  { label: "Media", href: "/admin/media", icon: Image },
-];
 
 export default async function AdminLayout({
   children,
@@ -87,7 +35,7 @@ export default async function AdminLayout({
     redirect("/admin/login");
   }
 
-  const navItems = isAdmin(session) ? ADMIN_NAV : AUTHOR_NAV;
+  const adminUser = isAdmin(session);
   const userName = session.user.name ?? "Unknown User";
   const userEmail = session.user.email ?? "";
   const userRole = (session.user as { role?: string }).role ?? "author";
@@ -97,6 +45,15 @@ export default async function AdminLayout({
     .join("")
     .toUpperCase()
     .slice(0, 2);
+
+  const pendingOrdersCount = isAdmin(session)
+    ? (
+        await db
+          .select({ count: sql<number>`count(*)` })
+          .from(orders)
+          .where(eq(orders.status, "PENDING_PAYMENT"))
+      )[0]?.count ?? 0
+    : 0;
 
   return (
     <div className="admin-dashboard flex w-full">
@@ -120,14 +77,10 @@ export default async function AdminLayout({
             <SidebarGroupLabel>Navigation</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {navItems.map((item) => (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton render={<Link href={item.href} />}>
-                      <item.icon className="size-4" />
-                      <span>{item.label}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+              <SidebarNav
+                isAdmin={adminUser}
+                pendingOrdersCount={Number(pendingOrdersCount)}
+              />
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -163,12 +116,12 @@ export default async function AdminLayout({
       </Sidebar>
 
       {/* Main content area */}
-      <SidebarInset>
+      <SidebarInset className="min-w-0 max-w-full overflow-x-hidden">
         <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="h-4" />
         </header>
-        <div className="flex-1 overflow-auto p-6">{children}</div>
+        <div className="flex-1 overflow-x-auto p-4 md:p-6 lg:p-8 max-w-full min-w-0">{children}</div>
       </SidebarInset>
     </SidebarProvider>
     </div>

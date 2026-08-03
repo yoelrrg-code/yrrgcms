@@ -48,7 +48,7 @@ export default async function TagsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Tags table */}
-        <div className="lg:col-span-2 rounded-md border border-border overflow-hidden">
+        <div className="lg:col-span-2 rounded-md border border-border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>

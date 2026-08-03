@@ -51,7 +51,7 @@ export default async function CategoriesPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Table */}
-        <div className="lg:col-span-2 rounded-md border border-border overflow-hidden">
+        <div className="lg:col-span-2 rounded-md border border-border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>

@@ -8,7 +8,7 @@ export default async function ServicesAdminPage() {
   const servicesList = await getServices();
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Services Management</h1>

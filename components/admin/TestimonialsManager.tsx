@@ -125,13 +125,13 @@ export function TestimonialsManager({ initialTestimonials }: TestimonialsManager
   return (
     <div className="space-y-6">
       {/* HEADER CONTROLS */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold">Client Testimonials</h2>
           <p className="text-sm text-muted-foreground">Manage customer feedback, quotes and ratings displayed across your site.</p>
         </div>
 
-        <Button onClick={() => handleOpenModal()} className="font-semibold gap-2">
+        <Button onClick={() => handleOpenModal()} className="font-semibold gap-2 shrink-0 self-start sm:self-auto">
           <Plus className="size-4" /> Add Testimonial
         </Button>
       </div>

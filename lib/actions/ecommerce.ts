@@ -53,12 +53,12 @@ export async function approveOrderAction(orderId: string) {
   try {
     const session = await auth();
     const userRole = (session?.user as { role?: string } | undefined)?.role;
-    if (!session?.user || userRole !== "ADMIN") {
-      return { success: false, error: "Unauthorized access" };
+    if (!session?.user || userRole !== "admin") {
+      throw new Error("Unauthorized access");
     }
 
     const [order] = await db.select().from(orders).where(eq(orders.id, orderId));
-    if (!order) return { success: false, error: "Order not found" };
+    if (!order) throw new Error("Order not found");
 
     // Update Order Status
     await db.update(orders).set({ status: "APPROVED", updatedAt: new Date() }).where(eq(orders.id, orderId));
@@ -132,8 +132,8 @@ export async function rejectOrderAction(orderId: string) {
   try {
     const session = await auth();
     const userRole = (session?.user as { role?: string } | undefined)?.role;
-    if (!session?.user || userRole !== "ADMIN") {
-      return { success: false, error: "Unauthorized access" };
+    if (!session?.user || userRole !== "admin") {
+      throw new Error("Unauthorized access");
     }
 
     await db.update(orders).set({ status: "REJECTED", updatedAt: new Date() }).where(eq(orders.id, orderId));

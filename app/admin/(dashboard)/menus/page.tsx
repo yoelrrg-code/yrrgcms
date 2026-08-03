@@ -72,7 +72,7 @@ export default async function MenusPage() {
         </form>
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>

@@ -30,12 +30,23 @@ export default async function CheckoutPage({ params }: CheckoutProps) {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-8 text-center">Checkout / Finalizar Compra</h1>
+        <h1
+          className="text-3xl font-extrabold mb-8 text-center"
+          style={{ color: "var(--theme-text, inherit)" }}
+          data-aos="fade-down"
+        >
+          Checkout / Finalizar Compra
+        </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Resumen del Pedido */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Resumen del Pedido</h2>
+          <div
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-4"
+            data-aos="fade-right"
+          >
+            <h2 className="text-xl font-bold" style={{ color: "var(--theme-text, inherit)" }}>
+              Resumen del Pedido
+            </h2>
             <div className="flex items-center gap-4">
               {product.imageUrl && <img src={product.imageUrl} alt={product.title} className="w-20 h-20 object-cover rounded-xl" />}
               <div>
@@ -53,7 +64,9 @@ export default async function CheckoutPage({ params }: CheckoutProps) {
             </div>
             <div className="flex items-center justify-between text-lg font-bold border-t border-slate-100 dark:border-slate-800 pt-4">
               <span>Total:</span>
-              <span className="text-indigo-600 dark:text-indigo-400">${product.price.toLocaleString()} {product.currency}</span>
+              <span style={{ color: "var(--theme-primary, #4f46e5)" }}>
+                ${product.price.toLocaleString()} {product.currency}
+              </span>
             </div>
 
             <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 rounded-2xl p-4 text-sm text-amber-800 dark:text-amber-300">
@@ -65,7 +78,10 @@ export default async function CheckoutPage({ params }: CheckoutProps) {
           </div>
 
           {/* Formulario de Checkout */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
+          <div
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm"
+            data-aos="fade-left"
+          >
             <CheckoutForm product={product} user={session?.user} />
           </div>
         </div>

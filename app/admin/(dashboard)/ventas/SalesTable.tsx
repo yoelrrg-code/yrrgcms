@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useTransition, useState } from "react";
+import { useRouter } from "next/navigation";
 import { approveOrderAction, rejectOrderAction } from "@/lib/actions/ecommerce";
 import type { Order } from "@/lib/db/schema";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { sileo } from "sileo";
-import { Eye, ExternalLink } from "lucide-react";
+import { Eye, ExternalLink, CheckCircle2, XCircle, Clock, FileCheck } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -33,6 +34,91 @@ export interface OrderWithItems extends Order {
   }>;
 }
 
+// ── Shared sub-components (used in both desktop table and mobile cards) ───────
+
+function StatusBadge({ status }: { status: string }) {
+  if (status === "APPROVED")
+    return (
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 whitespace-nowrap">
+        <CheckCircle2 className="w-3.5 h-3.5" /> Approved
+      </span>
+    );
+  if (status === "REJECTED")
+    return (
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 whitespace-nowrap">
+        <XCircle className="w-3.5 h-3.5" /> Rejected
+      </span>
+    );
+  return (
+    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60 whitespace-nowrap">
+      <Clock className="w-3.5 h-3.5" /> Pending Payment
+    </span>
+  );
+}
+
+function ReceiptLink({ url }: { url: string | null }) {
+  if (!url) return <span className="text-xs text-slate-400 italic">No attachment</span>;
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noreferrer"
+      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 font-bold text-xs hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition whitespace-nowrap"
+    >
+      <FileCheck className="w-3.5 h-3.5" /> View Receipt
+    </a>
+  );
+}
+
+interface ActionButtonsProps {
+  order: OrderWithItems;
+  isPending: boolean;
+  onApprove: (id: string, name: string) => void;
+  onReject: (id: string, name: string) => void;
+  onDetails: (order: OrderWithItems) => void;
+  fullWidth?: boolean;
+}
+
+function ActionButtons({ order, isPending, onApprove, onReject, onDetails, fullWidth }: ActionButtonsProps) {
+  const btnBase = fullWidth ? "flex-1 justify-center" : "";
+  return (
+    <>
+      {order.status === "PENDING_PAYMENT" && (
+        <>
+          <Button
+            size="sm"
+            disabled={isPending}
+            onClick={() => onApprove(order.id, order.customerName)}
+            className={`bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm rounded-xl ${btnBase}`}
+          >
+            Approve
+          </Button>
+          <Button
+            size="sm"
+            variant="destructive"
+            disabled={isPending}
+            onClick={() => onReject(order.id, order.customerName)}
+            className={`text-xs font-bold rounded-xl ${btnBase}`}
+          >
+            Reject
+          </Button>
+        </>
+      )}
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => onDetails(order)}
+        className={`text-xs font-bold gap-1.5 rounded-xl border-slate-200 dark:border-slate-800 ${btnBase}`}
+      >
+        <Eye className="w-3.5 h-3.5" />
+        Details
+      </Button>
+    </>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 interface SalesTableProps {
   sales: OrderWithItems[];
 }
@@ -40,6 +126,7 @@ interface SalesTableProps {
 export default function SalesTable({ sales }: SalesTableProps) {
   const [isPending, startTransition] = useTransition();
   const [selectedOrder, setSelectedOrder] = useState<OrderWithItems | null>(null);
+  const router = useRouter();
 
   function triggerApproveConfirmation(orderId: string, customerName: string) {
     sileo.action({
@@ -51,6 +138,7 @@ export default function SalesTable({ sales }: SalesTableProps) {
           startTransition(async () => {
             try {
               await approveOrderAction(orderId);
+              router.refresh();
               sileo.success({
                 title: "Order Approved",
                 description: "Course access has been granted to the customer.",
@@ -77,6 +165,7 @@ export default function SalesTable({ sales }: SalesTableProps) {
           startTransition(async () => {
             try {
               await rejectOrderAction(orderId);
+              router.refresh();
               sileo.info({
                 title: "Order Rejected",
                 description: "The payment order has been rejected.",
@@ -103,98 +192,105 @@ export default function SalesTable({ sales }: SalesTableProps) {
 
   return (
     <>
-      <div className="rounded-md border border-border overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Order</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Receipt</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sales.map((order) => {
-              return (
-                <TableRow key={order.id}>
-                  <TableCell className="font-mono font-bold text-primary">
+      {/* ── Desktop table ── */}
+      <div className="hidden lg:block rounded-2xl border border-border bg-card overflow-hidden shadow-sm">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader className="bg-slate-50/80 dark:bg-slate-900/80">
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="font-bold text-xs uppercase tracking-wider whitespace-nowrap">Order ID</TableHead>
+                <TableHead className="font-bold text-xs uppercase tracking-wider">Customer</TableHead>
+                <TableHead className="font-bold text-xs uppercase tracking-wider whitespace-nowrap">Amount</TableHead>
+                <TableHead className="font-bold text-xs uppercase tracking-wider">Status</TableHead>
+                <TableHead className="font-bold text-xs uppercase tracking-wider">Receipt</TableHead>
+                <TableHead className="text-right font-bold text-xs uppercase tracking-wider whitespace-nowrap">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sales.map((order) => (
+                <TableRow key={order.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition">
+                  <TableCell className="font-mono font-bold text-indigo-600 dark:text-indigo-400 text-xs whitespace-nowrap">
                     #{order.id.slice(0, 8)}
                   </TableCell>
                   <TableCell>
-                    <div className="font-bold">{order.customerName}</div>
-                    <div className="text-xs text-muted-foreground">{order.customerEmail}</div>
+                    <div className="font-bold text-slate-900 dark:text-white text-sm">{order.customerName}</div>
+                    <div className="text-xs text-slate-500 font-mono">{order.customerEmail}</div>
                   </TableCell>
-                  <TableCell className="font-bold">
-                    ${(order.totalAmount / 100).toFixed(2)} {order.currency}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        order.status === "APPROVED"
-                          ? "default"
-                          : order.status === "REJECTED"
-                          ? "destructive"
-                          : "secondary"
-                      }
-                    >
-                      {order.status}
-                    </Badge>
+                  <TableCell className="font-extrabold text-slate-900 dark:text-white whitespace-nowrap">
+                    ${order.totalAmount.toLocaleString()}{" "}
+                    <span className="text-xs font-semibold text-slate-500">{order.currency}</span>
                   </TableCell>
                   <TableCell>
-                    {order.proofOfPaymentUrl ? (
-                      <a
-                        href={order.proofOfPaymentUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-primary hover:underline font-medium text-xs"
-                      >
-                        View Receipt ↗
-                      </a>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">No attachment</span>
-                    )}
+                    <StatusBadge status={order.status} />
                   </TableCell>
-                  <TableCell className="text-right space-x-2">
-                    {order.status === "PENDING_PAYMENT" && (
-                      <>
-                        <Button
-                          size="sm"
-                          disabled={isPending}
-                          onClick={() => triggerApproveConfirmation(order.id, order.customerName)}
-                          className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold"
-                        >
-                          Approve Payment
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          disabled={isPending}
-                          onClick={() => triggerRejectConfirmation(order.id, order.customerName)}
-                          className="text-xs font-bold"
-                        >
-                          Reject
-                        </Button>
-                      </>
-                    )}
-
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setSelectedOrder(order)}
-                      className="text-xs font-bold gap-1.5"
-                    >
-                      <Eye className="w-3.5 h-3.5" />
-                      View Order Details
-                    </Button>
+                  <TableCell>
+                    <ReceiptLink url={order.proofOfPaymentUrl} />
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <ActionButtons
+                        order={order}
+                        isPending={isPending}
+                        onApprove={triggerApproveConfirmation}
+                        onReject={triggerRejectConfirmation}
+                        onDetails={setSelectedOrder}
+                      />
+                    </div>
                   </TableCell>
                 </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
+
+      {/* ── Mobile cards ── */}
+      <div className="lg:hidden space-y-3">
+        {sales.map((order) => (
+          <div
+            key={order.id}
+            className="rounded-2xl border border-border bg-card shadow-sm p-4 space-y-3"
+          >
+            {/* Header row */}
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <span className="font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                  #{order.id.slice(0, 8)}
+                </span>
+                <p className="font-bold text-sm text-slate-900 dark:text-white mt-0.5">
+                  {order.customerName}
+                </p>
+                <p className="text-xs text-slate-500 font-mono">{order.customerEmail}</p>
+              </div>
+              <div className="text-right shrink-0">
+                <p className="font-extrabold text-base text-slate-900 dark:text-white">
+                  ${order.totalAmount.toLocaleString()}
+                </p>
+                <p className="text-xs text-slate-400">{order.currency}</p>
+              </div>
+            </div>
+
+            {/* Status + Receipt */}
+            <div className="flex flex-wrap items-center gap-2">
+              <StatusBadge status={order.status} />
+              <ReceiptLink url={order.proofOfPaymentUrl} />
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-wrap gap-2 pt-1 border-t border-border">
+              <ActionButtons
+                order={order}
+                isPending={isPending}
+                onApprove={triggerApproveConfirmation}
+                onReject={triggerRejectConfirmation}
+                onDetails={setSelectedOrder}
+                fullWidth
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
 
       {/* Order Details Modal */}
       <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
@@ -234,7 +330,7 @@ export default function SalesTable({ sales }: SalesTableProps) {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Total Amount:</span>
                   <span className="font-bold text-indigo-600 dark:text-indigo-400 text-sm">
-                    ${(selectedOrder.totalAmount / 100).toFixed(2)} {selectedOrder.currency}
+                    ${selectedOrder.totalAmount.toLocaleString()} {selectedOrder.currency}
                   </span>
                 </div>
                 <div className="flex justify-between">

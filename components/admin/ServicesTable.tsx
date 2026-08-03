@@ -72,16 +72,16 @@ export function ServicesTable({ services: initialServices }: ServicesTableProps)
         </div>
       </div>
 
-      <div className="rounded-md border bg-card">
+      <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Service</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Duration</TableHead>
-              <TableHead>Base Price</TableHead>
-              <TableHead>Packs / Subscriptions</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+          <TableHeader className="bg-slate-50/80 dark:bg-slate-900/80">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="font-bold text-xs uppercase tracking-wider">Service</TableHead>
+              <TableHead className="font-bold text-xs uppercase tracking-wider">Status</TableHead>
+              <TableHead className="font-bold text-xs uppercase tracking-wider">Duration</TableHead>
+              <TableHead className="font-bold text-xs uppercase tracking-wider">Base Price</TableHead>
+              <TableHead className="font-bold text-xs uppercase tracking-wider">Packs / Subscriptions</TableHead>
+              <TableHead className="text-right font-bold text-xs uppercase tracking-wider">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -100,32 +100,40 @@ export function ServicesTable({ services: initialServices }: ServicesTableProps)
                 const subCount = pricing?.subscriptions?.length ?? 0;
 
                 return (
-                  <TableRow key={service.id}>
+                  <TableRow key={service.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition">
                     <TableCell className="font-medium">
                       <div>
-                        <div className="font-semibold text-foreground">{service.title}</div>
-                        <div className="text-xs text-muted-foreground">/{service.slug}</div>
+                        <div className="font-bold text-slate-900 dark:text-white">{service.title}</div>
+                        <div className="text-xs text-slate-500 font-mono">/{service.slug}</div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant={service.status === "active" ? "default" : service.status === "draft" ? "outline" : "secondary"}
-                        className="cursor-pointer capitalize"
-                        onClick={() => handleStatusToggle(service)}
-                      >
-                        {service.status}
-                      </Badge>
+                      {service.status === "active" ? (
+                        <span
+                          onClick={() => handleStatusToggle(service)}
+                          className="inline-flex items-center cursor-pointer px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60"
+                        >
+                          Active
+                        </span>
+                      ) : (
+                        <span
+                          onClick={() => handleStatusToggle(service)}
+                          className="inline-flex items-center cursor-pointer px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60"
+                        >
+                          Inactive
+                        </span>
+                      )}
                     </TableCell>
-                    <TableCell>{service.durationMinutes} min (+{service.bufferTimeMinutes}m buffer)</TableCell>
-                    <TableCell className="font-semibold">${basePrice.toLocaleString()} {currency}</TableCell>
-                    <TableCell className="text-xs text-muted-foreground">
+                    <TableCell className="text-sm font-medium">{service.durationMinutes} min <span className="text-xs text-slate-400">(+{service.bufferTimeMinutes}m buffer)</span></TableCell>
+                    <TableCell className="font-extrabold text-slate-900 dark:text-white">${basePrice.toLocaleString()} <span className="text-xs font-semibold text-slate-500">{currency}</span></TableCell>
+                    <TableCell className="text-xs text-slate-500">
                       {packCount} packs | {subCount} subs
                     </TableCell>
-                    <TableCell className="text-right space-x-2">
-                      <Button variant="ghost" size="icon" render={<Link href={`/admin/services/${service.id}`} />}>
+                    <TableCell className="text-right space-x-1">
+                      <Button variant="ghost" size="icon" className="rounded-xl" render={<Link href={`/admin/services/${service.id}`} />}>
                         <Edit className="size-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(service.id)} className="text-destructive">
+                      <Button variant="ghost" size="icon" onClick={() => handleDelete(service.id)} className="text-destructive rounded-xl">
                         <Trash2 className="size-4" />
                       </Button>
                     </TableCell>
