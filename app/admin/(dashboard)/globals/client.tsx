@@ -157,8 +157,8 @@ export default function GlobalsClient({
   };
 
   return (
-    <Tabs defaultValue="header" className="space-y-4">
-      <TabsList>
+    <Tabs defaultValue="header" className="space-y-5">
+      <TabsList className="py-6 px-3 bg-gray-200">
         <TabsTrigger value="header">Header</TabsTrigger>
         <TabsTrigger value="footer">Footer</TabsTrigger>
         <TabsTrigger value="seo">SEO Defaults</TabsTrigger>

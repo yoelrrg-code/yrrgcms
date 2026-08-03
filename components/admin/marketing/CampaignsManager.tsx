@@ -162,7 +162,7 @@ export function CampaignsManager({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {campaignsList.map((campaign) => (
-            <Card key={campaign.id} className="relative overflow-hidden flex flex-col justify-between hover:border-primary/50 transition-all shadow-xs">
+            <Card key={campaign.id} className="pt-0 relative overflow-hidden flex flex-col justify-between hover:border-primary/50 transition-all shadow-xs">
               <CardContent className="p-5 space-y-4">
                 <div className="flex items-start justify-between gap-2">
                   <Badge variant={campaign.status === "published" ? "default" : campaign.status === "failed" ? "destructive" : "outline"} className="capitalize text-[10px]">
@@ -200,7 +200,7 @@ export function CampaignsManager({
               </CardContent>
 
               {/* CARD ACTIONS */}
-              <div className="p-4 pt-0 border-t mt-auto flex items-center justify-between bg-muted/20">
+              <div className="px-4 pt-3 border-t mt-auto flex items-center justify-between bg-muted/20">
                 <Button variant="outline" size="sm" onClick={() => handleOpenEditor(campaign)} className="h-8 text-xs font-semibold gap-1.5">
                   <Edit2 className="size-3.5" /> Edit & Publish
                 </Button>

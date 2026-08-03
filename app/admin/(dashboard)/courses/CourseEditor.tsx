@@ -431,7 +431,7 @@ export default function CourseEditor({ course }: { course: CourseWithDetails }) 
                     variant="outline"
                     disabled={uploading}
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full gap-2 text-xs"
+                    className="w-full h-10 gap-2 text-xs rounded-md"
                   >
                     {uploading ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -444,7 +444,7 @@ export default function CourseEditor({ course }: { course: CourseWithDetails }) 
                   <MediaPicker
                     onSelect={(url) => setLessonData((prev) => ({ ...prev, contentUrl: url }))}
                     trigger={
-                      <Button type="button" variant="secondary" className="text-xs">
+                      <Button type="button" variant="secondary" className="h-10 text-xs rounded-md">
                         Select from Media
                       </Button>
                     }

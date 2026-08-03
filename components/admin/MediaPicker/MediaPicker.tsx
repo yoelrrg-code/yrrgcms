@@ -92,10 +92,9 @@ export default function MediaPicker({ onSelect, trigger }: MediaPickerProps) {
           <Button
             type="button"
             variant="outline"
-            size="sm"
             disabled={uploading}
             onClick={() => fileInputRef.current?.click()}
-            className="gap-2"
+            className="h-10 gap-2 rounded-md"
           >
             <Upload className="h-4 w-4" />
             {uploading ? "Uploading…" : "Upload File"}

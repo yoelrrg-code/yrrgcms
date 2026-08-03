@@ -511,7 +511,7 @@ export function ScheduleManager({ initialAppointments, services }: ScheduleManag
                           </span>
                         )}
                       </div>
-                      <Button variant="outline" size="sm" onClick={() => setSelectedAppointment(app)} className="text-xs font-bold rounded-xl">
+                      <Button variant="outline" size="sm" onClick={() => setSelectedAppointment(app)} className="h-10 text-xs font-bold rounded-md">
                         Details
                       </Button>
                     </div>

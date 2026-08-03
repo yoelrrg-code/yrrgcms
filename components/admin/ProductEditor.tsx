@@ -238,7 +238,7 @@ export default function ProductEditor({ product, categories = [] }: ProductEdito
                     <MediaPicker
                       onSelect={(url) => setDownloadUrl(url)}
                       trigger={
-                        <Button type="button" variant="outline" size="sm" className="shrink-0 gap-1.5">
+                        <Button type="button" variant="outline" className="h-10 shrink-0 gap-1.5 rounded-md">
                           <Upload className="h-4 w-4" /> Upload File
                         </Button>
                       }

@@ -214,7 +214,7 @@ export default async function PostsPage() {
             <p className="text-xs text-slate-400 font-mono">
               {post.updatedAt ? new Date(post.updatedAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "—"}
             </p>
-            <div className="flex flex-wrap gap-2 pt-1 border-t border-border">
+            <div className="flex flex-wrap gap-2 pt-4 border-t border-border">
               <Link href={`/admin/posts/${post.id}`} className="flex-1">
                 <Button variant="outline" size="sm" className="w-full text-xs gap-1.5 rounded-xl">
                   <Pencil className="h-3.5 w-3.5" /> Edit

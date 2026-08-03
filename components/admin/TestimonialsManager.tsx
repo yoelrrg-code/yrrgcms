@@ -148,7 +148,7 @@ export function TestimonialsManager({ initialTestimonials }: TestimonialsManager
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((item) => (
-            <Card key={item.id} className="relative overflow-hidden flex flex-col justify-between hover:border-primary/50 transition-all">
+            <Card key={item.id} className="pb-1 pt-0 relative overflow-hidden flex flex-col justify-between hover:border-primary/50 transition-all">
               <CardContent className="p-5 space-y-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
@@ -190,7 +190,7 @@ export function TestimonialsManager({ initialTestimonials }: TestimonialsManager
               </CardContent>
 
               {/* CARD FOOTER ACTIONS */}
-              <div className="p-4 pt-0 border-t mt-auto flex items-center justify-between bg-muted/20">
+              <div className="px-4 pt-1 pb-0 border-t mt-auto flex items-center justify-between bg-muted/20">
                 <span className="text-[11px] font-medium text-muted-foreground">Order: #{item.order}</span>
                 <div className="flex items-center gap-1">
                   <Button variant="ghost" size="icon" className="size-8" onClick={() => handleOpenModal(item)}>

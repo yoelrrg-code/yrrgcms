@@ -200,7 +200,7 @@ export function ServicesTable({ services: initialServices = [] }: ServicesTableP
 
                 <div className="flex items-center gap-2 pt-2 border-t border-border">
                   <Link href={`/admin/services/${service.id}`} className="flex-1">
-                    <Button variant="outline" size="sm" className="w-full text-xs gap-1.5 rounded-xl">
+                    <Button variant="outline" size="sm" className="w-full h-10 text-xs gap-1.5 rounded-md">
                       <Edit className="h-3.5 w-3.5" /> Edit
                     </Button>
                   </Link>
@@ -208,7 +208,7 @@ export function ServicesTable({ services: initialServices = [] }: ServicesTableP
                     variant="ghost"
                     size="sm"
                     onClick={() => handleDelete(service.id)}
-                    className="flex-1 text-xs text-destructive hover:text-destructive rounded-xl"
+                    className="flex-1 h-10 text-xs text-destructive hover:text-destructive rounded-md"
                   >
                     <Trash2 className="h-3.5 w-3.5 mr-1" /> Delete
                   </Button>
