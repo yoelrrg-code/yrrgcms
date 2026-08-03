@@ -140,7 +140,7 @@ export default async function UsersPage() {
                 <span className="font-mono text-slate-400">{formatDate(user.lastLogin)}</span>
               </div>
 
-              <div className="flex items-center gap-2 pt-2 border-t border-border">
+              <div className="flex items-center gap-2 pt-4 border-t border-border">
                 <Link href={`/admin/users/${user.id}`} className="flex-1">
                   <Button variant="outline" size="sm" className="w-full h-10 text-xs gap-1.5 rounded-md">
                     <Pencil className="h-3.5 w-3.5" /> Edit

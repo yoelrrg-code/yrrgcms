@@ -198,7 +198,7 @@ export function ServicesTable({ services: initialServices = [] }: ServicesTableP
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 pt-2 border-t border-border">
+                <div className="flex items-center gap-2 pt-4 border-t border-border">
                   <Link href={`/admin/services/${service.id}`} className="flex-1">
                     <Button variant="outline" size="sm" className="w-full h-10 text-xs gap-1.5 rounded-md">
                       <Edit className="h-3.5 w-3.5" /> Edit

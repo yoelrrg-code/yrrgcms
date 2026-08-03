@@ -6,6 +6,7 @@ import { orders } from "@/lib/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { SidebarNav } from "@/components/admin/SidebarNav";
 import { UserDrawer } from "@/components/site/UserDrawer";
+import { ModeToggle } from "@/components/admin/ModeToggle";
 import {
   Sidebar,
   SidebarContent,
@@ -101,7 +102,8 @@ export default async function AdminLayout({
             <Separator orientation="vertical" className="h-4" />
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <ModeToggle />
             <UserDrawer
               user={{
                 name: userName,

@@ -288,7 +288,7 @@ export default function SalesTable({ sales }: SalesTableProps) {
             </div>
 
             {/* Actions */}
-            <div className="flex flex-wrap gap-2 pt-1 border-t border-border">
+            <div className="flex flex-wrap gap-2 pt-4 border-t border-border">
               <ActionButtons
                 order={order}
                 isPending={isPending}

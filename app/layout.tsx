@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "sileo";
 
 const poppins = Poppins({
@@ -22,10 +23,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={poppins.variable}>
+    <html lang="en" className={poppins.variable} suppressHydrationWarning>
       <body className="font-sans min-h-full flex flex-col antialiased">
-        <TooltipProvider>{children}</TooltipProvider>
-        <Toaster position="top-center" theme="dark" options={{ fill: "#313131" }} />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          <TooltipProvider>{children}</TooltipProvider>
+          <Toaster position="top-center" theme="dark" options={{ fill: "#313131" }} />
+        </ThemeProvider>
       </body>
     </html>
   );
