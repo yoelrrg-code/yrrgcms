@@ -85,7 +85,7 @@ Respond ONLY with a valid JSON object matching this structure (no extra text or 
       headers: {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+        "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001",
         "X-Title": process.env.NEXT_PUBLIC_SITE_NAME || "YRRG CMS",
       },
       body: JSON.stringify({

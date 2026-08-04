@@ -15,20 +15,27 @@ export function AnimatedBlockWrapper({
   animation = "fade-up",
   className = "",
 }: AnimatedBlockWrapperProps) {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(() => index === 0);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (isVisible) return;
+
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 1000);
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
+          clearTimeout(timer);
           if (ref.current) observer.unobserve(ref.current);
         }
       },
       {
-        threshold: 0.1,
-        rootMargin: "0px 0px -50px 0px",
+        threshold: 0.05,
+        rootMargin: "50px 0px 50px 0px",
       }
     );
 
@@ -36,8 +43,11 @@ export function AnimatedBlockWrapper({
       observer.observe(ref.current);
     }
 
-    return () => observer.disconnect();
-  }, []);
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, [isVisible]);
 
   const delay = Math.min(index * 120, 480);
 

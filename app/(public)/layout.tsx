@@ -2,6 +2,7 @@ import Header from "@/components/site/Header";
 import Footer from "@/components/site/Footer";
 import { getActiveTheme } from "@/lib/actions/themes";
 import { AosInitializer } from "@/components/site/aos-initializer";
+import { ThemeCleanup } from "@/components/site/theme-cleanup";
 
 type HeadingConfig = {
   color?: string;
@@ -14,7 +15,7 @@ export default async function PublicLayout({
   children: React.ReactNode;
 }) {
   const activeTheme = await getActiveTheme();
-  
+
   const themeConfig = activeTheme?.config as {
     colors?: {
       primary?: string;
@@ -73,6 +74,7 @@ export default async function PublicLayout({
 
   return (
     <div className="public-layout-root min-h-screen flex flex-col flex-1">
+      <ThemeCleanup />
       <style
         dangerouslySetInnerHTML={{
           __html: `
