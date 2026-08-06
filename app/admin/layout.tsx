@@ -1,21 +1,24 @@
 "use client";
 
-import { useLayoutEffect, useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useTheme } from "next-themes";
 
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? useLayoutEffect : useEffect;
-
 function AdminThemeInitializer() {
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const initialized = useRef(false);
 
-  useIsomorphicLayoutEffect(() => {
-    document.documentElement.classList.remove("light");
-    document.documentElement.classList.add("dark");
-    try {
-      setTheme("dark");
-    } catch {}
-  }, [setTheme]);
+  useEffect(() => {
+    if (!initialized.current) {
+      initialized.current = true;
+      if (theme !== "dark") {
+        document.documentElement.classList.remove("light");
+        document.documentElement.classList.add("dark");
+        try {
+          setTheme("dark");
+        } catch {}
+      }
+    }
+  }, [theme, setTheme]);
 
   return null;
 }

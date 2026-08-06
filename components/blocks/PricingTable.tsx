@@ -48,15 +48,15 @@ export default function PricingTable({
   );
 }
 
-function PricingCard({ plan, delay }: { plan: PricingPlan; delay: number }) {
+function PricingCard({ plan }: { plan: PricingPlan; delay: number }) {
   const { highlighted } = plan;
 
   return (
     <div
-      className={`group card-hover-effect relative flex flex-col rounded-3xl p-8 transition-all duration-300 hover:-translate-y-2.5 ${
+      className={`group card-hover-effect relative flex flex-col rounded-3xl p-8 ${
         highlighted
-          ? "bg-gradient-to-b from-[var(--theme-primary,#4f46e5)] via-[var(--theme-primary,#4f46e5)] to-indigo-700 text-white shadow-2xl shadow-indigo-500/30 ring-2 ring-indigo-400/50 hover:shadow-indigo-500/50 hover:scale-[1.02]"
-          : "bg-[var(--theme-card-bg,rgba(255,255,255,0.85))] dark:bg-slate-900/80 backdrop-blur-md border border-[var(--theme-card-border,rgba(226,232,240,0.8))] dark:border-slate-800 shadow-sm hover:shadow-2xl hover:border-indigo-500/30"
+          ? "bg-gradient-to-b from-[var(--theme-primary,#4f46e5)] via-[var(--theme-primary,#4f46e5)] to-indigo-700 text-white shadow-2xl ring-2 ring-indigo-400/50"
+          : "bg-[var(--theme-card-bg,rgba(255,255,255,0.85))] dark:bg-slate-900/80 backdrop-blur-md border border-[var(--theme-card-border,rgba(226,232,240,0.8))] dark:border-slate-800 shadow-sm"
       }`}
     >
       {highlighted && (

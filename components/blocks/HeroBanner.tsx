@@ -94,7 +94,7 @@ export default function HeroBanner({
     }
 
     // Default: simple opacity fade
-    return `absolute inset-0 w-full h-full min-h-[600px] flex items-center justify-center transition-opacity duration-500 ease-in-out ${
+    return `absolute inset-0 w-full h-full flex items-center justify-center transition-opacity duration-500 ease-in-out ${
       isActive
         ? "opacity-100 z-10 pointer-events-auto"
         : "opacity-0 z-0 pointer-events-none"
@@ -106,7 +106,7 @@ export default function HeroBanner({
       className={`relative w-full overflow-hidden overflow-y-hidden bg-slate-950`}
     >
       {/* Outer Hero Frame with constrained height */}
-      <div className="relative flex h-full min-h-[600px] w-full items-center justify-center overflow-hidden">
+      <div className="relative flex h-[80vh] min-h-[600px] w-full items-center justify-center overflow-hidden">
         {/* Slides Container */}
         <div className="absolute inset-0 w-full h-full overflow-hidden">
         {activeSlides.map((slide, idx) => {

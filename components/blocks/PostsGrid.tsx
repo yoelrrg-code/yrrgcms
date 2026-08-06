@@ -136,10 +136,10 @@ type PostRow = {
   categorySlug: string | null;
 };
 
-function PostCard({ post, delay }: { post: PostRow; delay?: number }) {
+function PostCard({ post }: { post: PostRow; delay?: number }) {
   return (
     <article
-      className="group card-hover-effect flex flex-col overflow-hidden rounded-3xl border border-[var(--theme-card-border,rgba(226,232,240,0.8))] dark:border-slate-800/80 bg-[var(--theme-card-bg,rgba(255,255,255,0.85))] dark:bg-slate-900/80 backdrop-blur-md shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:border-indigo-500/30"
+      className="group card-hover-effect flex flex-col overflow-hidden rounded-3xl border border-[var(--theme-card-border,rgba(226,232,240,0.8))] dark:border-slate-800/80 bg-[var(--theme-card-bg,rgba(255,255,255,0.85))] dark:bg-slate-900/80 backdrop-blur-md shadow-sm"
     >
       {/* Featured image */}
       <Link href={`/blog/${post.slug}`} className="block overflow-hidden relative">
