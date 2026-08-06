@@ -103,7 +103,7 @@ export default function HeroBanner({
 
   return (
     <section
-      className={`relative w-full overflow-hidden overflow-y-hidden bg-slate-950`}
+      className={`relative w-full overflow-hidden bg-slate-950`}
     >
       {/* Outer Hero Frame with constrained height */}
       <div className="relative flex h-[80vh] min-h-[600px] w-full items-center justify-center overflow-hidden">

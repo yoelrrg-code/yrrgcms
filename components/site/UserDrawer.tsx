@@ -105,8 +105,8 @@ export function UserDrawer({ user, editHref, isAdminArea }: UserDrawerProps) {
               className="flex items-center justify-between p-3.5 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-slate-200/80 dark:hover:bg-indigo-950/40 transition-all duration-300 hover:shadow-sm font-medium text-sm group"
             >
               <div className="flex items-center gap-3">
-                <User className="w-4 h-4 text-slate-500 group-hover:text-indigo-600 transition-all" />
-                <span className="group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Edit Profile</span>
+                <User className="w-4 h-4 text-slate-500 group-hover:text-slate-800 group-hover:scale-110 transition-all" />
+                <span className="group-hover:text-slate-800 dark:group-hover:text-slate-800 transition-colors">Edit Profile</span>
               </div>
               <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-all duration-300" />
             </Link>
@@ -116,25 +116,25 @@ export function UserDrawer({ user, editHref, isAdminArea }: UserDrawerProps) {
                 <Link
                   href="/my-account/orders"
                   onClick={() => setOpen(false)}
-                  className="flex items-center justify-between p-3.5 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-indigo-50/80 dark:hover:bg-indigo-950/40 transition-all duration-300 hover:translate-x-1.5 hover:shadow-sm font-medium text-sm group"
+                  className="flex items-center justify-between p-3.5 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-slate-200/80 dark:hover:bg-indigo-950/40 transition-all duration-300 hover:shadow-sm font-medium text-sm group"
                 >
                   <div className="flex items-center gap-3">
-                    <ShoppingBag className="w-4 h-4 text-slate-500 group-hover:text-indigo-600 group-hover:scale-110 transition-all" />
-                    <span className="group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">My Orders & Downloads</span>
+                    <ShoppingBag className="w-4 h-4 text-slate-500 group-hover:text-slate-800 group-hover:scale-110 transition-all" />
+                    <span className="group-hover:text-slate-800 dark:group-hover:text-slate-800 transition-colors">My Orders & Downloads</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all duration-300" />
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-all duration-300" />
                 </Link>
 
                 <Link
                   href="/my-account/courses"
                   onClick={() => setOpen(false)}
-                  className="flex items-center justify-between p-3.5 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-indigo-50/80 dark:hover:bg-indigo-950/40 transition-all duration-300 hover:translate-x-1.5 hover:shadow-sm font-medium text-sm group"
+                  className="flex items-center justify-between p-3.5 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-slate-200/80 dark:hover:bg-indigo-950/40 transition-all duration-300 hover:shadow-sm font-medium text-sm group"
                 >
                   <div className="flex items-center gap-3">
-                    <GraduationCap className="w-4 h-4 text-slate-500 group-hover:text-indigo-600 group-hover:scale-110 transition-all" />
-                    <span className="group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">My Enrolled Courses</span>
+                    <GraduationCap className="w-4 h-4 text-slate-500 group-hover:text-slate-800 group-hover:scale-110 transition-all" />
+                    <span className="group-hover:text-slate-800 dark:group-hover:text-slate-800 transition-colors">My Enrolled Courses</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all duration-300" />
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-all duration-300" />
                 </Link>
               </>
             )}

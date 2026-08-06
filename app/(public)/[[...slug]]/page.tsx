@@ -56,7 +56,7 @@ export default async function PublicPage({
   const blocks = (page.blocks as Block[]) || [];
 
   return (
-    <main className="min-h-screen overflow-x-hidden">
+    <main className="overflow-hidden">
       {blocks.length === 0 && (
         <div className="py-20 text-center text-muted-foreground">
           This page has no content.
