@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "sileo";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700"],
@@ -24,8 +25,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={poppins.variable} suppressHydrationWarning>
       <body className="font-sans min-h-full flex flex-col antialiased">
-        <TooltipProvider>{children}</TooltipProvider>
-        <Toaster position="top-center" theme="dark" options={{ fill: "#313131" }} />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          <TooltipProvider>{children}</TooltipProvider>
+          <Toaster position="top-center" theme="dark" options={{ fill: "#313131" }} />
+        </ThemeProvider>
       </body>
     </html>
   );

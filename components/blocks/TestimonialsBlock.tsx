@@ -81,47 +81,50 @@ export function TestimonialsBlock({
       {layout === "slider" ? (
         <div className="relative max-w-4xl mx-auto">
           {/* SLIDER CARD */}
-          <div className="bg-card border rounded-3xl p-8 sm:p-12 shadow-xl relative overflow-hidden transition-all duration-300">
-            <Quote className="absolute top-6 right-6 size-16 text-primary/10 -rotate-12 pointer-events-none" />
+          <div
+            key={currentIndex}
+            className="card-hover-effect bg-[var(--theme-card-bg,rgba(255,255,255,0.85))] dark:bg-slate-900/90 backdrop-blur-md border border-[var(--theme-card-border,rgba(226,232,240,0.8))] dark:border-slate-800 rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden transition-all duration-300 animate-in fade-in slide-in-from-right-6 duration-500 ease-out"
+          >
+            <Quote className="absolute top-6 right-6 size-24 text-[var(--theme-primary,var(--primary))] opacity-10 -rotate-12 pointer-events-none" />
 
             <div className="space-y-6 relative z-10">
               {/* Rating */}
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star
                     key={i}
                     className={`size-5 ${
                       i < items[currentIndex].rating
                         ? "fill-amber-400 text-amber-400"
-                        : "fill-muted text-muted-foreground/30"
+                        : "fill-slate-200 dark:fill-slate-800 text-slate-300 dark:text-slate-700"
                     }`}
                   />
                 ))}
               </div>
 
               {/* Quote Content */}
-              <blockquote className="text-lg sm:text-xl font-medium leading-relaxed italic text-foreground">
+              <blockquote className="text-xl sm:text-2xl font-semibold leading-relaxed italic text-[var(--theme-h3-color,currentColor)] dark:text-white">
                 &quot;{items[currentIndex].content}&quot;
               </blockquote>
 
               {/* Author Info */}
-              <div className="flex items-center gap-4 pt-4 border-t">
+              <div className="flex items-center gap-4 pt-6 border-t border-[var(--theme-card-border,rgba(226,232,240,0.6))] dark:border-slate-800">
                 {items[currentIndex].avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={items[currentIndex].avatarUrl!}
                     alt={items[currentIndex].name}
-                    className="size-12 rounded-full object-cover border-2 border-primary/20"
+                    className="size-14 rounded-full object-cover ring-2 ring-[var(--theme-primary,var(--primary))]"
                   />
                 ) : (
-                  <div className="size-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-                    <UserIcon className="size-6" />
+                  <div className="size-14 rounded-full bg-indigo-500/10 ring-2 ring-indigo-500/20 flex items-center justify-center text-[var(--theme-primary,var(--primary))]">
+                    <UserIcon className="size-7" />
                   </div>
                 )}
                 <div>
-                  <h4 className="font-bold text-base">{items[currentIndex].name}</h4>
+                  <h4 className="font-extrabold text-base text-[var(--theme-h3-color,currentColor)] dark:text-white">{items[currentIndex].name}</h4>
                   {items[currentIndex].role && (
-                    <p className="text-xs text-muted-foreground">{items[currentIndex].role}</p>
+                    <p className="text-xs font-medium text-[var(--theme-p-color,#64748b)] dark:text-slate-400">{items[currentIndex].role}</p>
                   )}
                 </div>
               </div>
@@ -136,8 +139,8 @@ export function TestimonialsBlock({
                   <button
                     key={idx}
                     onClick={() => setCurrentIndex(idx)}
-                    className={`h-2 rounded-full transition-all ${
-                      idx === currentIndex ? "w-8 bg-primary" : "w-2 bg-muted hover:bg-muted-foreground/40"
+                    className={`h-2.5 rounded-full transition-all duration-300 ${
+                      idx === currentIndex ? "w-8 bg-[var(--theme-primary,var(--primary))]" : "w-2.5 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400"
                     }`}
                     aria-label={`Go to slide ${idx + 1}`}
                   />
@@ -145,11 +148,11 @@ export function TestimonialsBlock({
               </div>
 
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="icon" className="rounded-full size-9" onClick={handlePrev}>
-                  <ChevronLeft className="size-4" />
+                <Button variant="outline" size="icon" className="btn-hover-effect rounded-full size-10 border-slate-300 dark:border-slate-700 shadow-sm hover:scale-110 active:scale-95 hover:shadow-md transition-all duration-300" onClick={handlePrev}>
+                  <ChevronLeft className="size-5" />
                 </Button>
-                <Button variant="outline" size="icon" className="rounded-full size-9" onClick={handleNext}>
-                  <ChevronRight className="size-4" />
+                <Button variant="outline" size="icon" className="btn-hover-effect rounded-full size-10 border-slate-300 dark:border-slate-700 shadow-sm hover:scale-110 active:scale-95 hover:shadow-md transition-all duration-300" onClick={handleNext}>
+                  <ChevronRight className="size-5" />
                 </Button>
               </div>
             </div>
@@ -161,34 +164,34 @@ export function TestimonialsBlock({
           {items.map((item) => (
             <div
               key={item.id}
-              className="bg-card border rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-primary/40 transition-all flex flex-col justify-between space-y-4"
+              className="card-hover-effect bg-[var(--theme-card-bg,rgba(255,255,255,0.85))] dark:bg-slate-900/80 backdrop-blur-md border border-[var(--theme-card-border,rgba(226,232,240,0.8))] dark:border-slate-800 rounded-3xl p-7 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:border-indigo-500/30 transition-all duration-300 flex flex-col justify-between space-y-6"
             >
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div className="flex items-center gap-1">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star
                       key={i}
                       className={`size-4 ${
-                        i < item.rating ? "fill-amber-400 text-amber-400" : "fill-muted text-muted-foreground/30"
+                        i < item.rating ? "fill-amber-400 text-amber-400" : "fill-slate-200 dark:fill-slate-800 text-slate-300 dark:text-slate-700"
                       }`}
                     />
                   ))}
                 </div>
-                <p className="text-sm text-muted-foreground italic leading-relaxed">&quot;{item.content}&quot;</p>
+                <p className="text-sm text-[var(--theme-p-color,#475569)] dark:text-slate-300 italic leading-relaxed">&quot;{item.content}&quot;</p>
               </div>
 
-              <div className="flex items-center gap-3 pt-3 border-t">
+              <div className="flex items-center gap-3 pt-4 border-t border-[var(--theme-card-border,rgba(226,232,240,0.6))] dark:border-slate-800">
                 {item.avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={item.avatarUrl} alt={item.name} className="size-10 rounded-full object-cover border" />
+                  <img src={item.avatarUrl} alt={item.name} className="size-10 rounded-full object-cover ring-2 ring-[var(--theme-primary,var(--primary))]" />
                 ) : (
-                  <div className="size-10 rounded-full bg-muted border flex items-center justify-center text-muted-foreground">
+                  <div className="size-10 rounded-full bg-indigo-500/10 ring-1 ring-indigo-500/20 flex items-center justify-center text-[var(--theme-primary,var(--primary))]">
                     <UserIcon className="size-5" />
                   </div>
                 )}
                 <div>
-                  <h4 className="font-bold text-sm leading-tight">{item.name}</h4>
-                  {item.role && <p className="text-xs text-muted-foreground">{item.role}</p>}
+                  <h4 className="font-bold text-sm text-[var(--theme-h3-color,currentColor)] dark:text-white">{item.name}</h4>
+                  {item.role && <p className="text-xs text-slate-500 dark:text-slate-400">{item.role}</p>}
                 </div>
               </div>
             </div>

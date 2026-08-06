@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { users } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import Link from "next/link";
-import { GraduationCap, User, ShoppingBag } from "lucide-react";
+import { GraduationCap, User, ShoppingBag, ShieldCheck } from "lucide-react";
 import ProfileForm from "./ProfileForm";
 import { AccountBreadcrumbs } from "@/components/AccountBreadcrumbs";
 
@@ -39,7 +39,7 @@ export default async function MyAccountPage() {
     <div className="container max-w-5xl mx-auto py-10 px-4 space-y-8">
       <AccountBreadcrumbs />
 
-      <div data-aos="fade-down">
+      <div>
         <h1 className="text-3xl font-extrabold tracking-tight">My Account</h1>
         <p className="text-slate-500 text-sm mt-1">
           Manage your account profile, access your purchased digital/physical products, and view enrolled courses.
@@ -51,14 +51,13 @@ export default async function MyAccountPage() {
         <div className="md:col-span-1 space-y-6">
           {/* Purchased Orders & Digital Downloads Card */}
           <div 
-            data-aos="fade-right"
-            className="text-white rounded-3xl p-6 flex flex-col justify-between space-y-6 shadow-md border border-slate-800/20"
+            className="group card-hover-effect text-white rounded-3xl p-6 flex flex-col justify-between space-y-6 shadow-md border border-slate-800/20 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
             style={{
               backgroundColor: "var(--theme-primary, #4f46e5)",
             }}
           >
             <div className="space-y-3">
-              <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
                 <ShoppingBag className="h-6 w-6 text-white" />
               </div>
               <h2 className="text-xl font-bold" style={{ color: "#ffffff" }}>My Orders & Downloads</h2>
@@ -69,7 +68,7 @@ export default async function MyAccountPage() {
 
             <Link
               href="/my-account/orders"
-              className="w-full py-3 font-bold text-sm rounded-xl text-center transition block shadow-sm theme-btn-link"
+              className="btn-hover-effect w-full py-3 font-bold text-sm rounded-xl text-center transition-all duration-300 block shadow-sm hover:scale-105 active:scale-95 theme-btn-link"
               style={{
                 backgroundColor: "#ffffff",
                 color: "var(--theme-primary, #4f46e5)",
@@ -82,15 +81,13 @@ export default async function MyAccountPage() {
 
           {/* Course Access Card */}
           <div 
-            data-aos="fade-right"
-            data-aos-delay="100"
-            className="text-white rounded-3xl p-6 flex flex-col justify-between space-y-6 shadow-md border border-slate-800/20"
+            className="group card-hover-effect text-white rounded-3xl p-6 flex flex-col justify-between space-y-6 shadow-md border border-slate-800/20 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
             style={{
               backgroundColor: "var(--theme-secondary, #0f172a)",
             }}
           >
             <div className="space-y-3">
-              <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
                 <GraduationCap className="h-6 w-6 text-white" />
               </div>
               <h2 className="text-xl font-bold" style={{ color: "#ffffff" }}>My Courses</h2>
@@ -101,7 +98,7 @@ export default async function MyAccountPage() {
 
             <Link
               href="/my-account/courses"
-              className="w-full py-3 font-bold text-sm rounded-xl text-center transition block border border-white/20 hover:bg-white/10"
+              className="btn-hover-effect w-full py-3 font-bold text-sm rounded-xl text-center transition-all duration-300 block border border-white/20 hover:bg-white/10 hover:scale-105 active:scale-95"
               style={{
                 color: "#ffffff",
                 borderRadius: "var(--theme-button-radius, 0.75rem)",
@@ -113,7 +110,7 @@ export default async function MyAccountPage() {
         </div>
 
         {/* Profile Details & Password Update */}
-        <div data-aos="fade-left" className="md:col-span-2 bg-card border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-6">
+        <div className="card-hover-effect md:col-span-2 bg-card border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-6 transition-all duration-300 hover:shadow-xl">
           <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
             <User className="h-5 w-5" style={{ color: "var(--theme-primary, #4f46e5)" }} />
             <div>

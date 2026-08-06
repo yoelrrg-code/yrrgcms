@@ -58,7 +58,7 @@ export default async function PostsGrid({
     return (
       <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} py-20 px-6`}>
         {title && (
-          <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-[var(--theme-h2-color,currentColor)] sm:text-4xl" data-aos="fade-down">
+          <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-[var(--theme-h2-color,currentColor)] sm:text-4xl">
             {title}
           </h2>
         )}
@@ -89,7 +89,7 @@ export default async function PostsGrid({
       <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} py-20 px-6`}>
         <div className="mx-auto max-w-6xl">
           {title && (
-            <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-[var(--theme-h2-color,currentColor)] sm:text-4xl" data-aos="fade-down">
+            <h2 className="mb-12 text-center text-3xl font-bold tracking-tight text-[var(--theme-h2-color,currentColor)] sm:text-4xl">
               {title}
             </h2>
           )}
@@ -139,24 +139,22 @@ type PostRow = {
 function PostCard({ post, delay }: { post: PostRow; delay?: number }) {
   return (
     <article
-      data-aos="fade-up"
-      data-aos-delay={delay}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-muted-foreground/10"
+      className="group card-hover-effect flex flex-col overflow-hidden rounded-3xl border border-[var(--theme-card-border,rgba(226,232,240,0.8))] dark:border-slate-800/80 bg-[var(--theme-card-bg,rgba(255,255,255,0.85))] dark:bg-slate-900/80 backdrop-blur-md shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:border-indigo-500/30"
     >
       {/* Featured image */}
-      <Link href={`/blog/${post.slug}`} className="block overflow-hidden">
+      <Link href={`/blog/${post.slug}`} className="block overflow-hidden relative">
         {post.featuredImageUrl ? (
-          <div className="relative aspect-video">
+          <div className="relative aspect-[16/10] overflow-hidden">
             <Image
               src={post.featuredImageUrl}
               alt={post.title}
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className="img-zoom-effect object-cover transition-transform duration-700 ease-out group-hover:scale-110"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           </div>
         ) : (
-          <div className="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center">
+          <div className="aspect-[16/10] bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-10 w-10 text-slate-400"
@@ -175,12 +173,12 @@ function PostCard({ post, delay }: { post: PostRow; delay?: number }) {
         )}
       </Link>
 
-      <div className="flex flex-1 flex-col gap-3 p-6">
+      <div className="flex flex-1 flex-col gap-3.5 p-6">
         {/* Category badge */}
         {post.categoryName && (
           <Link
             href={`/blog/category/${post.categorySlug}`}
-            className="w-fit rounded-full bg-theme-primary/10 px-3 py-0.5 text-xs font-semibold text-theme-primary ring-1 ring-theme-primary/20 transition-colors hover:bg-theme-primary/20"
+            className="w-fit rounded-full bg-indigo-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[var(--theme-primary,var(--primary))] ring-1 ring-indigo-500/20 transition-all hover:bg-indigo-500/20"
           >
             {post.categoryName}
           </Link>
@@ -188,23 +186,23 @@ function PostCard({ post, delay }: { post: PostRow; delay?: number }) {
 
         {/* Title */}
         <Link href={`/blog/${post.slug}`}>
-          <h3 className="text-lg font-bold leading-snug text-[var(--theme-h3-color,currentColor)] transition-colors group-hover:text-[var(--theme-primary,var(--primary))] line-clamp-2">
+          <h3 className="text-xl font-extrabold leading-snug text-[var(--theme-h3-color,currentColor)] dark:text-white transition-colors group-hover:text-[var(--theme-primary,var(--primary))] line-clamp-2">
             {post.title}
           </h3>
         </Link>
 
         {/* Excerpt */}
         {post.excerpt && (
-          <p className="flex-1 text-sm text-[var(--theme-p-color,var(--muted-foreground,currentColor))] line-clamp-3">
+          <p className="flex-1 text-sm text-[var(--theme-p-color,#64748b)] dark:text-slate-400 leading-relaxed line-clamp-3">
             {post.excerpt}
           </p>
         )}
 
         {/* Meta */}
-        <div className="mt-auto flex items-center gap-2 pt-2 text-xs text-[var(--theme-p-color,var(--muted-foreground,currentColor))] opacity-80">
-          {post.authorName && <span>{post.authorName}</span>}
+        <div className="mt-auto flex items-center gap-2 pt-3 border-t border-[var(--theme-card-border,rgba(226,232,240,0.6))] dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 font-medium">
+          {post.authorName && <span>By {post.authorName}</span>}
           {post.authorName && post.publishedAt && (
-            <span className="text-border">·</span>
+            <span>·</span>
           )}
           {post.publishedAt && (
             <time dateTime={post.publishedAt.toISOString()}>
@@ -224,8 +222,6 @@ function PostCard({ post, delay }: { post: PostRow; delay?: number }) {
 function PostListItem({ post, delay }: { post: PostRow; delay?: number }) {
   return (
     <article
-      data-aos="fade-up"
-      data-aos-delay={delay}
       className="group flex gap-6 py-8"
     >
       {/* Thumbnail */}

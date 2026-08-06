@@ -44,7 +44,7 @@ export default async function MisCursosPage() {
     <div className="container max-w-5xl mx-auto py-10 px-4 space-y-8">
       <AccountBreadcrumbs />
 
-      <div data-aos="fade-down">
+      <div>
         <h1 className="text-3xl font-extrabold tracking-tight" style={{ color: "var(--theme-h1-color, var(--theme-text, inherit))" }}>My Courses</h1>
         <p className="text-sm mt-1" style={{ color: "var(--theme-p-color, inherit)" }}>
           Access all virtual courses and educational materials active on your account.
@@ -52,7 +52,7 @@ export default async function MisCursosPage() {
       </div>
 
       {userEnrollments.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 p-12 text-center space-y-4" data-aos="zoom-in">
+        <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 p-12 text-center space-y-4">
           <GraduationCap className="h-12 w-12 mx-auto text-slate-400 opacity-60" />
           <h3 className="text-lg font-bold" style={{ color: "var(--theme-h3-color, var(--theme-text, inherit))" }}>
             No Enrolled Courses Yet
@@ -62,7 +62,7 @@ export default async function MisCursosPage() {
           </p>
           <Link
             href="/courses"
-            className="inline-flex items-center gap-2 px-5 py-2.5 font-semibold text-sm rounded-xl transition hover:opacity-50"
+            className="btn-hover-effect inline-flex items-center gap-2 px-5 py-2.5 font-semibold text-sm rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 shadow-md"
             style={{
               backgroundColor: "var(--theme-button-bg, var(--theme-primary, #4f46e5))",
               color: "var(--theme-button-text, #ffffff)",
@@ -74,12 +74,10 @@ export default async function MisCursosPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {userEnrollments.map((item, index) => (
+          {userEnrollments.map((item) => (
             <div
               key={item.enrollmentId}
-              data-aos="fade-up"
-              data-aos-delay={(index % 3) * 150}
-              className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-card p-6 flex flex-col justify-between space-y-4 hover:shadow-lg transition"
+              className="group card-hover-effect rounded-2xl border border-slate-200 dark:border-slate-800 bg-card p-6 flex flex-col justify-between space-y-4 hover:shadow-2xl hover:-translate-y-2 hover:border-indigo-500/30 transition-all duration-300"
             >
               <div className="space-y-2">
                 <span 
@@ -90,14 +88,14 @@ export default async function MisCursosPage() {
                 >
                   {item.level}
                 </span>
-                <h2 className="text-xl font-bold line-clamp-2" style={{ color: "var(--theme-h2-color, var(--theme-text, inherit))" }}>
+                <h2 className="text-xl font-bold line-clamp-2 group-hover:text-[var(--theme-primary,#4f46e5)] transition-colors duration-300" style={{ color: "var(--theme-h2-color, var(--theme-text, inherit))" }}>
                   {item.productTitle}
                 </h2>
               </div>
 
               <Link
                 href={`/my-account/courses/${item.productSlug}`}
-                className="w-full py-3 font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition hover:opacity-50"
+                className="btn-hover-effect w-full py-3 font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 active:scale-95 shadow-md"
                 style={{
                   backgroundColor: "var(--theme-button-bg, var(--theme-primary, #4f46e5))",
                   color: "var(--theme-button-text, #ffffff)",

@@ -83,10 +83,8 @@ export default function HeroBanner({
     const isActive = idx === activeIndex;
     const isPrev = idx < activeIndex;
 
-    const baseClasses = "absolute inset-0 w-full h-full flex items-center justify-center transition-all";
-
     if (transitionEffect === "slide") {
-      return `${baseClasses} duration-700 ease-in-out ${
+      return `absolute inset-0 w-full h-full min-h-[600px] flex items-center justify-center transition-transform duration-500 ease-in-out ${
         isActive
           ? "translate-x-0 opacity-100 z-10 pointer-events-auto"
           : isPrev
@@ -95,18 +93,8 @@ export default function HeroBanner({
       }`;
     }
 
-    if (transitionEffect === "zoom") {
-      return `${baseClasses} duration-1000 ease-out ${
-        isActive
-          ? "scale-100 opacity-100 z-10 pointer-events-auto"
-          : isPrev
-          ? "scale-95 opacity-0 z-0 pointer-events-none"
-          : "scale-105 opacity-0 z-0 pointer-events-none"
-      }`;
-    }
-
-    // Default: fade
-    return `${baseClasses} duration-1000 ease-in-out ${
+    // Default: simple opacity fade
+    return `absolute inset-0 w-full h-full min-h-[600px] flex items-center justify-center transition-opacity duration-500 ease-in-out ${
       isActive
         ? "opacity-100 z-10 pointer-events-auto"
         : "opacity-0 z-0 pointer-events-none"
@@ -115,15 +103,16 @@ export default function HeroBanner({
 
   return (
     <section
-      className={`${paddingTop || "pt-12"} ${
-        paddingBottom || "pb-12"
-      } relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950`}
+      className={`relative w-full overflow-hidden overflow-y-hidden bg-slate-950`}
     >
-      {/* Slides Container */}
-      <div className="absolute inset-0 w-full h-full">
+      {/* Outer Hero Frame with constrained height */}
+      <div className="relative flex h-full min-h-[600px] w-full items-center justify-center overflow-hidden">
+        {/* Slides Container */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
         {activeSlides.map((slide, idx) => {
           const overlay = slide.overlayColor ?? "rgba(0, 0, 0, 0.55)";
           const slideClass = getSlideClasses(idx);
+          const isActive = idx === activeIndex;
 
           return (
             <div
@@ -139,8 +128,9 @@ export default function HeroBanner({
                   src={slide.backgroundImage}
                   alt=""
                   fill
-                  priority
-                  className="object-cover object-center"
+                  priority={idx === 0}
+                  className="object-cover object-center w-full h-full"
+                  style={{ objectFit: "cover", objectPosition: "center" }}
                   sizes="100vw"
                 />
               ) : (
@@ -159,44 +149,59 @@ export default function HeroBanner({
                 style={{ background: overlay }}
               />
 
-              {/* Content Container - only rendered when active so AOS animations run on mount */}
-              {activeIndex === idx && (
+              {/* Content Container - active slide */}
+              {isActive && (
                 <div
-                  data-aos="fade-up"
-                  data-aos-duration="1000"
-                  className="relative z-10 mx-auto max-w-4xl px-6 py-24 text-center"
+                  className="relative z-10 mx-auto max-w-4xl px-6 py-20 text-center flex flex-col items-center justify-center space-y-6"
                 >
-                  <h1 className="mb-6 text-5xl font-extrabold leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-50 to-slate-200 sm:text-6xl lg:text-7xl drop-shadow-md">
+                  {/* Subtle Badge Tag */}
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 dark:bg-white/5 border border-white/20 text-xs font-semibold tracking-wide text-white uppercase backdrop-blur-md shadow-sm">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                    <span>Featured Highlight</span>
+                  </div>
+
+                  {/* Title */}
+                  <h1 className="text-4xl font-black leading-tight tracking-tight text-white sm:text-6xl lg:text-7xl drop-shadow-lg">
                     {slide.title}
                   </h1>
 
+                  {/* Subtitle */}
                   {slide.subtitle && (
-                    <p className="mx-auto mb-10 max-w-2xl text-lg text-slate-200/90 sm:text-xl leading-relaxed font-light drop-shadow">
+                    <p className="max-w-2xl text-base text-slate-200/90 sm:text-xl leading-relaxed font-normal drop-shadow">
                       {slide.subtitle}
                     </p>
                   )}
 
+                  {/* CTA Button */}
                   {slide.ctaText && slide.ctaUrl && (
-                    <Button
-                      render={<Link href={slide.ctaUrl} />}
-                      className="group/btn relative px-8 py-6 text-base font-medium shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-300"
-                    >
-                      {slide.ctaText}
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4 ml-2 transition-transform duration-300 group-hover/btn:translate-x-1"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
+                    <div className="pt-4">
+                      <Button
+                        render={<Link href={slide.ctaUrl} />}
+                        style={{
+                          backgroundColor: "var(--theme-button-bg, var(--primary))",
+                          color: "var(--theme-button-text, #ffffff)",
+                          borderRadius: "var(--theme-button-radius, 9999px)",
+                          padding: "var(--theme-button-padding, 0.875rem 2rem)",
+                        }}
+                        className="group/btn relative inline-flex items-center gap-2 text-base font-semibold shadow-lg border-0"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M17 8l4 4m0 0l-4 4m4-4H3"
-                        />
-                      </svg>
-                    </Button>
+                        <span>{slide.ctaText}</span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M17 8l4 4m0 0l-4 4m4-4H3"
+                          />
+                        </svg>
+                      </Button>
+                    </div>
                   )}
                 </div>
               )}
@@ -222,7 +227,7 @@ export default function HeroBanner({
           <button
             type="button"
             onClick={goPrev}
-            className="absolute left-6 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/10 bg-black/20 p-2 text-white/70 backdrop-blur-sm transition-all hover:bg-black/40 hover:text-white hover:scale-105 active:scale-95"
+            className="absolute left-6 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/20 bg-black/30 p-3 text-white/80 backdrop-blur-md shadow-md"
             aria-label="Previous slide"
           >
             <ChevronLeft className="size-6" />
@@ -232,7 +237,7 @@ export default function HeroBanner({
           <button
             type="button"
             onClick={goNext}
-            className="absolute right-6 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/10 bg-black/20 p-2 text-white/70 backdrop-blur-sm transition-all hover:bg-black/40 hover:text-white hover:scale-105 active:scale-95"
+            className="absolute right-6 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/20 bg-black/30 p-3 text-white/80 backdrop-blur-md shadow-md"
             aria-label="Next slide"
           >
             <ChevronRight className="size-6" />
@@ -245,8 +250,10 @@ export default function HeroBanner({
                 key={idx}
                 type="button"
                 onClick={() => setActiveIndex(idx)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  activeIndex === idx ? "w-8 bg-white" : "w-2 bg-white/40 hover:bg-white/60"
+                className={`h-2.5 rounded-full transition-all duration-500 ease-out ${
+                  activeIndex === idx
+                    ? "w-10 bg-[var(--theme-primary,var(--primary))] shadow-md shadow-white/30"
+                    : "w-2.5 bg-slate-500 dark:bg-slate-700 hover:bg-slate-400"
                 }`}
                 aria-label={`Go to slide ${idx + 1}`}
               />
@@ -260,6 +267,7 @@ export default function HeroBanner({
         aria-hidden
         className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-25 pointer-events-none"
       />
+      </div>
     </section>
   );
 }

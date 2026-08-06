@@ -30,7 +30,13 @@ export interface NavItem {
   children?: NavItem[];
 }
 
-export default async function Header({ transparency }: { transparency?: number }) {
+export default async function Header({
+  transparency,
+  isFixed = true,
+}: {
+  transparency?: number;
+  isFixed?: boolean;
+}) {
   const headerData = ((await getGlobal("header")) as HeaderConfig) || {};
   const menuData = await getMenuByLocation("header");
   const session = await auth();
@@ -54,7 +60,7 @@ export default async function Header({ transparency }: { transparency?: number }
 
   return (
     <header 
-      className="sticky top-0 z-50 w-full border-b"
+      className={`${isFixed ? "sticky top-0" : "relative"} z-50 w-full border-b`}
       style={headerStyle}
     >
       <div className="container mx-auto flex h-16 items-center justify-between px-4" style={{ padding: 'inherit' }}>

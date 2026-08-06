@@ -1,7 +1,6 @@
 import Header from "@/components/site/Header";
 import Footer from "@/components/site/Footer";
 import { getActiveTheme } from "@/lib/actions/themes";
-import { AosInitializer } from "@/components/site/aos-initializer";
 import { ThemeCleanup } from "@/components/site/theme-cleanup";
 
 type HeadingConfig = {
@@ -24,6 +23,9 @@ export default async function PublicLayout({
       text?: string;
       link?: string;
       menuLink?: string;
+      cardBg?: string;
+      cardBorder?: string;
+      shadowGlow?: string;
     };
     layout?: {
       buttonStyle?: "primary" | "secondary";
@@ -53,6 +55,7 @@ export default async function PublicLayout({
       transparency?: number;
       blur?: number;
       padding?: string;
+      isFixed?: boolean;
     };
     footer?: {
       background?: string;
@@ -85,6 +88,9 @@ export default async function PublicLayout({
               ${themeConfig?.colors?.secondary ? `--theme-secondary: ${themeConfig.colors.secondary};` : ""}
               ${themeConfig?.colors?.background ? `--theme-background: ${themeConfig.colors.background};` : ""}
               ${themeConfig?.colors?.menuLink ? `--theme-menu-link: ${themeConfig.colors.menuLink};` : ""}
+              ${themeConfig?.colors?.cardBg ? `--theme-card-bg: ${themeConfig.colors.cardBg};` : ""}
+              ${themeConfig?.colors?.cardBorder ? `--theme-card-border: ${themeConfig.colors.cardBorder};` : ""}
+              ${themeConfig?.colors?.shadowGlow ? `--theme-shadow-glow: ${themeConfig.colors.shadowGlow};` : ""}
               
               ${btnBg ? `--theme-button-bg: ${btnBg};` : ""}
               ${btnText ? `--theme-button-text: ${btnText};` : ""}
@@ -134,8 +140,10 @@ export default async function PublicLayout({
           `,
         }}
       />
-      <AosInitializer />
-      <Header transparency={themeConfig?.header?.transparency} />
+      <Header
+        transparency={themeConfig?.header?.transparency}
+        isFixed={themeConfig?.header?.isFixed !== false}
+      />
       <div 
         className="flex-1"
         style={{ padding: themeConfig?.layout?.contentPadding ? "var(--theme-content-padding)" : undefined }}

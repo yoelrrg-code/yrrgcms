@@ -16,6 +16,9 @@
   --color-theme-button-text: var(--theme-button-text, var(--primary-foreground));
   --color-theme-header: var(--theme-header-bg, var(--background));
   --color-theme-footer: var(--theme-footer-bg, var(--muted));
+  --color-theme-card-bg: var(--theme-card-bg, rgba(255, 255, 255, 0.85));
+  --color-theme-card-border: var(--theme-card-border, rgba(226, 232, 240, 0.8));
+  --color-theme-shadow-glow: var(--theme-shadow-glow, rgba(79, 70, 229, 0.08));
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -194,6 +197,12 @@
 }
 
 /* Premium Public Frontend Styles */
+html,
+body {
+  max-width: 100vw;
+  overflow-x: clip;
+}
+
 .public-layout-root {
   background: radial-gradient(at 0% 0%, rgba(96, 165, 250, 0.05) 0px, transparent 50%),
               radial-gradient(at 50% 0%, rgba(167, 139, 250, 0.04) 0px, transparent 50%),
@@ -201,20 +210,7 @@
               var(--theme-background, #ffffff);
   color: var(--theme-text, #0f172a);
   background-attachment: fixed;
-  background-size: 200% 200%;
-  animation: meshGradient 20s ease infinite;
-}
-
-@keyframes meshGradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+  overflow-x: clip;
 }
 
 @layer base {
@@ -253,3 +249,65 @@
 [data-sileo-viewport] [data-sileo-description] {
   color: #ffffff !important;
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Frontend Blocks & Components Hover Transitions System
+   ───────────────────────────────────────────────────────────── */
+
+/* Card & Block Hover Lift & Glow */
+.card-hover-effect {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.35s ease !important;
+  will-change: transform, box-shadow;
+}
+.card-hover-effect:hover {
+  transform: translateY(-8px) scale(1.01) !important;
+  box-shadow: 0 25px 50px -12px color-mix(in srgb, var(--theme-primary, #4f46e5) 30%, transparent) !important;
+  border-color: color-mix(in srgb, var(--theme-primary, #4f46e5) 45%, transparent) !important;
+}
+
+/* Button Hover Scale & Lift */
+.btn-hover-effect {
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+              background-color 0.25s ease,
+              color 0.25s ease !important;
+  will-change: transform, box-shadow;
+}
+.btn-hover-effect:hover {
+  transform: translateY(-2px) scale(1.04) !important;
+  box-shadow: 0 16px 32px -6px color-mix(in srgb, var(--theme-primary, #4f46e5) 45%, transparent) !important;
+}
+.btn-hover-effect:active {
+  transform: translateY(0) scale(0.96) !important;
+}
+
+/* Smooth Image Scale on Hover */
+.img-zoom-effect {
+  transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+  will-change: transform;
+}
+.group:hover .img-zoom-effect,
+.img-zoom-effect:hover {
+  transform: scale(1.08) !important;
+}
+
+/* Slider Controls Arrow Buttons - Discrete hover without position/scale shift */
+.slider-arrow-btn {
+  transition: background-color 0.25s ease,
+              border-color 0.25s ease,
+              color 0.25s ease,
+              box-shadow 0.25s ease !important;
+}
+.slider-arrow-btn:hover {
+  transform: translateY(-50%) !important;
+  background-color: rgba(255, 255, 255, 0.25) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+}
+.slider-arrow-btn:active {
+  transform: translateY(-50%) !important;
+  background-color: rgba(255, 255, 255, 0.35) !important;
+}
+

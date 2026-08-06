@@ -171,14 +171,14 @@ export default function ContactFormBlock({
     <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} py-20 px-6`}>
       <div className="mx-auto max-w-2xl">
         {title && (
-          <h2 className="mb-10 text-3xl font-bold tracking-tight text-[var(--theme-h2-color,currentColor)] sm:text-4xl">
+          <h2 className="mb-10 text-center text-3xl font-extrabold tracking-tight text-[var(--theme-h2-color,currentColor)] dark:text-white sm:text-4xl">
             {title}
           </h2>
         )}
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-6 rounded-2xl border border-border bg-card/50 backdrop-blur-sm p-8 shadow-md hover:shadow-lg transition-all duration-300"
+          className="space-y-6 rounded-3xl border border-[var(--theme-card-border,rgba(226,232,240,0.8))] dark:border-slate-800 bg-[var(--theme-card-bg,rgba(255,255,255,0.85))] dark:bg-slate-900/80 backdrop-blur-md p-8 sm:p-10 shadow-xl hover:shadow-2xl transition-all duration-300"
           noValidate
         >
           {config!.fields.map((field) => (
@@ -191,33 +191,39 @@ export default function ContactFormBlock({
           ))}
 
           {status === "error" && (
-            <p className="rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">
+            <p className="rounded-xl bg-destructive/10 border border-destructive/20 px-4 py-3 text-sm font-medium text-destructive">
               {errorMessage}
             </p>
           )}
 
-          <Button
-            type="submit"
-            disabled={status === "loading"}
-            className="w-full md:w-auto shadow-sm hover:shadow-md transition-all duration-300 hover:scale-102 active:scale-98"
-          >
-            {status === "loading" && (
-              <svg
-                className="h-4 w-4 animate-spin"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
+          <div className="pt-2">
+            <Button
+              type="submit"
+              disabled={status === "loading"}
+              style={{
+                backgroundColor: "var(--theme-button-bg, var(--theme-primary, var(--primary)))",
+                color: "var(--theme-button-text, #ffffff)",
+                borderRadius: "var(--theme-button-radius, 1rem)",
+              }}
+              className="w-full font-bold py-6 text-base shadow-lg hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95 transition-all duration-300"
+            >
+              {status === "loading" && (
+                <svg
+                  className="mr-2 h-5 w-5 animate-spin"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
                   fill="currentColor"
                   d="M4 12a8 8 0 018-8v8H4z"
                 />
@@ -225,6 +231,7 @@ export default function ContactFormBlock({
             )}
             {status === "loading" ? "Sending…" : "Submit"}
           </Button>
+          </div>
         </form>
       </div>
     </section>

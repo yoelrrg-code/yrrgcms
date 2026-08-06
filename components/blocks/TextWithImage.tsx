@@ -22,21 +22,23 @@ export default function TextWithImage({
   const html = tiptapToHtml(content);
 
   const imageCol = (
-    <div className="group relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 ring-1 ring-black/5 dark:ring-white/10">
+    <div className="group relative aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 ring-1 ring-black/5 dark:ring-white/10">
       <Image
         src={imageUrl}
         alt={imageAlt}
         fill
         loading="eager"
         className="object-cover transition-transform duration-700 group-hover:scale-105"
+        style={{ objectFit: "cover", objectPosition: "center" }}
         sizes="(max-width: 768px) 100vw, 50vw"
       />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
     </div>
   );
 
   const textCol = (
     <div
-      className="prose prose-lg prose-slate dark:prose-invert max-w-none"
+      className="prose prose-lg prose-slate dark:prose-invert max-w-none text-[var(--theme-p-color,#475569)] dark:text-slate-300 prose-headings:text-[var(--theme-h2-color,currentColor)] dark:prose-headings:text-white"
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );
@@ -49,8 +51,8 @@ export default function TextWithImage({
             imagePosition === "right" ? "lg:flex-row-reverse" : ""
           }`}
         >
-          <div className="w-full lg:w-1/2" data-aos={imagePosition === "right" ? "fade-left" : "fade-right"}>{imageCol}</div>
-          <div className="w-full lg:w-1/2" data-aos={imagePosition === "right" ? "fade-right" : "fade-left"}>{textCol}</div>
+          <div className="w-full lg:w-1/2">{imageCol}</div>
+          <div className="w-full lg:w-1/2">{textCol}</div>
         </div>
       </div>
     </section>

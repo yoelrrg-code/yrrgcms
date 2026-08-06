@@ -41,7 +41,7 @@ export function UserDrawer({ user, editHref, isAdminArea }: UserDrawerProps) {
       <SheetTrigger
         render={
           <button
-            className="relative inline-flex items-center justify-center w-10 h-10 rounded-full font-bold text-sm transition shadow-sm hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 shrink-0"
+            className="btn-hover-effect relative inline-flex items-center justify-center w-10 h-10 rounded-full font-bold text-sm transition-all shadow-sm hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 shrink-0"
             style={{
               backgroundColor: "var(--theme-primary, #4f46e5)",
               color: "#ffffff",
@@ -53,7 +53,7 @@ export function UserDrawer({ user, editHref, isAdminArea }: UserDrawerProps) {
         }
       />
 
-      <SheetContent side="right" className="w-full sm:max-w-md p-6 flex flex-col justify-between">
+      <SheetContent side="right" className="w-full sm:max-w-md p-6 flex flex-col justify-between animate-in slide-in-from-right duration-300">
         <div>
           <SheetHeader className="pb-4 border-b border-slate-100 dark:border-slate-800 text-left">
             <SheetTitle className="text-xl font-extrabold tracking-tight">Account Overview</SheetTitle>
@@ -62,7 +62,7 @@ export function UserDrawer({ user, editHref, isAdminArea }: UserDrawerProps) {
           {/* User Details Box */}
           <div className="py-6 flex items-center gap-4 border-b border-slate-100 dark:border-slate-800">
             <div
-              className="w-14 h-14 rounded-full flex items-center justify-center font-extrabold text-lg text-white shrink-0 shadow-sm"
+              className="w-14 h-14 rounded-full flex items-center justify-center font-extrabold text-lg text-white shrink-0 shadow-md transition-transform duration-300 hover:scale-110"
               style={{ backgroundColor: "var(--theme-primary, #4f46e5)" }}
             >
               {initials}
@@ -84,17 +84,31 @@ export function UserDrawer({ user, editHref, isAdminArea }: UserDrawerProps) {
           </div>
 
           {/* Quick Menu Links */}
-          <div className="py-4 space-y-1">
+          <div className="py-4 space-y-2.5">
+            {user.role?.toLowerCase() === "admin" && (
+              <Link
+                href="/admin"
+                onClick={() => setOpen(false)}
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-amber-500/10 text-amber-900 dark:text-amber-300 border border-amber-500/20 transition-all duration-300 hover:shadow-md font-bold text-sm group"
+              >
+                <div className="flex items-center gap-3">
+                  <ShieldCheck className="w-4.5 h-4.5 text-amber-500 transition-transform" />
+                  <span>Admin Dashboard</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-amber-500" />
+              </Link>
+            )}
+
             <Link
               href={editHref || "/my-account"}
               onClick={() => setOpen(false)}
-              className="flex items-center justify-between p-3 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 transition font-medium text-sm group"
+              className="flex items-center justify-between p-3.5 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-slate-200/80 dark:hover:bg-indigo-950/40 transition-all duration-300 hover:shadow-sm font-medium text-sm group"
             >
               <div className="flex items-center gap-3">
-                <User className="w-4 h-4 text-slate-500 group-hover:text-indigo-600 transition" />
-                <span>Edit Profile</span>
+                <User className="w-4 h-4 text-slate-500 group-hover:text-indigo-600 transition-all" />
+                <span className="group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Edit Profile</span>
               </div>
-              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition" />
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-all duration-300" />
             </Link>
 
             {!isAdminArea && (
@@ -102,25 +116,25 @@ export function UserDrawer({ user, editHref, isAdminArea }: UserDrawerProps) {
                 <Link
                   href="/my-account/orders"
                   onClick={() => setOpen(false)}
-                  className="flex items-center justify-between p-3 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 transition font-medium text-sm group"
+                  className="flex items-center justify-between p-3.5 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-indigo-50/80 dark:hover:bg-indigo-950/40 transition-all duration-300 hover:translate-x-1.5 hover:shadow-sm font-medium text-sm group"
                 >
                   <div className="flex items-center gap-3">
-                    <ShoppingBag className="w-4 h-4 text-slate-500 group-hover:text-indigo-600 transition" />
-                    <span>My Orders & Downloads</span>
+                    <ShoppingBag className="w-4 h-4 text-slate-500 group-hover:text-indigo-600 group-hover:scale-110 transition-all" />
+                    <span className="group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">My Orders & Downloads</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition" />
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all duration-300" />
                 </Link>
 
                 <Link
                   href="/my-account/courses"
                   onClick={() => setOpen(false)}
-                  className="flex items-center justify-between p-3 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-900 transition font-medium text-sm group"
+                  className="flex items-center justify-between p-3.5 rounded-2xl text-slate-700 dark:text-slate-200 hover:bg-indigo-50/80 dark:hover:bg-indigo-950/40 transition-all duration-300 hover:translate-x-1.5 hover:shadow-sm font-medium text-sm group"
                 >
                   <div className="flex items-center gap-3">
-                    <GraduationCap className="w-4 h-4 text-slate-500 group-hover:text-indigo-600 transition" />
-                    <span>My Enrolled Courses</span>
+                    <GraduationCap className="w-4 h-4 text-slate-500 group-hover:text-indigo-600 group-hover:scale-110 transition-all" />
+                    <span className="group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">My Enrolled Courses</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition" />
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all duration-300" />
                 </Link>
               </>
             )}
@@ -131,7 +145,7 @@ export function UserDrawer({ user, editHref, isAdminArea }: UserDrawerProps) {
         <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
           <button
             onClick={() => signOut({ callbackUrl: "/admin/login" })}
-            className="w-full flex items-center justify-center gap-2 p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 font-bold text-sm hover:bg-rose-100 dark:hover:bg-rose-900/60 transition"
+            className="btn-hover-effect w-full flex items-center justify-center gap-2 p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 font-bold text-sm hover:bg-rose-100 dark:hover:bg-rose-900/60 transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md"
           >
             <LogOut className="w-4 h-4" />
             <span>Sign Out</span>

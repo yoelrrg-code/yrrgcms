@@ -22,8 +22,8 @@ type HeadingConfig = {
 type ThemeConfig = {
   colors?: Record<string, string>;
   layout?: Record<string, string>;
-  header?: Record<string, string | number>;
-  footer?: Record<string, string>;
+  header?: Record<string, string | number | boolean>;
+  footer?: Record<string, string | boolean>;
   button?: Record<string, string>;
   typography?: {
     paragraphColor?: string;
@@ -58,6 +58,8 @@ export function ThemeEditor({ theme }: { theme: Theme }) {
   const [textColor, setTextColor] = useState(colors.text || "#1a1a1a");
   const [linkColor, setLinkColor] = useState(colors.link || "#2563eb");
   const [menuLinkColor, setMenuLinkColor] = useState(colors.menuLink || "#4b5563");
+  const [cardBg, setCardBg] = useState(colors.cardBg || "rgba(255, 255, 255, 0.85)");
+  const [cardBorder, setCardBorder] = useState(colors.cardBorder || "rgba(226, 232, 240, 0.8)");
   
   // Layout
   const [buttonStyle, setButtonStyle] = useState(layout.buttonStyle || "primary");
@@ -81,15 +83,16 @@ export function ThemeEditor({ theme }: { theme: Theme }) {
   const [h6, setH6] = useState<HeadingConfig>(typography.h6 || { color: "", padding: "" });
 
   // Header
-  const [headerBackground, setHeaderBackground] = useState(header.background || "#ffffff");
-  const [headerTransparency, setHeaderTransparency] = useState(header.transparency ?? 0.95);
-  const [headerBlur, setHeaderBlur] = useState(header.blur ?? 8);
-  const [headerPadding, setHeaderPadding] = useState(header.padding || "0");
+  const [headerBackground, setHeaderBackground] = useState((header.background as string) || "#ffffff");
+  const [headerTransparency, setHeaderTransparency] = useState((header.transparency as number) ?? 0.95);
+  const [headerBlur, setHeaderBlur] = useState((header.blur as number) ?? 8);
+  const [headerPadding, setHeaderPadding] = useState((header.padding as string) || "0");
+  const [headerIsFixed, setHeaderIsFixed] = useState(header.isFixed !== false);
 
   // Footer
-  const [footerBackground, setFooterBackground] = useState(footer.background || "#f3f4f6");
-  const [footerTextColor, setFooterTextColor] = useState(footer.textColor || "");
-  const [footerPadding, setFooterPadding] = useState(footer.padding || "3rem 0");
+  const [footerBackground, setFooterBackground] = useState((footer.background as string) || "#f3f4f6");
+  const [footerTextColor, setFooterTextColor] = useState((footer.textColor as string) || "");
+  const [footerPadding, setFooterPadding] = useState((footer.padding as string) || "3rem 0");
   const [footerLinkColor, setFooterLinkColor] = useState((footer.linkColor as string) || "");
   const [footerHeadingColor, setFooterHeadingColor] = useState((footer.headingColor as string) || "");
   const [footerSocialColor, setFooterSocialColor] = useState((footer.socialIconColor as string) || "");
@@ -109,6 +112,8 @@ export function ThemeEditor({ theme }: { theme: Theme }) {
           text: textColor,
           link: linkColor,
           menuLink: menuLinkColor,
+          cardBg,
+          cardBorder,
         },
         layout: {
           ...layout,
@@ -135,6 +140,7 @@ export function ThemeEditor({ theme }: { theme: Theme }) {
           transparency: Number(headerTransparency),
           blur: Number(headerBlur),
           padding: headerPadding,
+          isFixed: headerIsFixed,
         },
         footer: {
           ...footer,
@@ -431,6 +437,21 @@ export function ThemeEditor({ theme }: { theme: Theme }) {
                 onChange={(e) => setHeaderPadding(e.target.value)}
                 placeholder="e.g. 0 1rem"
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="headerIsFixed">Header Position</Label>
+              <Select
+                value={headerIsFixed ? "fixed" : "static"}
+                onValueChange={(val) => setHeaderIsFixed(val === "fixed")}
+              >
+                <SelectTrigger id="headerIsFixed">
+                  <SelectValue placeholder="Select Header Position" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="fixed">Fixed (Sticky on scroll)</SelectItem>
+                  <SelectItem value="static">Static (Scrolls with page)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
         </Card>
