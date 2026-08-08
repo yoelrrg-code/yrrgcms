@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Header from "@/components/site/Header";
 import Footer from "@/components/site/Footer";
 import { getActiveTheme } from "@/lib/actions/themes";
@@ -78,7 +79,9 @@ export default async function PublicLayout({
 
   return (
     <div className="public-layout-root min-h-screen flex flex-col flex-1">
-      <PageLoader />
+      <Suspense fallback={null}>
+        <PageLoader />
+      </Suspense>
       <ThemeCleanup />
       <style
         dangerouslySetInnerHTML={{

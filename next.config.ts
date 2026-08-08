@@ -15,13 +15,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Enable Server Actions (on by default in Next.js 15, but explicit for clarity)
-  experimental: {
-    serverActions: {
-      // Max body size for form submissions (10MB for media uploads)
-      bodySizeLimit: "10mb",
-    },
-  },
   // Configuraciones de Seguridad, CORS y Caching HTTP para la App y Frontend
   async headers() {
     return [
@@ -46,13 +39,6 @@ const nextConfig: NextConfig = {
           { key: "Access-Control-Allow-Origin", value: process.env.NEXT_PUBLIC_APP_URL || "*" },
           { key: "Access-Control-Allow-Methods", value: "GET,DELETE,PATCH,POST,PUT,OPTIONS" },
           { key: "Access-Control-Allow-Headers", value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization" },
-        ],
-      },
-      {
-        // Caché inmutable y ultra-rápida para imágenes optimizadas y assets del front
-        source: "/_next/image(.*)",
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
       },
       {
