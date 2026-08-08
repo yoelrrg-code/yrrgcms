@@ -9,7 +9,7 @@ import { CampaignEditorModal } from "./CampaignEditorModal";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Mail, Edit2, Trash2, Megaphone, Calendar, Sparkles, AlertTriangle } from "lucide-react";
+import { Mail, SquarePen, Trash2, Megaphone, Calendar, Sparkles, AlertTriangle } from "lucide-react";
 import { sileo } from "sileo";
 
 function FacebookIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -200,12 +200,22 @@ export function CampaignsManager({
               </CardContent>
 
               {/* CARD ACTIONS */}
-              <div className="px-4 pt-3 border-t mt-auto flex items-center justify-between bg-muted/20">
-                <Button variant="outline" size="sm" onClick={() => handleOpenEditor(campaign)} className="h-8 text-xs font-semibold gap-1.5">
-                  <Edit2 className="size-3.5" /> Edit & Publish
+              <div className="px-4 py-3 border-t mt-auto flex items-center justify-between bg-muted/20">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleOpenEditor(campaign)}
+                  className="h-9 px-3 text-xs font-bold gap-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors"
+                >
+                  <SquarePen className="size-4" /> Edit & Publish
                 </Button>
-                <Button variant="ghost" size="icon" className="size-8 text-destructive" onClick={() => handleDelete(campaign.id)}>
-                  <Trash2 className="size-3.5" />
+                <Button
+                  size="icon"
+                  className="size-9 rounded-xl bg-rose-500 hover:bg-rose-600 text-white shadow-xs border border-rose-500/30 transition-colors shrink-0"
+                  onClick={() => handleDelete(campaign.id)}
+                  title="Eliminar campaña"
+                >
+                  <Trash2 className="size-4" />
                 </Button>
               </div>
             </Card>

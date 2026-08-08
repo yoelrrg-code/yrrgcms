@@ -3,42 +3,42 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { deleteUser } from "@/lib/actions/users";
+import { deletePost } from "@/lib/actions/posts";
 import { sileo } from "sileo";
 
-interface DeleteUserButtonProps {
-  userId: string;
-  userName: string;
+interface DeletePostButtonProps {
+  postId: string;
+  postTitle: string;
   className?: string;
   iconOnly?: boolean;
 }
 
-export function DeleteUserButton({
-  userId,
-  userName,
+export function DeletePostButton({
+  postId,
+  postTitle,
   className,
   iconOnly = true,
-}: DeleteUserButtonProps) {
+}: DeletePostButtonProps) {
   const router = useRouter();
 
-  const handleDeleteClick = () => {
+  const handleDelete = () => {
     sileo.action({
-      title: `Delete user "${userName}"?`,
-      description: "This action is permanent and cannot be undone. The user's account will be removed, but their authored content will remain.",
+      title: `¿Eliminar "${postTitle}"?`,
+      description: "Esta acción es permanente y no se puede deshacer.",
       button: {
-        title: "Confirm Delete",
+        title: "Confirmar eliminación",
         onClick: async () => {
           try {
-            await deleteUser(userId);
+            await deletePost(postId);
             sileo.success({
-              title: "User Deleted",
-              description: `User "${userName}" was removed successfully.`,
+              title: "Post eliminado",
+              description: `El post "${postTitle}" fue eliminado correctamente.`,
             });
             router.refresh();
           } catch (err) {
             sileo.error({
-              title: "Error",
-              description: err instanceof Error ? err.message : "Failed to delete user.",
+              title: "Error al eliminar",
+              description: err instanceof Error ? err.message : "No se pudo eliminar el post.",
             });
           }
         },
@@ -50,12 +50,12 @@ export function DeleteUserButton({
     <Button
       type="button"
       size={iconOnly ? "icon" : "sm"}
-      onClick={handleDeleteClick}
+      onClick={handleDelete}
       className={`size-9 rounded-xl bg-rose-500 hover:bg-rose-600 text-white shadow-xs border border-rose-500/30 transition-colors shrink-0 ${className || ""}`}
-      title="Eliminar usuario"
+      title="Eliminar post"
     >
       <Trash2 className="size-4" />
-      {!iconOnly && <span>Delete</span>}
+      {!iconOnly && <span>Eliminar</span>}
     </Button>
   );
 }

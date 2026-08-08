@@ -47,74 +47,93 @@ export default async function MenusPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Menus</h1>
-        <form action={handleCreate} className="flex gap-2 items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Menus</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Create and manage navigation menus for your website.
+          </p>
+        </div>
+        <form action={handleCreate} className="flex flex-wrap gap-2 items-center">
           <input
             type="text"
             name="name"
             placeholder="Menu name..."
             required
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="flex h-9 rounded-xl border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
           />
           <select
             name="location"
             required
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="flex h-9 rounded-xl border border-input bg-card px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-foreground"
           >
             <option value="header">Header</option>
             <option value="footer">Footer</option>
             <option value="sidebar">Sidebar</option>
           </select>
-          <Button type="submit">
-            <Plus className="mr-2 h-4 w-4" /> Create Menu
+          <Button type="submit" className="gap-2 font-bold rounded-xl shadow-sm">
+            <Plus className="h-4 w-4" /> Create Menu
           </Button>
         </form>
       </div>
 
-      <div className="rounded-md border overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Location</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {menus.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={3} className="text-center py-6 text-muted-foreground">
-                  No menus found. Create one above.
-                </TableCell>
+      <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader className="bg-slate-50/80 dark:bg-slate-900/80">
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="font-bold text-xs uppercase tracking-wider">Name</TableHead>
+                <TableHead className="font-bold text-xs uppercase tracking-wider">Location</TableHead>
+                <TableHead className="text-right font-bold text-xs uppercase tracking-wider">Actions</TableHead>
               </TableRow>
-            ) : (
-              menus.map((menu) => (
-                <TableRow key={menu.id}>
-                  <TableCell className="font-medium">{menu.name}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">{menu.location}</Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button variant="outline" size="sm" >
-                        <Link href={`/admin/menus/${menu.id}`} title="Edit Items">
-                          <ListTree className="mr-2 h-4 w-4" /> Edit Items
-                        </Link>
-                      </Button>
-                      <form action={handleDelete}>
-                        <input type="hidden" name="id" value={menu.id} />
-                        <Button variant="destructive" size="icon" type="submit" title="Delete Menu">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </form>
-                    </div>
+            </TableHeader>
+            <TableBody>
+              {menus.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center py-10 text-muted-foreground">
+                    No menus found. Create one above.
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                menus.map((menu) => (
+                  <TableRow key={menu.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition">
+                    <TableCell className="font-bold text-foreground">{menu.name}</TableCell>
+                    <TableCell>
+                      <Badge variant="secondary" className="capitalize font-bold rounded-lg px-2.5 py-0.5">
+                        {menu.location}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link href={`/admin/menus/${menu.id}`}>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors"
+                            title="Editar items del menú"
+                          >
+                            <ListTree className="size-4" />
+                          </Button>
+                        </Link>
+                        <form action={handleDelete}>
+                          <input type="hidden" name="id" value={menu.id} />
+                          <Button
+                            size="icon"
+                            type="submit"
+                            className="size-9 rounded-xl bg-rose-500 hover:bg-rose-600 text-white shadow-xs border border-rose-500/30 transition-colors"
+                            title="Eliminar menú"
+                          >
+                            <Trash2 className="size-4" />
+                          </Button>
+                        </form>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   );

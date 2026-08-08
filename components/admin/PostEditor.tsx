@@ -24,7 +24,7 @@ import RichTextEditor from "@/components/admin/RichTextEditor/RichTextEditor";
 import MediaPicker from "@/components/admin/MediaPicker/MediaPicker";
 import { createPost, updatePost, publishPost } from "@/lib/actions/posts";
 import type { Post } from "@/lib/db/schema";
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, Sparkles, RefreshCw, Wand2 } from "lucide-react";
 
 // Slug generator
 function toSlug(str: string) {
@@ -57,6 +57,7 @@ interface PostEditorProps {
 export default function PostEditor({ post, categories, tags }: PostEditorProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [aiLoading, setAiLoading] = useState(false);
 
   const [title, setTitle] = useState(post?.title ?? "");
   const [slug, setSlug] = useState(post?.slug ?? "");
@@ -78,6 +79,46 @@ export default function PostEditor({ post, categories, tags }: PostEditorProps) 
   const handleTitleChange = (val: string) => {
     setTitle(val);
     if (!post) setSlug(toSlug(val));
+  };
+
+  const handleGenerateMetadata = async () => {
+    if (!title && !content) {
+      setError("Por favor ingresá un título o contenido en el editor primero.");
+      return;
+    }
+
+    setAiLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/ai/post-metadata", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, content }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Error al autocompletar con IA.");
+      }
+
+      if (data.excerpt) setExcerpt(data.excerpt);
+      if (data.seoTitle) setSeoTitle(data.seoTitle);
+      if (data.seoDescription) setSeoDescription(data.seoDescription);
+      if (data.featuredImageUrl) {
+        setFeaturedImageUrl(data.featuredImageUrl);
+        setSeoOgImage(data.featuredImageUrl);
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Error al comunicarse con la IA.");
+      }
+    } finally {
+      setAiLoading(false);
+    }
   };
 
   const buildPayload = () => ({
@@ -149,7 +190,21 @@ export default function PostEditor({ post, categories, tags }: PostEditorProps) 
             {status}
           </Badge>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center flex-wrap">
+          <Button
+            type="button"
+            onClick={handleGenerateMetadata}
+            disabled={aiLoading}
+            className="gap-2 border-indigo-500/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/20 font-bold shadow-sm"
+            variant="outline"
+          >
+            {aiLoading ? (
+              <RefreshCw className="h-4 w-4 animate-spin text-indigo-500" />
+            ) : (
+              <Sparkles className="h-4 w-4 text-indigo-500 animate-pulse" />
+            )}
+            <span>Auto-completar SEO, Excerpt e Imagen</span>
+          </Button>
           <Button
             type="button"
             variant="outline"
@@ -337,8 +392,19 @@ export default function PostEditor({ post, categories, tags }: PostEditorProps) 
 
           {/* SEO */}
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-base">SEO</CardTitle>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleGenerateMetadata}
+                disabled={aiLoading}
+                className="h-8 gap-1.5 text-xs text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/10 font-bold"
+              >
+                {aiLoading ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Wand2 className="h-3.5 w-3.5" />}
+                <span>Generar SEO</span>
+              </Button>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-1.5">

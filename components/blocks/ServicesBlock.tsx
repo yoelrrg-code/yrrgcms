@@ -7,6 +7,7 @@ import { getServices } from "@/lib/actions/services";
 import { BookingModal } from "./BookingModal";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
+import { Reveal } from "@/components/site/Reveal";
 
 interface ServicePricingOptions {
   singleSession?: {
@@ -44,7 +45,7 @@ export function ServicesBlock({
 
   return (
     <section className={`${paddingTop || "pt-12"} ${paddingBottom || "pb-12"} py-16 px-4 md:px-8 max-w-7xl mx-auto space-y-12`}>
-      <div className="text-center max-w-2xl mx-auto space-y-3">
+      <Reveal animation="fade-down" className="text-center max-w-2xl mx-auto space-y-3">
         <h2 className="text-center text-3xl font-bold tracking-tight sm:text-4xl" style={{ color: "var(--theme-h2-color, currentColor)" }}>
           {title}
         </h2>
@@ -53,7 +54,7 @@ export function ServicesBlock({
             {subtitle}
           </p>
         )}
-      </div>
+      </Reveal>
 
       {layout === "grid" ? (
         /* GRID LAYOUT */
@@ -63,18 +64,17 @@ export function ServicesBlock({
             const price = pricing.singleSession?.price || 0;
             const currency = pricing.singleSession?.currency || "USD";
 
+            const delays: (100 | 150 | 200 | 300 | 400 | 500)[] = [100, 200, 300];
             return (
-              <div
-                key={service.id}
-                className="group card-hover-effect relative bg-[var(--theme-card-bg,rgba(255,255,255,0.85))] dark:bg-slate-900/90 backdrop-blur-md rounded-3xl border border-[var(--theme-card-border,rgba(226,232,240,0.8))] dark:border-slate-800/80 overflow-hidden shadow-sm flex flex-col"
-              >
-                {service.mainImage && (
+              <Reveal key={service.id} animation="fade-up" delay={index * 120}>
+                <div className="group card-hover-effect relative bg-[var(--theme-card-bg,rgba(255,255,255,0.85))] dark:bg-slate-900/90 backdrop-blur-md rounded-3xl border border-[var(--theme-card-border,rgba(226,232,240,0.8))] dark:border-slate-800/80 overflow-hidden shadow-sm flex flex-col h-full">
+                  {service.mainImage && (
                   <div className="relative h-52 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
                     <Image
                       src={service.mainImage}
                       alt={service.title}
                       fill
-                      className="img-zoom-effect object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                      className="img-zoom-effect object-cover transition-transform duration-700 ease-out group-hover:scale-100"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                     {service.durationMinutes && (
@@ -111,13 +111,14 @@ export function ServicesBlock({
                         color: "var(--theme-button-text, #ffffff)",
                         borderRadius: "var(--theme-button-radius, 1rem)",
                       }}
-                      className="btn-hover-effect w-full font-bold py-6 text-sm shadow-md hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-300"
+                      className="btn-hover-effect w-full font-bold py-6 text-sm shadow-md hover:shadow-xl transition-all duration-300"
                     >
                       <Calendar className="mr-2 size-4" /> Book Session
                     </Button>
                   </div>
                 </div>
-              </div>
+                </div>
+              </Reveal>
             );
           })}
         </div>
@@ -131,12 +132,10 @@ export function ServicesBlock({
             const currency = pricing.singleSession?.currency || "USD";
 
             return (
-              <div
-                key={service.id}
-                className={`group card-hover-effect flex flex-col md:flex-row items-center gap-8 md:gap-12 bg-[var(--theme-card-bg,rgba(255,255,255,0.85))] dark:bg-slate-900/80 backdrop-blur-md p-7 md:p-10 rounded-3xl border border-[var(--theme-card-border,rgba(226,232,240,0.8))] dark:border-slate-800 shadow-sm ${
+              <Reveal key={service.id} animation={isEven ? "fade-right" : "fade-left"} delay={index * 150}>
+                <div className={`group card-hover-effect flex flex-col md:flex-row items-center gap-8 md:gap-12 bg-[var(--theme-card-bg,rgba(255,255,255,0.85))] dark:bg-slate-900/80 backdrop-blur-md p-7 md:p-10 rounded-3xl border border-[var(--theme-card-border,rgba(226,232,240,0.8))] dark:border-slate-800 shadow-sm ${
                   !isEven ? "md:flex-row-reverse" : ""
-                }`}
-              >
+                }`}>
                 {/* SERVICE IMAGE */}
                 <div className="relative w-full md:w-1/2 h-72 md:h-96 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0 shadow-md">
                   {service.mainImage ? (
@@ -144,7 +143,7 @@ export function ServicesBlock({
                       src={service.mainImage}
                       alt={service.title}
                       fill
-                      className="img-zoom-effect object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                      className="img-zoom-effect object-cover transition-transform duration-700 ease-out group-hover:scale-100"
                       sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   ) : (
@@ -192,13 +191,14 @@ export function ServicesBlock({
                         color: "var(--theme-button-text, #ffffff)",
                         borderRadius: "var(--theme-button-radius, 1rem)",
                       }}
-                      className="btn-hover-effect px-8 py-6 font-bold text-sm shadow-md hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-300"
+                      className="btn-hover-effect px-8 py-6 font-bold text-sm shadow-md hover:shadow-xl transition-all duration-300"
                     >
                       <Calendar className="mr-2 size-4" /> Book Now
                     </Button>
                   </div>
                 </div>
               </div>
+              </Reveal>
             );
           })}
         </div>

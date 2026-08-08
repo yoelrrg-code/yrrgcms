@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Star, Plus, Edit2, Trash2, Quote, User as UserIcon, Sparkles, Upload } from "lucide-react";
+import { Star, Plus, Trash2, Quote, User as UserIcon, Sparkles, Upload, SquarePen } from "lucide-react";
 import { sileo } from "sileo";
 import MediaPicker from "@/components/admin/MediaPicker/MediaPicker";
 
@@ -192,12 +192,23 @@ export function TestimonialsManager({ initialTestimonials }: TestimonialsManager
               {/* CARD FOOTER ACTIONS */}
               <div className="px-4 pt-1 pb-0 border-t mt-auto flex items-center justify-between bg-muted/20">
                 <span className="text-[11px] font-medium text-muted-foreground">Order: #{item.order}</span>
-                <div className="flex items-center gap-1">
-                  <Button variant="ghost" size="icon" className="size-8" onClick={() => handleOpenModal(item)}>
-                    <Edit2 className="size-3.5" />
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors"
+                    onClick={() => handleOpenModal(item)}
+                    title="Editar testimonio"
+                  >
+                    <SquarePen className="size-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="size-8 text-destructive" onClick={() => handleDelete(item.id)}>
-                    <Trash2 className="size-3.5" />
+                  <Button
+                    size="icon"
+                    className="size-9 rounded-xl bg-rose-500 hover:bg-rose-600 text-white shadow-xs border border-rose-500/30 transition-colors"
+                    onClick={() => handleDelete(item.id)}
+                    title="Eliminar testimonio"
+                  >
+                    <Trash2 className="size-4" />
                   </Button>
                 </div>
               </div>

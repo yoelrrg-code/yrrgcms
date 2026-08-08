@@ -199,7 +199,7 @@ export default async function Footer() {
                       href={social.url}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-muted-foreground hover:text-primary transition-all duration-300 transform hover:scale-110"
+                      className="text-muted-foreground hover:text-primary transition-colors duration-300"
                       style={{ color: brandColor || "var(--theme-footer-social)" }}
                       title={social.label}
                     >

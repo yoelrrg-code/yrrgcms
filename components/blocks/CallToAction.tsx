@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Reveal } from "@/components/site/Reveal";
 
 export interface CallToActionProps {
   paddingTop?: string;
@@ -54,7 +55,7 @@ export default function CallToAction({
         </>
       )}
 
-      <div className="relative z-10 mx-auto max-w-3xl text-center space-y-6">
+      <Reveal animation="fade-up" className="relative z-10 mx-auto max-w-3xl text-center space-y-6">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-bold uppercase tracking-wider text-white backdrop-blur-md shadow-sm">
           <span>✦ Special Offer</span>
         </div>
@@ -83,7 +84,7 @@ export default function CallToAction({
                     borderRadius: "var(--theme-button-radius, 9999px)",
                   }
             }
-            className={`group/cta btn-hover-effect inline-flex items-center gap-2.5 px-9 py-4 text-base font-bold transition-all duration-300 hover:scale-105 active:scale-95 hover:-translate-y-1 ${
+            className={`group/cta btn-hover-effect inline-flex items-center gap-2.5 px-9 py-4 text-base font-bold transition-all duration-300 ${
               style === "primary"
                 ? "bg-white text-indigo-900 shadow-2xl hover:bg-slate-50 hover:shadow-white/20"
                 : "shadow-xl hover:shadow-2xl"
@@ -106,7 +107,7 @@ export default function CallToAction({
             </svg>
           </Link>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

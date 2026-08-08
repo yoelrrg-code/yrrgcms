@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DeleteUserButton } from "@/components/admin/delete-user-button";
-import { UserPlus, Pencil } from "lucide-react";
+import { UserPlus, SquarePen } from "lucide-react";
 
 function formatDate(date: Date | null): string {
   if (!date) return "Never";
@@ -37,15 +37,17 @@ export default async function UsersPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Users</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Users</h1>
           <p className="text-sm text-muted-foreground mt-1">
             Manage admin and author accounts.
           </p>
         </div>
-        <Button render={<Link href="/admin/users/new" />}>
-          <UserPlus className="size-4" />
-          New User
-        </Button>
+        <Link href="/admin/users/new">
+          <Button className="gap-2 font-bold rounded-xl shadow-sm">
+            <UserPlus className="size-4" />
+            New User
+          </Button>
+        </Link>
       </div>
 
       {/* Desktop table >=1024px */}
@@ -74,8 +76,8 @@ export default async function UsersPage() {
               ) : (
                 users.map((user) => (
                   <TableRow key={user.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition">
-                    <TableCell className="font-bold text-slate-900 dark:text-white">{user.name}</TableCell>
-                    <TableCell className="text-sm text-slate-500 font-mono">
+                    <TableCell className="font-bold text-foreground">{user.name}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground font-mono">
                       {user.email}
                     </TableCell>
                     <TableCell>
@@ -86,15 +88,21 @@ export default async function UsersPage() {
                         {user.role}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm text-slate-500 font-mono whitespace-nowrap">
+                    <TableCell className="text-sm text-muted-foreground font-mono whitespace-nowrap">
                       {formatDate(user.lastLogin)}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Button variant="outline" size="sm" className="rounded-xl text-xs gap-1.5" render={<Link href={`/admin/users/${user.id}`} />}>
-                          <Pencil className="size-3.5" />
-                          Edit
-                        </Button>
+                        <Link href={`/admin/users/${user.id}`}>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors"
+                            title="Editar usuario"
+                          >
+                            <SquarePen className="size-4" />
+                          </Button>
+                        </Link>
                         {userIsAdmin && user.id !== currentUserId && (
                           <DeleteUserButton
                             userId={user.id}
@@ -122,8 +130,8 @@ export default async function UsersPage() {
             <div key={user.id} className="rounded-2xl border border-border bg-card shadow-sm p-4 space-y-3">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="font-bold text-sm text-slate-900 dark:text-white truncate">{user.name}</p>
-                  <p className="text-xs text-slate-500 font-mono mt-0.5 truncate">{user.email}</p>
+                  <p className="font-bold text-sm text-foreground truncate">{user.name}</p>
+                  <p className="text-xs text-muted-foreground font-mono mt-0.5 truncate">{user.email}</p>
                 </div>
                 <div className="shrink-0">
                   <Badge
@@ -135,26 +143,29 @@ export default async function UsersPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-start gap-2 text-xs text-slate-500 pt-1">
-                <span>Last login:</span>
-                <span className="font-mono text-slate-400">{formatDate(user.lastLogin)}</span>
-              </div>
-
-              <div className="flex items-center gap-2 pt-4 border-t border-border">
-                <Link href={`/admin/users/${user.id}`} className="flex-1">
-                  <Button variant="outline" size="sm" className="w-full h-10 text-xs gap-1.5 rounded-md">
-                    <Pencil className="h-3.5 w-3.5" /> Edit
-                  </Button>
-                </Link>
-                {userIsAdmin && user.id !== currentUserId && (
-                  <div className="flex-1">
+              <div className="flex items-center justify-between pt-2 border-t border-border">
+                <div className="text-xs text-muted-foreground">
+                  <span>Last login: </span>
+                  <span className="font-mono text-foreground font-medium">{formatDate(user.lastLogin)}</span>
+                </div>
+                <div className="flex items-center justify-end gap-2">
+                  <Link href={`/admin/users/${user.id}`}>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors"
+                      title="Editar usuario"
+                    >
+                      <SquarePen className="size-4" />
+                    </Button>
+                  </Link>
+                  {userIsAdmin && user.id !== currentUserId && (
                     <DeleteUserButton
                       userId={user.id}
                       userName={user.name}
-                      className="w-full"
                     />
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           ))

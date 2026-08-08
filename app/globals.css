@@ -143,43 +143,11 @@
     @apply font-sans;
   }
 }
-@layer base {
-  a:not([class]) {
-    color: var(--theme-link, inherit);
-    text-decoration: underline;
-  }
-  p {
-    color: var(--theme-p-color, inherit);
-    padding: var(--theme-p-padding, 0);
-    margin-bottom: 0 !important;
-  }
-  h1 {
-    color: var(--theme-h1-color, inherit);
-    padding: var(--theme-h1-padding, 0);
-  }
-  h2 {
-    color: var(--theme-h2-color, inherit);
-    padding: var(--theme-h2-padding, 0);
-  }
-  h3 {
-    color: var(--theme-h3-color, inherit);
-    padding: var(--theme-h3-padding, 0);
-  }
-  h4 {
-    color: var(--theme-h4-color, inherit);
-    padding: var(--theme-h4-padding, 0);
-  }
-  h5 {
-    color: var(--theme-h5-color, inherit);
-    padding: var(--theme-h5-padding, 0);
-  }
-  h6 {
-    color: var(--theme-h6-color, inherit);
-    padding: var(--theme-h6-padding, 0);
-  }
-}
 
-/* Admin Dashboard Specific Button Overrides */
+/* ─────────────────────────────────────────────────────────────
+   ADMIN DASHBOARD THEME OVERRIDES (High-Contrast Scope)
+   ───────────────────────────────────────────────────────────── */
+
 .admin-dashboard [data-slot="button"] {
   padding: 18px 12px !important;
   border-radius: 10px !important;
@@ -189,6 +157,103 @@
   --admin-badge-bg: #058405;
   --admin-badge-secondary-bg: #058405;
   --admin-badge-secondary-color: #fff;
+}
+
+/* Override public theme engine heading variables inside admin dashboard */
+.admin-dashboard h1,
+.admin-dashboard h2,
+.admin-dashboard h3,
+.admin-dashboard h4,
+.admin-dashboard h5,
+.admin-dashboard h6 {
+  color: var(--foreground) !important;
+}
+
+.admin-dashboard p {
+  color: var(--muted-foreground);
+}
+
+/* Light Theme Variables for Admin Dashboard */
+html.admin-theme-light,
+.admin-dashboard.light {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #f8fafc;
+  --card-foreground: #0f172a;
+  --popover: #f8fafc;
+  --popover-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #475569;
+  --border: #e2e8f0;
+  --input: #cbd5e1;
+  --primary: #0f172a;
+  --primary-foreground: #ffffff;
+  --secondary: #e2e8f0;
+  --secondary-foreground: #0f172a;
+}
+
+/* Dark Theme Variables for Admin Dashboard */
+html.admin-theme-dark,
+.admin-dashboard.dark {
+  --background: #090d16;
+  --foreground: #f8fafc;
+  --card: #090d16;
+  --card-foreground: #f8fafc;
+  --popover: #090d16;
+  --popover-foreground: #f8fafc;
+  --sidebar: #090d16;
+  --sidebar-foreground: #f8fafc;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --muted: #161e2e;
+  --muted-foreground: #9ca3af;
+  --border: rgba(255, 255, 255, 0.12);
+  --input: rgba(255, 255, 255, 0.18);
+  --primary: #f8fafc;
+  --primary-foreground: #090d16;
+  --secondary: #161e2e;
+  --secondary-foreground: #f8fafc;
+}
+
+/* Force Dialogs, Popovers, Modals, Dropdowns and Selects to match main background exactly */
+.admin-dashboard [data-slot="dialog-content"],
+.admin-dashboard [data-slot="popover-content"],
+.admin-dashboard [data-slot="dropdown-menu-content"],
+.admin-dashboard [data-slot="select-content"],
+.admin-dashboard [data-slot="alert-dialog-content"],
+.admin-dashboard [data-slot="sheet-content"],
+.admin-dashboard [role="dialog"],
+.admin-dashboard [role="alertdialog"],
+.admin-dashboard [data-radix-popper-content-wrapper] > div,
+html.admin-theme-dark [data-slot="dialog-content"],
+html.admin-theme-dark [data-slot="popover-content"],
+html.admin-theme-dark [data-slot="dropdown-menu-content"],
+html.admin-theme-dark [data-slot="select-content"],
+html.admin-theme-dark [data-slot="alert-dialog-content"],
+html.admin-theme-dark [data-slot="sheet-content"],
+html.admin-theme-dark [role="dialog"],
+html.admin-theme-dark [role="alertdialog"],
+html.admin-theme-dark [data-radix-popper-content-wrapper] > div {
+  background-color: #090d16 !important;
+}
+
+html.admin-theme-light [data-slot="dialog-content"],
+html.admin-theme-light [data-slot="popover-content"],
+html.admin-theme-light [data-slot="dropdown-menu-content"],
+html.admin-theme-light [data-slot="select-content"],
+html.admin-theme-light [data-slot="alert-dialog-content"],
+html.admin-theme-light [data-slot="sheet-content"],
+html.admin-theme-light [role="dialog"],
+html.admin-theme-light [role="alertdialog"],
+html.admin-theme-light [data-radix-popper-content-wrapper] > div {
+  background-color: #f8fafc !important;
+}
+
+/* Specific Dark Mode overrides */
+.admin-dashboard.dark [data-sidebar="sidebar"],
+.admin-dashboard.dark [data-sidebar="header"],
+.admin-dashboard.dark [data-sidebar="footer"],
+.admin-dashboard.dark header {
+  background-color: #090d16 !important;
 }
 
 .admin-dashboard [data-slot="badge"][data-variant="secondary"] {
@@ -214,33 +279,9 @@ body {
 }
 
 @layer base {
-  h1 {
-    color: var(--theme-h1-color, inherit);
-    padding: var(--theme-h1-padding, 0);
-  }
-  h2 {
-    color: var(--theme-h2-color, inherit);
-    padding: var(--theme-h2-padding, 0);
-  }
-  h3 {
-    color: var(--theme-h3-color, inherit);
-    padding: var(--theme-h3-padding, 0);
-  }
-  h4 {
-    color: var(--theme-h4-color, inherit);
-    padding: var(--theme-h4-padding, 0);
-  }
-  h5 {
-    color: var(--theme-h5-color, inherit);
-    padding: var(--theme-h5-padding, 0);
-  }
-  h6 {
-    color: var(--theme-h6-color, inherit);
-    padding: var(--theme-h6-padding, 0);
-  }
-  p {
-    color: var(--theme-p-color, inherit);
-    padding: var(--theme-p-padding, 0);
+  a:not([class]) {
+    color: var(--theme-link, inherit);
+    text-decoration: underline;
   }
 }
 
@@ -254,36 +295,31 @@ body {
    Frontend Blocks & Components Hover Transitions System
    ───────────────────────────────────────────────────────────── */
 
-/* Card & Block Hover Lift & Glow */
 .card-hover-effect {
   transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
               box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
               border-color 0.35s ease !important;
-  will-change: transform, box-shadow;
 }
 .card-hover-effect:hover {
-  transform: translateY(-8px) scale(1.01) !important;
-  box-shadow: 0 25px 50px -12px color-mix(in srgb, var(--theme-primary, #4f46e5) 30%, transparent) !important;
+  transform: translateY(-4px) scale(1.01) !important;
+  box-shadow: 0 15px 20px -8px color-mix(in srgb, var(--theme-primary, #4f46e5) 30%, transparent) !important;
   border-color: color-mix(in srgb, var(--theme-primary, #4f46e5) 45%, transparent) !important;
+  will-change: transform;
 }
 
-/* Button Hover Scale & Lift */
 .btn-hover-effect {
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
-              box-shadow 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
-              background-color 0.25s ease,
-              color 0.25s ease !important;
-  will-change: transform, box-shadow;
+  transition: opacity 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease !important;
 }
 .btn-hover-effect:hover {
-  transform: translateY(-2px) scale(1.04) !important;
-  box-shadow: 0 16px 32px -6px color-mix(in srgb, var(--theme-primary, #4f46e5) 45%, transparent) !important;
+  opacity: 0.8 !important;
+  transform: none !important;
+  box-shadow: 0 8px 22px -4px color-mix(in srgb, var(--theme-button-bg, var(--theme-primary, #4f46e5)) 40%, transparent) !important;
 }
 .btn-hover-effect:active {
-  transform: translateY(0) scale(0.96) !important;
+  opacity: 0.8 !important;
+  transform: none !important;
 }
 
-/* Smooth Image Scale on Hover */
 .img-zoom-effect {
   transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
   will-change: transform;
@@ -293,7 +329,6 @@ body {
   transform: scale(1.08) !important;
 }
 
-/* Slider Controls Arrow Buttons - Discrete hover without position/scale shift */
 .slider-arrow-btn {
   transition: background-color 0.25s ease,
               border-color 0.25s ease,
@@ -311,7 +346,6 @@ body {
   background-color: rgba(255, 255, 255, 0.35) !important;
 }
 
-/* ── Page Loader ──────────────────────────────────────────────── */
 .page-loader {
   position: fixed;
   inset: 0;
@@ -320,13 +354,13 @@ body {
   align-items: center;
   justify-content: center;
   background: var(--background, #0f172a);
-  /* Fade out when React removes the element via animation */
-  animation: loader-fadein 0.2s ease-out both;
+  transition: opacity 0.35s ease-out, visibility 0.35s ease-out;
 }
 
-@keyframes loader-fadein {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+.page-loader.page-loader-hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 .page-loader-spinner {
@@ -335,7 +369,6 @@ body {
   height: 56px;
 }
 
-/* Spinning ring */
 .page-loader-ring {
   position: absolute;
   inset: 0;
@@ -346,7 +379,6 @@ body {
   animation: loader-spin 0.9s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
 }
 
-/* Pulsing center dot */
 .page-loader-dot {
   position: absolute;
   inset: 18px;
@@ -362,4 +394,63 @@ body {
 @keyframes loader-pulse {
   from { opacity: 0.4; transform: scale(0.7); }
   to   { opacity: 1;   transform: scale(1); }
+}
+
+.reveal-fade-up {
+  opacity: 0;
+  transform: translate3d(0, 32px, 0);
+  transition: opacity 1.05s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 1.05s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal-fade-down {
+  opacity: 0;
+  transform: translate3d(0, -32px, 0);
+  transition: opacity 1.05s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 1.05s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal-fade-left {
+  opacity: 0;
+  transform: translate3d(32px, 0, 0);
+  transition: opacity 1.05s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 1.05s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal-fade-right {
+  opacity: 0;
+  transform: translate3d(-32px, 0, 0);
+  transition: opacity 1.05s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 1.05s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal-fade {
+  opacity: 0;
+  transition: opacity 1.05s ease;
+  will-change: opacity;
+}
+
+.reveal-fade-up.reveal-visible,
+.reveal-fade-down.reveal-visible,
+.reveal-fade-left.reveal-visible,
+.reveal-fade-right.reveal-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  will-change: auto;
+}
+.reveal-fade.reveal-visible {
+  opacity: 1;
+  will-change: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-fade-up,
+  .reveal-fade-down,
+  .reveal-fade-left,
+  .reveal-fade-right,
+  .reveal-fade {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

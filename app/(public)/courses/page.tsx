@@ -64,12 +64,12 @@ export default async function CatalogPage() {
               return (
                 <div
                   key={prod.id}
-                  className="group card-hover-effect bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:border-indigo-500/30 transition-all duration-300 flex flex-col justify-between"
+                  className="group card-hover-effect flex flex-col overflow-hidden rounded-3xl border border-[var(--theme-card-border,rgba(226,232,240,0.8))] dark:border-slate-800/80 bg-[var(--theme-card-bg,rgba(255,255,255,0.85))] dark:bg-slate-900/80 backdrop-blur-md shadow-sm justify-between h-full"
                 >
                   <div>
                     {prod.imageUrl ? (
-                      <div className="w-full h-52 overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                        <img src={prod.imageUrl} alt={prod.title} className="img-zoom-effect w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110" />
+                      <div className="w-full aspect-[16/10] overflow-hidden relative bg-slate-100 dark:bg-slate-800">
+                        <img src={prod.imageUrl} alt={prod.title} className="img-zoom-effect w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
                       </div>
                     ) : (
                       <div className="w-full h-52 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 font-medium">
@@ -106,7 +106,7 @@ export default async function CatalogPage() {
 
                     <Link
                       href={`/courses/${prod.slug}`}
-                      className="group/btn btn-hover-effect inline-flex items-center gap-1.5 px-5 py-2.5 font-bold transition-all duration-300 hover:scale-105 active:scale-95 shadow-md hover:shadow-xl"
+                      className="group/btn btn-hover-effect inline-flex items-center gap-1.5 px-5 py-2.5 font-bold transition-all duration-300 shadow-md hover:shadow-xl"
                       style={{
                         backgroundColor: "var(--theme-button-bg, var(--theme-primary, #4f46e5))",
                         color: "var(--theme-button-text, #ffffff)",

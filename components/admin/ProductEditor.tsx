@@ -24,6 +24,7 @@ import MediaPicker from "@/components/admin/MediaPicker/MediaPicker";
 import { createProduct, updateProduct, publishProduct, ProductWithCategories } from "@/lib/actions/products";
 import type { productTypeEnum, productStatusEnum } from "@/lib/db/schema";
 import { ImageIcon, Upload } from "lucide-react";
+import CourseAIModal from "@/components/admin/CourseAIModal";
 
 type ProductType = (typeof productTypeEnum.enumValues)[number];
 type ProductStatus = (typeof productStatusEnum.enumValues)[number];
@@ -147,7 +148,17 @@ export default function ProductEditor({ product, categories = [] }: ProductEdito
             {status}
           </Badge>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center flex-wrap">
+          <CourseAIModal
+            onApplyCourseData={(data) => {
+              if (data.title) {
+                setTitle(data.title);
+                if (!product) setSlug(toSlug(data.title));
+              }
+              if (data.description) setDescription(data.description);
+              if (data.price) setPrice(Number(data.price));
+            }}
+          />
           <Button
             type="button"
             variant="outline"

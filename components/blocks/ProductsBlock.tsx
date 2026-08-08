@@ -3,6 +3,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { products } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
+import { Reveal } from "@/components/site/Reveal";
 
 interface ProductsBlockProps {
   title?: string;
@@ -34,23 +35,22 @@ export async function ProductsBlock({
   return (
     <section className={`max-w-7xl mx-auto px-4 ${paddingTop} ${paddingBottom}`}>
       {title && (
-        <div className="text-center mb-10">
+        <Reveal animation="fade-down" className="text-center mb-10">
           <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">{title}</h2>
           {subtitle && <p className="mt-2 text-lg text-slate-600 dark:text-slate-400">{subtitle}</p>}
-        </div>
+        </Reveal>
       )}
 
       {/* ROWS LAYOUT */}
       {layout === "rows" && (
         <div className="space-y-6">
-          {items.map((prod) => (
-            <div
-              key={prod.id}
-              className="group card-hover-effect flex flex-col md:flex-row items-center gap-6 p-6 bg-[var(--theme-card-bg,rgba(255,255,255,0.85))] dark:bg-slate-900/80 backdrop-blur-md border border-[var(--theme-card-border,rgba(226,232,240,0.8))] dark:border-slate-800 rounded-3xl shadow-sm"
-            >
+          {items.map((prod, idx) => {
+            return (
+            <Reveal key={prod.id} animation="fade-up" delay={idx * 120}>
+              <div className="group card-hover-effect flex flex-col md:flex-row items-center gap-6 p-6 bg-[var(--theme-card-bg,rgba(255,255,255,0.85))] dark:bg-slate-900/80 backdrop-blur-md border border-[var(--theme-card-border,rgba(226,232,240,0.8))] dark:border-slate-800 rounded-3xl shadow-sm">
               {prod.imageUrl ? (
                 <div className="w-full md:w-56 h-40 overflow-hidden rounded-2xl relative bg-slate-100 dark:bg-slate-800 shrink-0">
-                  <img src={prod.imageUrl} alt={prod.title} className="img-zoom-effect w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110" />
+                  <img src={prod.imageUrl} alt={prod.title} className="img-zoom-effect w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
                 </div>
               ) : (
                 <div className="w-full md:w-56 h-40 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400 font-medium shrink-0">
@@ -75,27 +75,28 @@ export async function ProductsBlock({
                     color: "var(--theme-button-text, #ffffff)",
                     borderRadius: "var(--theme-button-radius, 0.75rem)",
                   }}
-                  className="btn-hover-effect w-full text-center px-5 py-2.5 text-sm font-semibold shadow-md hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-300"
+                  className="btn-hover-effect w-full text-center px-5 py-2.5 text-sm font-semibold shadow-md hover:shadow-xl transition-all duration-300"
                 >
                   Ver detalles
                 </Link>
               </div>
-            </div>
-          ))}
+              </div>
+            </Reveal>
+            );
+          })}
         </div>
       )}
 
       {/* GRID / SLIDER LAYOUT */}
       {(layout === "grid" || layout === "slider") && (
         <div className={layout === "slider" ? "flex gap-6 overflow-x-auto pb-4 scrollbar-thin" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"}>
-          {items.map((prod) => (
-            <div
-              key={prod.id}
-              className={`${layout === "slider" ? "min-w-[300px] max-w-[340px]" : ""} group card-hover-effect bg-[var(--theme-card-bg,rgba(255,255,255,0.85))] dark:bg-slate-900/80 backdrop-blur-md border border-[var(--theme-card-border,rgba(226,232,240,0.8))] dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm flex flex-col`}
-            >
+          {items.map((prod, idx) => {
+            return (
+            <Reveal key={prod.id} animation="fade-up" delay={idx * 120}>
+              <div className={`${layout === "slider" ? "min-w-[300px] max-w-[340px]" : ""} group card-hover-effect bg-[var(--theme-card-bg,rgba(255,255,255,0.85))] dark:bg-slate-900/80 backdrop-blur-md border border-[var(--theme-card-border,rgba(226,232,240,0.8))] dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm flex flex-col`}>
               {prod.imageUrl ? (
                 <div className="w-full h-52 overflow-hidden relative bg-slate-100 dark:bg-slate-800">
-                  <img src={prod.imageUrl} alt={prod.title} className="img-zoom-effect w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110" />
+                  <img src={prod.imageUrl} alt={prod.title} className="img-zoom-effect w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
                 </div>
               ) : (
                 <div className="w-full h-52 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 font-medium">
@@ -121,14 +122,16 @@ export async function ProductsBlock({
                       color: "var(--theme-button-text, #ffffff)",
                       borderRadius: "var(--theme-button-radius, 0.75rem)",
                     }}
-                    className="btn-hover-effect px-5 py-2.5 text-xs font-semibold shadow-md hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-300"
+                    className="btn-hover-effect px-5 py-2.5 text-xs font-semibold shadow-md hover:shadow-xl transition-all duration-300"
                   >
                     Ver detalles
                   </Link>
                 </div>
               </div>
-            </div>
-          ))}
+              </div>
+            </Reveal>
+            );
+          })}
         </div>
       )}
     </section>

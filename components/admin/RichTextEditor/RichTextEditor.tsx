@@ -18,6 +18,8 @@ import {
   ImageIcon,
 } from "lucide-react";
 
+import AIAssistantModal from "./AIAssistantModal";
+
 interface RichTextEditorProps {
   content: unknown;
   onChange: (content: unknown) => void;
@@ -66,10 +68,24 @@ export default function RichTextEditor({
     editor.chain().focus().setImage({ src: url }).run();
   };
 
+  const handleInsertAIContent = (htmlContent: string) => {
+    const selection = editor.state.selection;
+    if (!selection.empty) {
+      editor.chain().focus().deleteSelection().insertContent(htmlContent).run();
+    } else {
+      editor.chain().focus().insertContent(htmlContent).run();
+    }
+  };
+
+  const getSelectedText = () => {
+    const { from, to } = editor.state.selection;
+    return editor.state.doc.textBetween(from, to, " ");
+  };
+
   return (
     <div className="border border-border rounded-md overflow-hidden">
       {/* Toolbar */}
-      <div className="flex flex-wrap gap-1 border-b border-border p-2 bg-muted/50">
+      <div className="flex flex-wrap items-center gap-1 border-b border-border p-2 bg-muted/50">
         <Button
           type="button"
           variant={editor.isActive("bold") ? "secondary" : "ghost"}
@@ -173,6 +189,15 @@ export default function RichTextEditor({
         >
           <ImageIcon className="h-4 w-4" />
         </Button>
+
+        <div className="w-px h-8 bg-border mx-1" />
+
+        {/* AI Assistant Button Trigger */}
+        <AIAssistantModal
+          currentText={editor.getText()}
+          selectedText={getSelectedText()}
+          onInsertContent={handleInsertAIContent}
+        />
       </div>
 
       {/* Editor area */}

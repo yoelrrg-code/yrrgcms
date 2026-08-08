@@ -24,6 +24,9 @@ import { Separator } from "@/components/ui/separator";
 import { Zap } from "lucide-react";
 import Link from "next/link";
 
+import AdminAICopilotDrawer from "@/components/admin/AdminAICopilotDrawer";
+import { AdminThemeWrapper } from "@/components/admin/AdminThemeWrapper";
+
 export default async function AdminLayout({
   children,
 }: {
@@ -55,7 +58,7 @@ export default async function AdminLayout({
     : 0;
 
   return (
-    <div className="admin-dashboard flex w-full">
+    <AdminThemeWrapper>
       <SidebarProvider>
       <Sidebar>
         {/* Brand header */}
@@ -99,7 +102,7 @@ export default async function AdminLayout({
         <header className="flex h-14 shrink-0 items-center justify-between border-b border-border px-4">
           <div className="flex items-center gap-2">
             <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="h-4" />
+            <Separator orientation="vertical" className="h-10" />
           </div>
 
           <div className="flex items-center gap-2">
@@ -117,7 +120,10 @@ export default async function AdminLayout({
         </header>
         <div className="flex-1 overflow-x-auto p-4 md:p-6 lg:p-8 max-w-full min-w-0">{children}</div>
       </SidebarInset>
+
+      {/* Global AI Executive Copilot Drawer */}
+      <AdminAICopilotDrawer />
     </SidebarProvider>
-    </div>
+    </AdminThemeWrapper>
   );
 }

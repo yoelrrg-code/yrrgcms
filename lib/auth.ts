@@ -12,7 +12,16 @@ const loginSchema = z.object({
 });
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  secret: process.env.AUTH_SECRET,
   session: { strategy: "jwt" },
+  logger: {
+    error(error: Error) {
+      if (error.name === "JWTSessionError") {
+        return;
+      }
+      console.error(`[auth][error] ${error.name}:`, error);
+    },
+  },
   pages: {
     signIn: "/admin/login",
     error: "/admin/login",

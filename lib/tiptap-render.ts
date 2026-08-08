@@ -1,6 +1,5 @@
 import { generateHTML } from "@tiptap/html/server";
 import StarterKit from "@tiptap/starter-kit";
-import { Link } from "@tiptap/extension-link";
 import { Image } from "@tiptap/extension-image";
 
 /**
@@ -33,8 +32,9 @@ export function tiptapToHtml(content: unknown): string {
 
   try {
     return generateHTML(doc as Parameters<typeof generateHTML>[0], [
-      StarterKit,
-      Link.configure({ openOnClick: false }),
+      StarterKit.configure({
+        link: { openOnClick: false },
+      }),
       Image,
     ]);
   } catch {

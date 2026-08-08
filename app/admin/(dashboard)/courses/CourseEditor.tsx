@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { PlusIcon, Trash2, Edit, Layers, Video, FileText, Globe, UploadCloud, Loader2 } from "lucide-react";
+import { PlusIcon, Trash2, SquarePen, Layers, Video, FileText, Globe, UploadCloud, Loader2 } from "lucide-react";
 import { addModule, deleteModule, addLesson, updateLesson, deleteLesson, updateCourseLevel } from "@/lib/actions/courses";
 import { courseLevelEnum, lessonContentTypeEnum } from "@/lib/db/schema";
 import { sileo } from "sileo";
@@ -265,7 +265,7 @@ export default function CourseEditor({ course }: { course: CourseWithDetails }) 
           </select>
 
           <Dialog open={isModOpen} onOpenChange={setIsModOpen}>
-            <Button size="sm" className="gap-1.5" nativeButton render={<DialogTrigger />}>
+            <Button size="sm" className="gap-1.5 font-bold rounded-xl" nativeButton render={<DialogTrigger />}>
               <PlusIcon className="h-4 w-4" /> Add Module
             </Button>
             <DialogContent className="sm:max-w-md">
@@ -297,7 +297,7 @@ export default function CourseEditor({ course }: { course: CourseWithDetails }) 
           </div>
         ) : (
           modules.map((mod, idx) => (
-            <div key={mod.id} className="border border-border rounded-md overflow-hidden">
+            <div key={mod.id} className="border border-border rounded-xl overflow-hidden">
               <div className="bg-muted/50 px-4 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Badge variant="outline" className="font-mono">
@@ -310,13 +310,19 @@ export default function CourseEditor({ course }: { course: CourseWithDetails }) 
                     size="sm"
                     variant="outline"
                     onClick={() => handleOpenAddLesson(mod.id)}
-                    className="h-8 text-xs gap-1"
+                    className="h-9 px-3 text-xs gap-1 font-bold rounded-xl"
                   >
                     <PlusIcon className="h-3.5 w-3.5" /> Lesson
                   </Button>
 
-                  <Button size="sm" variant="ghost" onClick={() => handleDeleteModule(mod.id, mod.title)}>
-                    <Trash2 className="h-4 w-4 text-destructive" />
+                  {/* Botón Eliminar Módulo Rojo */}
+                  <Button
+                    size="icon"
+                    className="size-9 rounded-xl bg-rose-500 hover:bg-rose-600 text-white shadow-xs border border-rose-500/30 transition-colors shrink-0"
+                    onClick={() => handleDeleteModule(mod.id, mod.title)}
+                    title="Eliminar módulo"
+                  >
+                    <Trash2 className="size-4" />
                   </Button>
                 </div>
               </div>
@@ -346,22 +352,26 @@ export default function CourseEditor({ course }: { course: CourseWithDetails }) 
 
                       <div className="flex items-center gap-2 text-muted-foreground">
                         {lesson.duration && <span className="mr-1">{lesson.duration}</span>}
+                        
+                        {/* Botón Editar Lección */}
                         <Button
-                          variant="ghost"
-                          size="sm"
+                          size="icon"
+                          variant="outline"
                           onClick={() => handleOpenEditLesson(mod.id, lesson)}
-                          className="h-7 w-7 p-0"
+                          className="size-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors shrink-0"
+                          title="Editar lección"
                         >
-                          <Edit className="h-3.5 w-3.5" />
+                          <SquarePen className="size-3.5" />
                         </Button>
 
+                        {/* Botón Eliminar Lección Rojo */}
                         <Button
-                          variant="ghost"
-                          size="sm"
+                          size="icon"
                           onClick={() => handleDeleteLesson(mod.id, lesson.id, lesson.title)}
-                          className="h-7 w-7 p-0 hover:text-destructive"
+                          className="size-8 rounded-xl bg-rose-500 hover:bg-rose-600 text-white shadow-xs border border-rose-500/30 transition-colors shrink-0"
+                          title="Eliminar lección"
                         >
-                          <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                          <Trash2 className="size-3.5" />
                         </Button>
                       </div>
                     </div>

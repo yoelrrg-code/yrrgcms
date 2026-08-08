@@ -14,6 +14,19 @@ const ADMIN_ONLY_PATHS = [
 export default auth(function proxy(req: NextRequest & { auth: import("next-auth").Session | null }) {
   const { pathname } = req.nextUrl;
 
+  // Manejo de preflight CORS (OPTIONS) para peticiones de API
+  if (req.method === "OPTIONS" && pathname.startsWith("/api")) {
+    return new NextResponse(null, {
+      status: 204,
+      headers: {
+        "Access-Control-Allow-Origin": process.env.NEXT_PUBLIC_APP_URL || "*",
+        "Access-Control-Allow-Methods": "GET,DELETE,PATCH,POST,PUT,OPTIONS",
+        "Access-Control-Allow-Headers": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization",
+        "Access-Control-Allow-Credentials": "true",
+      },
+    });
+  }
+
   // Not an admin route — let it through
   if (!pathname.startsWith("/admin")) {
     return NextResponse.next();
@@ -51,6 +64,6 @@ export default auth(function proxy(req: NextRequest & { auth: import("next-auth"
 });
 
 export const config = {
-  // Run on all admin routes; skip static files and Next.js internals
-  matcher: ["/admin/:path*"],
+  // Run on all admin and api routes; skip static files and Next.js internals
+  matcher: ["/admin/:path*", "/api/:path*"],
 };

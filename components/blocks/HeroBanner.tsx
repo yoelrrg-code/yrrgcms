@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Reveal } from "@/components/site/Reveal";
 
 export interface HeroSlide {
   title: string;
@@ -152,56 +153,65 @@ export default function HeroBanner({
               {/* Content Container - active slide */}
               {isActive && (
                 <div
+                  key={activeIndex}
                   className="relative z-10 mx-auto max-w-4xl px-6 py-20 text-center flex flex-col items-center justify-center space-y-6"
                 >
                   {/* Subtle Badge Tag */}
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 dark:bg-white/5 border border-white/20 text-xs font-semibold tracking-wide text-white uppercase backdrop-blur-md shadow-sm">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                    <span>Featured Highlight</span>
-                  </div>
+                  <Reveal animation="fade-up" delay={0}>
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 dark:bg-white/5 border border-white/20 text-xs font-semibold tracking-wide text-white uppercase backdrop-blur-md shadow-sm">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                      <span>Featured Highlight</span>
+                    </div>
+                  </Reveal>
 
                   {/* Title */}
-                  <h1 className="text-4xl font-black leading-tight tracking-tight text-white sm:text-6xl lg:text-7xl drop-shadow-lg">
-                    {slide.title}
-                  </h1>
+                  <Reveal animation="fade-up" delay={150}>
+                    <h1 className="text-4xl font-black leading-tight tracking-tight text-white sm:text-6xl lg:text-7xl drop-shadow-lg">
+                      {slide.title}
+                    </h1>
+                  </Reveal>
 
                   {/* Subtitle */}
                   {slide.subtitle && (
-                    <p className="max-w-2xl text-base text-slate-200/90 sm:text-xl leading-relaxed font-normal drop-shadow">
-                      {slide.subtitle}
-                    </p>
+                    <Reveal animation="fade-up" delay={300}>
+                      <p className="max-w-2xl text-base text-slate-200/90 sm:text-xl leading-relaxed font-normal drop-shadow">
+                        {slide.subtitle}
+                      </p>
+                    </Reveal>
                   )}
 
                   {/* CTA Button */}
                   {slide.ctaText && slide.ctaUrl && (
-                    <div className="pt-4">
-                      <Button
-                        render={<Link href={slide.ctaUrl} />}
-                        style={{
-                          backgroundColor: "var(--theme-button-bg, var(--primary))",
-                          color: "var(--theme-button-text, #ffffff)",
-                          borderRadius: "var(--theme-button-radius, 9999px)",
-                          padding: "var(--theme-button-padding, 0.875rem 2rem)",
-                        }}
-                        className="group/btn relative inline-flex items-center gap-2 text-base font-semibold shadow-lg border-0"
-                      >
-                        <span>{slide.ctaText}</span>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={2}
+                    <Reveal animation="fade-up" delay={450}>
+                      <div className="pt-4">
+                        <Button
+                          render={<Link href={slide.ctaUrl} />}
+                          style={{
+                            backgroundColor: "var(--theme-button-bg, var(--primary))",
+                            color: "var(--theme-button-text, #ffffff)",
+                            borderRadius: "var(--theme-button-radius, 9999px)",
+                            padding: "var(--theme-button-padding, 0.875rem 2rem)",
+                          }}
+                          className="group/btn relative inline-flex items-center gap-2 text-base font-semibold shadow-lg border-0"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M17 8l4 4m0 0l-4 4m4-4H3"
-                          />
-                        </svg>
-                      </Button>
-                    </div>
+                          <span>{slide.ctaText}</span>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M17 8l4 4m0 0l-4 4m4-4H3"
+                            />
+                          </svg>
+                        </Button>
+                      </div>
+                    </Reveal>
                   )}
                 </div>
               )}

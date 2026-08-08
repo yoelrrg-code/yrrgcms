@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusIcon, Trash2, Pencil } from "lucide-react";
+import { PlusIcon, Trash2, SquarePen } from "lucide-react";
 
 function toSlug(str: string) {
   return str
@@ -87,15 +87,27 @@ export default async function CategoriesPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-2">
-                      <Button variant="ghost" size="icon" render={<Link href={`/admin/categories/${cat.id}`} />}>
-                        <Pencil className="h-4 w-4 text-muted-foreground" />
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors"
+                        render={<Link href={`/admin/categories/${cat.id}`} />}
+                        title="Editar categoría"
+                      >
+                        <SquarePen className="size-4" />
                       </Button>
                       {/* Delete */}
                       <AlertDialog>
                         <AlertDialogTrigger
-                          render={<Button variant="ghost" size="icon" className="text-destructive" />}
+                          render={
+                            <Button
+                              size="icon"
+                              className="size-9 rounded-xl bg-rose-500 hover:bg-rose-600 text-white shadow-xs border border-rose-500/30 transition-colors"
+                              title="Eliminar categoría"
+                            />
+                          }
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="size-4" />
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
@@ -115,7 +127,7 @@ export default async function CategoriesPage() {
                                 revalidatePath("/admin/categories");
                               }}
                             >
-                              <AlertDialogAction type="submit">Delete</AlertDialogAction>
+                              <AlertDialogAction type="submit" className="bg-rose-600 hover:bg-rose-700 text-white">Delete</AlertDialogAction>
                             </form>
                           </AlertDialogFooter>
                         </AlertDialogContent>

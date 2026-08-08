@@ -1,11 +1,10 @@
 import { auth } from "@/lib/auth";
 import { requireCan } from "@/lib/permissions";
-import { getMedia, deleteMedia } from "@/lib/actions/media";
+import { getMedia } from "@/lib/actions/media";
 import { UploadArea } from "./upload-area";
-import { Button } from "@/components/ui/button";
-import { Trash2, Copy } from "lucide-react";
+import { DeleteMediaButton } from "@/components/admin/DeleteMediaButton";
+import { Copy } from "lucide-react";
 import Image from "next/image";
-import { revalidatePath } from "next/cache";
 
 export const metadata = {
   title: "Media | YRRG CMS",
@@ -23,36 +22,26 @@ export default async function MediaPage() {
   const session = await auth();
   requireCan(session, "read", "media");
 
-  // Allow deleting from server action
-  async function handleDelete(formData: FormData) {
-    "use server";
-    const id = formData.get("id") as string;
-    if (id) {
-      await deleteMedia(id);
-      revalidatePath("/media");
-    }
-  }
-
   const { items } = await getMedia({ limit: 50 });
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Media Library</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Media Library</h1>
       </div>
 
       <UploadArea />
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-8">
         {items.length === 0 ? (
-          <div className="col-span-full text-center py-12 text-muted-foreground border-2 border-dashed rounded-lg">
+          <div className="col-span-full text-center py-12 text-muted-foreground border-2 border-dashed border-border rounded-2xl bg-card">
             No media found. Upload something above.
           </div>
         ) : (
           items.map((file) => {
             const isImage = file.mimeType.startsWith("image/");
             return (
-              <div key={file.id} className="group relative rounded-md border bg-card overflow-hidden flex flex-col">
+              <div key={file.id} className="group relative rounded-2xl border border-border bg-card overflow-hidden flex flex-col shadow-sm">
                 <div className="aspect-square relative bg-muted flex items-center justify-center">
                   {isImage ? (
                     <Image
@@ -68,28 +57,27 @@ export default async function MediaPage() {
                     </div>
                   )}
                 </div>
-                <div className="p-2 text-xs border-t bg-card space-y-1">
-                  <p className="truncate font-medium" title={file.filename}>
+                <div className="p-2.5 text-xs border-t border-border bg-card space-y-1">
+                  <p className="truncate font-bold text-foreground" title={file.filename}>
                     {file.filename}
                   </p>
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground font-mono text-[11px]">
                     {formatBytes(file.size)}
                   </p>
                 </div>
                 
                 {/* Actions overlay */}
                 <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {/* <Button variant="secondary" size="icon" className="h-7 w-7 bg-background/80 hover:bg-background" > */}
-                    <a href={file.url} target="_blank" rel="noreferrer" title="Open URL" className="h-7 w-7 bg-background/80 hover:bg-background flex items-center justify-center rounded-md">
-                      <Copy className="h-3.5 w-3.5" />
-                    </a>
-                  {/* </Button> */}
-                  <form action={handleDelete}>
-                    <input type="hidden" name="id" value={file.id} />
-                    <Button variant="destructive" size="icon" type="submit" className="h-7 w-7 bg-destructive/90 hover:bg-destructive rounded-full" title="Delete">
-                      <Trash2 className="h-3.5 w-3.5" style={{color: "white"}}/>
-                    </Button>
-                  </form>
+                  <a
+                    href={file.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    title="Open URL"
+                    className="size-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100/90 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center transition-colors"
+                  >
+                    <Copy className="size-3.5" />
+                  </a>
+                  <DeleteMediaButton mediaId={file.id} filename={file.filename} />
                 </div>
               </div>
             );

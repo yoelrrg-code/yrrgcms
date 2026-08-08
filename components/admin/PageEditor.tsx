@@ -26,6 +26,8 @@ import { createPage, updatePage, publishPage } from "@/lib/actions/pages";
 import type { Block } from "@/components/blocks/definitions";
 import type { Page } from "@/lib/db/schema";
 
+import PageAIAssistantModal from "@/components/admin/BlockEditor/PageAIAssistantModal";
+
 // Slug generator helper
 function toSlug(str: string) {
   return str
@@ -118,7 +120,14 @@ export default function PageEditor({ page }: PageEditorProps) {
             {status}
           </Badge>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center flex-wrap">
+          <PageAIAssistantModal
+            onInsertBlocks={(newBlocks) => setBlocks((prev) => [...prev, ...newBlocks])}
+            onSetSeo={(title, desc) => {
+              if (!seoTitle) setSeoTitle(title);
+              if (!seoDescription) setSeoDescription(desc);
+            }}
+          />
           <Button
             type="button"
             variant="outline"

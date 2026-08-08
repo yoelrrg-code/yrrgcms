@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Reveal } from "@/components/site/Reveal";
 
 export interface PricingPlan {
   id: string;
@@ -52,7 +53,8 @@ function PricingCard({ plan }: { plan: PricingPlan; delay: number }) {
   const { highlighted } = plan;
 
   return (
-    <div
+    <Reveal
+      animation="fade-up"
       className={`group card-hover-effect relative flex flex-col rounded-3xl p-8 ${
         highlighted
           ? "bg-gradient-to-b from-[var(--theme-primary,#4f46e5)] via-[var(--theme-primary,#4f46e5)] to-indigo-700 text-white shadow-2xl ring-2 ring-indigo-400/50"
@@ -136,7 +138,7 @@ function PricingCard({ plan }: { plan: PricingPlan; delay: number }) {
                 borderRadius: "var(--theme-button-radius, 9999px)",
               }
         }
-        className={`btn-hover-effect inline-flex items-center justify-center px-6 py-3.5 text-sm font-bold transition-all duration-300 hover:scale-105 active:scale-95 ${
+        className={`btn-hover-effect inline-flex items-center justify-center px-6 py-3.5 text-sm font-bold transition-all duration-300 ${
           highlighted
             ? "bg-white text-indigo-900 shadow-lg hover:bg-slate-50 hover:shadow-xl"
             : "shadow-md hover:shadow-lg"
@@ -144,6 +146,6 @@ function PricingCard({ plan }: { plan: PricingPlan; delay: number }) {
       >
         {plan.ctaText}
       </Link>
-    </div>
+    </Reveal>
   );
 }

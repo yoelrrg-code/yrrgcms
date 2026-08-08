@@ -62,7 +62,7 @@ export default async function MisCursosPage() {
           </p>
           <Link
             href="/courses"
-            className="btn-hover-effect inline-flex items-center gap-2 px-5 py-2.5 font-semibold text-sm rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 shadow-md"
+            className="btn-hover-effect inline-flex items-center gap-2 px-5 py-2.5 font-semibold text-sm rounded-xl transition-all duration-300 shadow-md"
             style={{
               backgroundColor: "var(--theme-button-bg, var(--theme-primary, #4f46e5))",
               color: "var(--theme-button-text, #ffffff)",
@@ -95,7 +95,7 @@ export default async function MisCursosPage() {
 
               <Link
                 href={`/my-account/courses/${item.productSlug}`}
-                className="btn-hover-effect w-full py-3 font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 active:scale-95 shadow-md"
+                className="btn-hover-effect w-full py-3 font-bold text-sm rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-md"
                 style={{
                   backgroundColor: "var(--theme-button-bg, var(--theme-primary, #4f46e5))",
                   color: "var(--theme-button-text, #ffffff)",

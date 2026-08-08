@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { posts, users, postCategories, postTags, categories, tags } from "@/lib/db/schema";
 import { requireCan } from "@/lib/permissions";
 import { eq, desc } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 // Returns all posts (optionally filtered by authorId). Authors see only their own posts.
 export async function getPosts(options?: { authorId?: string }) {
@@ -163,6 +163,10 @@ export async function createPost(data: {
     );
   }
 
+  revalidatePath("/admin/posts");
+  revalidatePath("/blog");
+  revalidatePath("/");
+
   return newPost;
 }
 
@@ -224,6 +228,12 @@ export async function updatePost(
     }
   }
 
+  revalidatePath("/admin/posts");
+  revalidatePath("/blog");
+  revalidatePath("/");
+  if (updated.slug) revalidatePath(`/blog/${updated.slug}`);
+
+
   return updated;
 }
 
@@ -242,7 +252,12 @@ export async function deletePost(id: string) {
   requireCan(session, "delete", "posts", { authorId: existing.authorId });
 
   await db.delete(posts).where(eq(posts.id, id));
+
   revalidatePath("/admin/posts");
+  revalidatePath("/blog");
+  revalidatePath("/");
+  if (existing.slug) revalidatePath(`/blog/${existing.slug}`);
+
 }
 
 // Publishes a post; checks ownership
@@ -270,6 +285,11 @@ export async function publishPost(id: string) {
     .returning();
 
   revalidatePath("/admin/posts");
+  revalidatePath("/blog");
+  revalidatePath("/");
+  if (updated.slug) revalidatePath(`/blog/${updated.slug}`);
+
+
   return updated;
 }
 
@@ -298,5 +318,10 @@ export async function unpublishPost(id: string) {
     .returning();
 
   revalidatePath("/admin/posts");
+  revalidatePath("/blog");
+  revalidatePath("/");
+  if (existing.slug) revalidatePath(`/blog/${existing.slug}`);
+
+
   return updated;
 }

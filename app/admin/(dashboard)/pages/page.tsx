@@ -20,7 +20,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { PlusIcon, Pencil, FileText, CheckCircle2, Globe } from "lucide-react";
+import { PlusIcon, SquarePen, Trash2, Eye, FileText, CheckCircle2, Globe } from "lucide-react";
 
 export default async function PagesPage() {
   const pages = await getPages();
@@ -116,20 +116,53 @@ export default async function PagesPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-2">
-                      <Link href={`/admin/pages/${page.id}`}>
-                        <Button variant="ghost" size="icon" className="h-8 w-8" title="Edit"><Pencil className="h-3.5 w-3.5" /></Button>
-                      </Link>
                       {page.status === "draft" ? (
                         <form action={async () => { "use server"; await publishPage(page.id); }}>
-                          <Button type="submit" variant="ghost" size="sm" className="h-8 text-xs">Publish</Button>
+                          <Button type="submit" variant="outline" size="sm" className="h-9 px-3 text-xs font-bold rounded-xl border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20">Publish</Button>
                         </form>
                       ) : (
                         <form action={async () => { "use server"; await unpublishPage(page.id); }}>
-                          <Button type="submit" variant="ghost" size="sm" className="h-8 text-xs">Unpublish</Button>
+                          <Button type="submit" variant="outline" size="sm" className="h-9 px-3 text-xs font-bold rounded-xl border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20">Unpublish</Button>
                         </form>
                       )}
+
+                      {/* Botón Ver Público */}
+                      <Link href={page.slug === "home" ? "/" : `/${page.slug}`} target="_blank">
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors shrink-0"
+                          title="Ver en la web pública"
+                        >
+                          <Eye className="size-4" />
+                        </Button>
+                      </Link>
+
+                      {/* Botón Editar Cuadrado */}
+                      <Link href={`/admin/pages/${page.id}`}>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors shrink-0"
+                          title="Editar página"
+                        >
+                          <SquarePen className="size-4" />
+                        </Button>
+                      </Link>
+
+                      {/* Botón Eliminar Rojo */}
                       <AlertDialog>
-                        <AlertDialogTrigger render={<Button variant="ghost" size="sm" className="h-8 text-xs text-destructive hover:text-destructive" />}>Delete</AlertDialogTrigger>
+                        <AlertDialogTrigger
+                          render={
+                            <Button
+                              size="icon"
+                              className="size-9 rounded-xl bg-rose-500 hover:bg-rose-600 text-white shadow-xs border border-rose-500/30 transition-colors shrink-0"
+                              title="Eliminar página"
+                            />
+                          }
+                        >
+                          <Trash2 className="size-4" />
+                        </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>Delete page?</AlertDialogTitle>
@@ -138,7 +171,7 @@ export default async function PagesPage() {
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <form action={async () => { "use server"; await deletePage(page.id); }}>
-                              <AlertDialogAction type="submit">Delete</AlertDialogAction>
+                              <AlertDialogAction type="submit" className="bg-rose-600 hover:bg-rose-700 text-white">Delete</AlertDialogAction>
                             </form>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -177,21 +210,44 @@ export default async function PagesPage() {
             <p className="text-xs text-slate-400 font-mono">
               {page.updatedAt ? new Date(page.updatedAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }) : "—"}
             </p>
-            <div className="flex flex-wrap gap-2 pt-4 border-t border-border">
-              <Link href={`/admin/pages/${page.id}`} className="flex-1">
-                <Button variant="outline" size="sm" className="w-full text-xs gap-1.5 rounded-xl"><Pencil className="h-3.5 w-3.5" /> Edit</Button>
+            <div className="flex items-center justify-end gap-2 pt-4 border-t border-border">
+              {/* Botón Ver Público */}
+              <Link href={page.slug === "home" ? "/" : `/${page.slug}`} target="_blank">
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors shrink-0"
+                  title="Ver en la web pública"
+                >
+                  <Eye className="size-4" />
+                </Button>
               </Link>
-              {page.status === "draft" ? (
-                <form action={async () => { "use server"; await publishPage(page.id); }} className="flex-1">
-                  <Button type="submit" variant="ghost" size="sm" className="w-full text-xs rounded-xl">Publish</Button>
-                </form>
-              ) : (
-                <form action={async () => { "use server"; await unpublishPage(page.id); }} className="flex-1">
-                  <Button type="submit" variant="ghost" size="sm" className="w-full text-xs rounded-xl">Unpublish</Button>
-                </form>
-              )}
+
+              {/* Botón Editar Cuadrado */}
+              <Link href={`/admin/pages/${page.id}`}>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors shrink-0"
+                  title="Editar página"
+                >
+                  <SquarePen className="size-4" />
+                </Button>
+              </Link>
+
+              {/* Botón Eliminar Rojo */}
               <AlertDialog>
-                <AlertDialogTrigger render={<Button variant="ghost" size="sm" className="text-xs text-destructive hover:text-destructive rounded-xl" />}>Delete</AlertDialogTrigger>
+                <AlertDialogTrigger
+                  render={
+                    <Button
+                      size="icon"
+                      className="size-9 rounded-xl bg-rose-500 hover:bg-rose-600 text-white shadow-xs border border-rose-500/30 transition-colors shrink-0"
+                      title="Eliminar página"
+                    />
+                  }
+                >
+                  <Trash2 className="size-4" />
+                </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>Delete page?</AlertDialogTitle>
@@ -200,7 +256,7 @@ export default async function PagesPage() {
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <form action={async () => { "use server"; await deletePage(page.id); }}>
-                      <AlertDialogAction type="submit">Delete</AlertDialogAction>
+                      <AlertDialogAction type="submit" className="bg-rose-600 hover:bg-rose-700 text-white">Delete</AlertDialogAction>
                     </form>
                   </AlertDialogFooter>
                 </AlertDialogContent>

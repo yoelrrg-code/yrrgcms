@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { tiptapToHtml } from "@/lib/tiptap-render";
+import { Reveal } from "@/components/site/Reveal";
 
 export interface TextWithImageProps {
   paddingTop?: string;
@@ -51,8 +52,8 @@ export default function TextWithImage({
             imagePosition === "right" ? "lg:flex-row-reverse" : ""
           }`}
         >
-          <div className="w-full lg:w-1/2">{imageCol}</div>
-          <div className="w-full lg:w-1/2">{textCol}</div>
+          <Reveal animation="fade-right" className="w-full lg:w-1/2">{imageCol}</Reveal>
+          <Reveal animation="fade-left" className="w-full lg:w-1/2">{textCol}</Reveal>
         </div>
       </div>
     </section>

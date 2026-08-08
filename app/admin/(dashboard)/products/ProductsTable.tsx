@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash2, Edit, ShoppingBag } from "lucide-react";
+import { Trash2, SquarePen, Eye, ShoppingBag } from "lucide-react";
 import { deleteProduct } from "@/lib/actions/products";
 
 const PRODUCT_TYPE_LABELS: Record<string, string> = {
@@ -82,7 +82,7 @@ export default function ProductsTable({ initialProducts }: { initialProducts: Pr
                     <TableCell className="font-medium">
                       <Link
                         href={`/admin/products/${product.id}`}
-                        className="font-bold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition hover:underline"
+                        className="font-bold text-foreground hover:text-indigo-600 dark:hover:text-indigo-400 transition hover:underline"
                       >
                         {product.title}
                       </Link>
@@ -93,9 +93,9 @@ export default function ProductsTable({ initialProducts }: { initialProducts: Pr
                         {PRODUCT_TYPE_LABELS[product.type] ?? product.type}
                       </span>
                     </TableCell>
-                    <TableCell className="font-extrabold text-slate-900 dark:text-white whitespace-nowrap">
+                    <TableCell className="font-extrabold text-foreground whitespace-nowrap">
                       ${product.price.toLocaleString()}{" "}
-                      <span className="text-xs font-semibold text-slate-500">{product.currency}</span>
+                      <span className="text-xs font-semibold text-muted-foreground">{product.currency}</span>
                     </TableCell>
                     <TableCell>
                       {product.status === "PUBLISHED" ? (
@@ -105,12 +105,39 @@ export default function ProductsTable({ initialProducts }: { initialProducts: Pr
                       )}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        <Link href={`/admin/products/${product.id}`}>
-                          <Button variant="ghost" size="sm" className="rounded-xl"><Edit className="h-4 w-4" /></Button>
+                      <div className="flex items-center justify-end gap-2">
+                        {/* Botón Ver Público */}
+                        <Link href={`/courses/${product.slug}`} target="_blank">
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors"
+                            title="Ver en la web pública"
+                          >
+                            <Eye className="size-4" />
+                          </Button>
                         </Link>
-                        <Button variant="ghost" size="sm" className="rounded-xl" onClick={() => handleDelete(product.id, product.title)}>
-                          <Trash2 className="h-4 w-4 text-destructive" />
+
+                        {/* Botón Editar */}
+                        <Link href={`/admin/products/${product.id}`}>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors"
+                            title="Editar producto"
+                          >
+                            <SquarePen className="size-4" />
+                          </Button>
+                        </Link>
+
+                        {/* Botón Eliminar Rojo */}
+                        <Button
+                          size="icon"
+                          className="size-9 rounded-xl bg-rose-500 hover:bg-rose-600 text-white shadow-xs border border-rose-500/30 transition-colors shrink-0"
+                          onClick={() => handleDelete(product.id, product.title)}
+                          title="Eliminar producto"
+                        >
+                          <Trash2 className="size-4" />
                         </Button>
                       </div>
                     </TableCell>
@@ -136,11 +163,11 @@ export default function ProductsTable({ initialProducts }: { initialProducts: Pr
                 <div className="min-w-0">
                   <Link
                     href={`/admin/products/${product.id}`}
-                    className="font-bold text-sm text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline truncate block"
+                    className="font-bold text-sm text-foreground hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline truncate block"
                   >
                     {product.title}
                   </Link>
-                  <p className="text-xs text-slate-500 font-mono mt-0.5">/courses/{product.slug}</p>
+                  <p className="text-xs text-muted-foreground font-mono mt-0.5">/courses/{product.slug}</p>
                 </div>
                 <div className="shrink-0">
                   {product.status === "PUBLISHED" ? (
@@ -158,19 +185,41 @@ export default function ProductsTable({ initialProducts }: { initialProducts: Pr
                   ${product.price.toLocaleString()} <span className="text-xs font-semibold text-slate-400">{product.currency}</span>
                 </span>
               </div>
-              <div className="flex gap-2 pt-1 border-t border-border">
-                <Link href={`/admin/products/${product.id}`} className="flex-1">
-                  <Button variant="outline" size="sm" className="w-full text-xs gap-1.5 rounded-xl">
-                    <Edit className="h-3.5 w-3.5" /> Edit
+
+              {/* Botones unificados */}
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-border">
+                {/* Botón Ver Público */}
+                <Link href={`/courses/${product.slug}`} target="_blank">
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors"
+                    title="Ver en la web pública"
+                  >
+                    <Eye className="size-4" />
                   </Button>
                 </Link>
+
+                {/* Botón Editar */}
+                <Link href={`/admin/products/${product.id}`}>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors"
+                    title="Editar producto"
+                  >
+                    <SquarePen className="size-4" />
+                  </Button>
+                </Link>
+
+                {/* Botón Eliminar Rojo */}
                 <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-xs rounded-xl text-destructive hover:text-destructive"
+                  size="icon"
+                  className="size-9 rounded-xl bg-rose-500 hover:bg-rose-600 text-white shadow-xs border border-rose-500/30 transition-colors shrink-0"
                   onClick={() => handleDelete(product.id, product.title)}
+                  title="Eliminar producto"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
+                  <Trash2 className="size-4" />
                 </Button>
               </div>
             </div>

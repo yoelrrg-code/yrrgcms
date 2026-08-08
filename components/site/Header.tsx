@@ -39,7 +39,12 @@ export default async function Header({
 }) {
   const headerData = ((await getGlobal("header")) as HeaderConfig) || {};
   const menuData = await getMenuByLocation("header");
-  const session = await auth();
+  let session = null;
+  try {
+    session = await auth();
+  } catch (error) {
+    // Si la cookie está corrupta o el secret no coincide, session permanece null
+  }
 
   const siteName = headerData.siteName || "YRRG CMS";
   const logoUrl = headerData.logoUrl;
@@ -118,7 +123,7 @@ export default async function Header({
             <div className="hidden md:block">
               <Button
                 render={<Link href={ctaUrl} />}
-                className="shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
+                className="shadow-sm hover:shadow-md transition-all duration-300"
               >
                 {ctaText}
               </Button>

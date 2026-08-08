@@ -205,7 +205,7 @@ export default function ContactFormBlock({
                 color: "var(--theme-button-text, #ffffff)",
                 borderRadius: "var(--theme-button-radius, 1rem)",
               }}
-              className="w-full font-bold py-6 text-base shadow-lg hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95 transition-all duration-300"
+              className="w-full font-bold py-6 text-base shadow-lg hover:shadow-2xl transition-all duration-300"
             >
               {status === "loading" && (
                 <svg

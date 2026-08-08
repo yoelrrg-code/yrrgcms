@@ -6,7 +6,7 @@ import { updateService, deleteService } from "@/lib/actions/services";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Edit, Trash2, Search } from "lucide-react";
+import { SquarePen, Trash2, Search, Eye } from "lucide-react";
 import Link from "next/link";
 import { sileo } from "sileo";
 
@@ -131,13 +131,27 @@ export function ServicesTable({ services: initialServices = [] }: ServicesTableP
                     <TableCell className="text-xs text-slate-500">
                       {packCount} packs | {subCount} subs
                     </TableCell>
-                    <TableCell className="text-right space-x-1">
-                      <Button variant="ghost" size="icon" className="rounded-xl" render={<Link href={`/admin/services/${service.id}`} />}>
-                        <Edit className="size-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(service.id)} className="text-destructive rounded-xl">
-                        <Trash2 className="size-4" />
-                      </Button>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link href={`/admin/services/${service.id}`}>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors"
+                            title="Editar servicio"
+                          >
+                            <SquarePen className="size-4" />
+                          </Button>
+                        </Link>
+                        <Button
+                          size="icon"
+                          onClick={() => handleDelete(service.id)}
+                          className="size-9 rounded-xl bg-rose-500 hover:bg-rose-600 text-white shadow-xs border border-rose-500/30 transition-colors"
+                          title="Eliminar servicio"
+                        >
+                          <Trash2 className="size-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
@@ -198,19 +212,39 @@ export function ServicesTable({ services: initialServices = [] }: ServicesTableP
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 pt-4 border-t border-border">
-                  <Link href={`/admin/services/${service.id}`} className="flex-1">
-                    <Button variant="outline" size="sm" className="w-full h-10 text-xs gap-1.5 rounded-md">
-                      <Edit className="h-3.5 w-3.5" /> Edit
+                <div className="flex items-center justify-end gap-2 pt-4 border-t border-border">
+                  {/* Botón Ver Público */}
+                  <Link href={`/services/${service.slug}`} target="_blank">
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors shrink-0"
+                      title="Ver en la web pública"
+                    >
+                      <Eye className="size-4" />
                     </Button>
                   </Link>
+
+                  {/* Botón Editar Cuadrado */}
+                  <Link href={`/admin/services/${service.id}`}>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      className="size-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors shrink-0"
+                      title="Editar servicio"
+                    >
+                      <SquarePen className="size-4" />
+                    </Button>
+                  </Link>
+
+                  {/* Botón Eliminar Rojo */}
                   <Button
-                    variant="ghost"
-                    size="sm"
+                    size="icon"
                     onClick={() => handleDelete(service.id)}
-                    className="flex-1 h-10 text-xs text-destructive hover:text-destructive rounded-md"
+                    className="size-9 rounded-xl bg-rose-500 hover:bg-rose-600 text-white shadow-xs border border-rose-500/30 transition-colors shrink-0"
+                    title="Eliminar servicio"
                   >
-                    <Trash2 className="h-3.5 w-3.5 mr-1" /> Delete
+                    <Trash2 className="size-4" />
                   </Button>
                 </div>
               </div>

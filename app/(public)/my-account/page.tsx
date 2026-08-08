@@ -68,7 +68,7 @@ export default async function MyAccountPage() {
 
             <Link
               href="/my-account/orders"
-              className="btn-hover-effect w-full py-3 font-bold text-sm rounded-xl text-center transition-all duration-300 block shadow-sm hover:scale-105 active:scale-95 theme-btn-link"
+              className="btn-hover-effect w-full py-3 font-bold text-sm rounded-xl text-center transition-all duration-300 block shadow-sm theme-btn-link"
               style={{
                 backgroundColor: "#ffffff",
                 color: "var(--theme-primary, #4f46e5)",
@@ -81,13 +81,13 @@ export default async function MyAccountPage() {
 
           {/* Course Access Card */}
           <div 
-            className="group card-hover-effect text-white rounded-3xl p-6 flex flex-col justify-between space-y-6 shadow-md border border-slate-800/20 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+            className="group card-hover-effect text-white rounded-3xl p-6 flex flex-col justify-between space-y-6 shadow-md border border-slate-800/20 transition-all duration-300 hover:shadow-2xl"
             style={{
               backgroundColor: "var(--theme-secondary, #0f172a)",
             }}
           >
             <div className="space-y-3">
-              <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+              <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center transition-transform duration-300">
                 <GraduationCap className="h-6 w-6 text-white" />
               </div>
               <h2 className="text-xl font-bold" style={{ color: "#ffffff" }}>My Courses</h2>
@@ -98,7 +98,7 @@ export default async function MyAccountPage() {
 
             <Link
               href="/my-account/courses"
-              className="btn-hover-effect w-full py-3 font-bold text-sm rounded-xl text-center transition-all duration-300 block border border-white/20 hover:bg-white/10 hover:scale-105 active:scale-95"
+              className="btn-hover-effect w-full py-3 font-bold text-sm rounded-xl text-center transition-all duration-300 block border border-white/20 hover:bg-white/10"
               style={{
                 color: "#ffffff",
                 borderRadius: "var(--theme-button-radius, 0.75rem)",

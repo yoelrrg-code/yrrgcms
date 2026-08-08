@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { UploadCloud } from "lucide-react";
+import { UploadCloud, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { sileo } from "sileo";
 
@@ -10,11 +10,13 @@ export function UploadArea() {
   const router = useRouter();
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [uploadFileName, setUploadFileName] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = async (file: File) => {
     if (!file) return;
     setUploading(true);
+    setUploadFileName(file.name);
     const formData = new FormData();
     formData.append("file", file);
 
@@ -33,6 +35,7 @@ export function UploadArea() {
       sileo.error({ title: err instanceof Error ? err.message : "Upload failed" });
     } finally {
       setUploading(false);
+      setUploadFileName("");
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -49,14 +52,16 @@ export function UploadArea() {
 
   return (
     <div
-      className={`relative flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-12 transition-colors ${
-        isDragging
-          ? "border-primary bg-primary/10"
-          : "border-border bg-card hover:bg-accent/50"
+      className={`relative flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-10 transition-all duration-300 ${
+        uploading
+          ? "border-indigo-500/60 bg-indigo-500/5 dark:bg-indigo-950/20 shadow-md"
+          : isDragging
+          ? "border-primary bg-primary/10 scale-[1.01]"
+          : "border-border bg-card hover:bg-accent/40"
       }`}
       onDragOver={(e) => {
         e.preventDefault();
-        setIsDragging(true);
+        if (!uploading) setIsDragging(true);
       }}
       onDragLeave={() => setIsDragging(false)}
       onDrop={handleDrop}
@@ -70,21 +75,57 @@ export function UploadArea() {
             handleFile(e.target.files[0]);
           }
         }}
-      />
-      <UploadCloud className="h-10 w-10 text-muted-foreground mb-4" />
-      <h3 className="text-lg font-semibold mb-1">
-        {uploading ? "Uploading..." : "Drag and drop a file"}
-      </h3>
-      <p className="text-sm text-muted-foreground mb-4">
-        or click to select from your computer
-      </p>
-      <Button
-        variant="outline"
-        onClick={() => fileInputRef.current?.click()}
         disabled={uploading}
-      >
-        Select File
-      </Button>
+      />
+
+      {uploading ? (
+        <div className="flex flex-col items-center justify-center space-y-3 py-2 animate-in fade-in zoom-in-95 duration-200">
+          <div className="relative p-3 bg-indigo-500/10 dark:bg-indigo-500/20 rounded-2xl text-indigo-600 dark:text-indigo-400">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+          <div className="text-center space-y-1">
+            <h3 className="text-base font-bold text-foreground animate-pulse">
+              Uploading {uploadFileName || "file"}...
+            </h3>
+            <p className="text-xs text-muted-foreground">
+              Please wait while the media file is being uploaded and processed.
+            </p>
+          </div>
+          {/* Animated Progress Bar */}
+          <div className="w-56 h-1.5 bg-indigo-500/10 dark:bg-indigo-500/20 rounded-full overflow-hidden relative mt-2">
+            <div className="absolute inset-0 bg-indigo-600 dark:bg-indigo-400 rounded-full animate-[shimmer_1.5s_infinite] -translate-x-full w-full" style={{
+              animation: "slideProgress 1.4s ease-in-out infinite"
+            }} />
+          </div>
+          <style jsx>{`
+            @keyframes slideProgress {
+              0% { transform: translateX(-100%); }
+              50% { transform: translateX(0%); }
+              100% { transform: translateX(100%); }
+            }
+          `}</style>
+        </div>
+      ) : (
+        <>
+          <div className="p-3 bg-muted rounded-2xl mb-3 text-muted-foreground">
+            <UploadCloud className="h-8 w-8" />
+          </div>
+          <h3 className="text-base font-bold text-foreground mb-1">
+            Drag and drop a media file
+          </h3>
+          <p className="text-xs text-muted-foreground mb-4">
+            or click to select from your device
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => fileInputRef.current?.click()}
+            className="rounded-xl font-bold gap-2 text-xs"
+          >
+            Select File
+          </Button>
+        </>
+      )}
     </div>
   );
 }

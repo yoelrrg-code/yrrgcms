@@ -1,31 +1,53 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export function PageLoader() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [visible, setVisible] = useState(true);
 
+  // Trigger loading screen on initial load & navigation changes
   useEffect(() => {
-    // Wait for window.load (all resources including images) to hide the loader
-    const hide = () => setVisible(false);
+    setVisible(true);
 
-    if (document.readyState === "complete") {
-      // Already fully loaded (e.g. hot-reload in dev)
-      hide();
-    } else {
-      window.addEventListener("load", hide);
-      return () => window.removeEventListener("load", hide);
-    }
-  }, []);
+    const timer = setTimeout(() => {
+      setVisible(false);
+    }, 450);
 
-  if (!visible) return null;
+    return () => clearTimeout(timer);
+  }, [pathname, searchParams]);
+
+  // Intercept click on internal links to activate loading immediately
+  useEffect(() => {
+    const handleAnchorClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      const anchor = target?.closest("a");
+      if (!anchor) return;
+
+      const href = anchor.getAttribute("href");
+      if (
+        href &&
+        href.startsWith("/") &&
+        !href.startsWith("#") &&
+        anchor.target !== "_blank" &&
+        href !== pathname
+      ) {
+        setVisible(true);
+      }
+    };
+
+    document.addEventListener("click", handleAnchorClick);
+    return () => document.removeEventListener("click", handleAnchorClick);
+  }, [pathname]);
 
   return (
     <div
       aria-hidden="true"
-      className="page-loader"
+      className={`page-loader ${!visible ? "page-loader-hidden" : ""}`}
     >
-      {/* Spinner */}
+      {/* Full Screen Loading Animation & Ring */}
       <div className="page-loader-spinner">
         <div className="page-loader-ring" />
         <div className="page-loader-dot" />

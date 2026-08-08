@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "sileo";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { PageLoader } from "@/components/site/PageLoader";
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700"],
@@ -31,6 +33,9 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
+          <Suspense fallback={null}>
+            <PageLoader />
+          </Suspense>
           <TooltipProvider>{children}</TooltipProvider>
           <Toaster position="top-center" theme="dark" options={{ fill: "#313131" }} />
         </ThemeProvider>
