@@ -4,7 +4,6 @@
 node_modules/
 .next/
 out/
-drizzle/
 *.log
 .DS_Store
 .claude/
