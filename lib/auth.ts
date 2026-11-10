@@ -66,13 +66,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session: sessionPayload }) {
       if (user) {
         token.id = user.id;
         token.name = user.name;
         token.role = (user as { role?: string }).role;
-      } else if (token.id) {
-        // Fetch latest user data from DB to ensure updates are reflected
+        token.lastChecked = Date.now();
+        return token;
+      }
+
+      if (trigger === "update" && (sessionPayload as { name?: string })?.name) {
+        token.name = (sessionPayload as { name?: string }).name;
+      }
+
+      // Check DB at most once every 5 minutes or on explicit session update to avoid constant DB round-trips
+      const now = Date.now();
+      const lastChecked = (token.lastChecked as number) || 0;
+      if (token.id && (trigger === "update" || now - lastChecked > 5 * 60 * 1000)) {
         const [dbUser] = await db
           .select({
             name: users.name,
@@ -84,6 +94,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (dbUser) {
           token.name = dbUser.name;
           token.role = dbUser.role;
+          token.lastChecked = now;
         }
       }
       return token;

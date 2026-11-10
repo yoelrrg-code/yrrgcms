@@ -6,6 +6,7 @@ import { pages, users } from "@/lib/db/schema";
 import { requireCan } from "@/lib/permissions";
 import { eq, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { cache } from "react";
 
 // Returns all pages ordered by updatedAt desc with author name
 export async function getPages() {
@@ -33,8 +34,8 @@ export async function getPages() {
   return rows;
 }
 
-// For the public frontend — fetches a page by slug
-export async function getPageBySlug(slug: string) {
+// For the public frontend — fetches a page by slug (deduplicated per request via React.cache)
+export const getPageBySlug = cache(async (slug: string) => {
   const [page] = await db
     .select()
     .from(pages)
@@ -42,7 +43,7 @@ export async function getPageBySlug(slug: string) {
     .limit(1);
 
   return page ?? null;
-}
+});
 
 // For the admin editor — fetches a page by id with full data
 export async function getPageById(id: string) {

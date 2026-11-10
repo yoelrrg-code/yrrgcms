@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "skills": {
+    "code-review": {
+      "version": "1.0.0",
+      "installedAt": "2026-10-26T18:44:59.639Z",
+      "platform": "gemini",
+      "contentHash": "a36edc8e90bf772b3577c3819abc824edca4e5e434b843c23cce91836e91d00c"
+    },
+    "alirezarezvani-senior-frontend": {
+      "version": "1.0.3",
+      "installedAt": "2026-10-26T18:45:25.400Z",
+      "platform": "gemini"
+    },
+    "alirezarezvani-ui-design-system": {
+      "version": "1.0.1",
+      "installedAt": "2026-10-26T18:45:32.185Z",
+      "platform": "gemini"
+    },
+    "security-review": {
+      "version": "2.0.1",
+      "installedAt": "2026-10-26T18:45:45.337Z",
+      "platform": "gemini"
+    },
+    "security-audit": {
+      "version": "1.0.0",
+      "installedAt": "2026-10-26T18:46:00.513Z",
+      "platform": "gemini",
+      "contentHash": "00c1fd837d045d7906629543c8f3d2268e8800365083373c7ed151fb53828230"
+    }
+  }
+}

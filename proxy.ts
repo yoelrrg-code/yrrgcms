@@ -2,13 +2,20 @@ import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Admin-only routes — Authors will get a 403
 const ADMIN_ONLY_PATHS = [
   "/admin/categories",
   "/admin/forms",
   "/admin/menus",
   "/admin/globals",
   "/admin/users",
+  "/admin/products",
+  "/admin/courses",
+  "/admin/payments",
+  "/admin/marketing",
+  "/admin/services",
+  "/admin/schedule",
+  "/admin/testimonials",
+  "/admin/themes",
 ];
 
 export default auth(function proxy(req: NextRequest & { auth: import("next-auth").Session | null }) {

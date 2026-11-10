@@ -17,7 +17,13 @@ type Resource =
   | "menus"
   | "globals"
   | "media"
-  | "users";
+  | "users"
+  | "products"
+  | "courses"
+  | "services"
+  | "testimonials"
+  | "themes"
+  | "marketing";
 
 // ============================================================
 // Admin-only resources — Authors have no access at all
@@ -30,6 +36,12 @@ const ADMIN_ONLY_RESOURCES: Resource[] = [
   "menus",
   "globals",
   "users",
+  "products",
+  "courses",
+  "services",
+  "testimonials",
+  "themes",
+  "marketing",
 ];
 
 // ============================================================

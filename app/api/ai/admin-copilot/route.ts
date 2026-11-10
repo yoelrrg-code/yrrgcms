@@ -7,8 +7,9 @@ import { count } from "drizzle-orm";
 export async function POST(req: Request) {
   try {
     const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const userRole = (session?.user as { role?: string } | undefined)?.role;
+    if (!session?.user || userRole !== "admin") {
+      return NextResponse.json({ error: "Forbidden: Admin access required." }, { status: 403 });
     }
 
     const apiKey = process.env.OPENROUTER_API_KEY;

@@ -1,5 +1,7 @@
 "use server";
 
+import { auth } from "@/lib/auth";
+import { requireCan } from "@/lib/permissions";
 import { db } from "@/lib/db";
 import { testimonials, NewTestimonial } from "@/lib/db/schema";
 import { eq, asc } from "drizzle-orm";
@@ -20,6 +22,9 @@ export async function getTestimonials() {
 
 export async function createTestimonial(data: NewTestimonial) {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "testimonials");
+
     const [created] = await db.insert(testimonials).values(data).returning();
     revalidatePath("/admin/testimonials");
     revalidatePath("/");
@@ -35,6 +40,9 @@ export async function createTestimonial(data: NewTestimonial) {
 
 export async function updateTestimonial(id: string, data: Partial<NewTestimonial>) {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "testimonials");
+
     const [updated] = await db
       .update(testimonials)
       .set({ ...data, updatedAt: new Date() })
@@ -54,6 +62,9 @@ export async function updateTestimonial(id: string, data: Partial<NewTestimonial
 
 export async function deleteTestimonial(id: string) {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "testimonials");
+
     await db.delete(testimonials).where(eq(testimonials.id, id));
     revalidatePath("/admin/testimonials");
     revalidatePath("/");

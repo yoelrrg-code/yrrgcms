@@ -1,5 +1,7 @@
 "use server";
 
+import { auth } from "@/lib/auth";
+import { requireCan } from "@/lib/permissions";
 import { db } from "@/lib/db";
 import { products, courses, productCategories, NewProduct, Product } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
@@ -40,6 +42,9 @@ export async function createProduct(data: {
   downloadUrl?: string;
   categoryIds?: string[];
 }) {
+  const session = await auth();
+  requireCan(session, "manage", "products");
+
   const [product] = await db
     .insert(products)
     .values({
@@ -81,6 +86,9 @@ export async function updateProduct(
   id: string,
   data: Partial<NewProduct> & { categoryIds?: string[] }
 ) {
+  const session = await auth();
+  requireCan(session, "manage", "products");
+
   const { categoryIds, ...productData } = data;
 
   const [updated] = await db
@@ -110,6 +118,9 @@ export async function updateProduct(
 }
 
 export async function deleteProduct(id: string) {
+  const session = await auth();
+  requireCan(session, "manage", "products");
+
   await db.delete(products).where(eq(products.id, id));
   revalidatePath("/admin/products");
   revalidatePath("/admin/courses");

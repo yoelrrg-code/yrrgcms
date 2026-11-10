@@ -24,7 +24,7 @@ export async function ProductsBlock({
   paddingTop = "pt-12",
   paddingBottom = "pb-12",
 }: ProductsBlockProps) {
-  let query = db.select().from(products).where(eq(products.status, "PUBLISHED")).orderBy(desc(products.createdAt)).limit(limit);
+  const query = db.select().from(products).where(eq(products.status, "PUBLISHED")).orderBy(desc(products.createdAt)).limit(limit);
 
   const items = await query;
 

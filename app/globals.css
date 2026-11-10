@@ -278,6 +278,10 @@ body {
   overflow-x: clip;
 }
 
+.public-layout-root p{
+  margin-bottom: 10px;
+}
+
 @layer base {
   a:not([class]) {
     color: var(--theme-link, inherit);

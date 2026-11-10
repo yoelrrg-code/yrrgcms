@@ -1,5 +1,7 @@
 "use server";
 
+import { auth } from "@/lib/auth";
+import { requireCan } from "@/lib/permissions";
 import { db } from "@/lib/db";
 import { campaigns, socialPosts, posts, pages, services, NewCampaign, NewSocialPost } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
@@ -19,9 +21,13 @@ import { sendNewsletterEmail } from "@/lib/services/email-sender";
 
 export async function getCampaignsAction() {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "marketing");
+
     const list = await db.select().from(campaigns).orderBy(desc(campaigns.createdAt));
     return list;
   } catch (error: unknown) {
+    if ((error as { digest?: string })?.digest === "DYNAMIC_SERVER_USAGE") throw error;
     console.error("Error fetching campaigns:", error);
     return [];
   }
@@ -29,6 +35,9 @@ export async function getCampaignsAction() {
 
 export async function getCampaignDetailsAction(id: string) {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "marketing");
+
     const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, id)).limit(1);
     if (!campaign) return null;
 
@@ -46,6 +55,8 @@ export async function generateCampaignContentAction(params: {
   customPrompt?: string;
 }) {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "marketing");
     let sourceTitle = "Custom Marketing Campaign";
     let sourceContent = params.customPrompt || "Marketing content update for our CMS website.";
     let sourceUrl = "";
@@ -140,6 +151,9 @@ export async function generateCampaignContentAction(params: {
 
 export async function updateCampaignAction(id: string, data: Partial<NewCampaign>) {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "marketing");
+
     const [updated] = await db
       .update(campaigns)
       .set({ ...data, updatedAt: new Date() })
@@ -156,6 +170,9 @@ export async function updateCampaignAction(id: string, data: Partial<NewCampaign
 
 export async function updateSocialPostAction(id: string, data: Partial<NewSocialPost>) {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "marketing");
+
     const [updated] = await db
       .update(socialPosts)
       .set({ ...data, updatedAt: new Date() })
@@ -172,6 +189,9 @@ export async function updateSocialPostAction(id: string, data: Partial<NewSocial
 
 export async function deleteCampaignAction(id: string) {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "marketing");
+
     await db.delete(campaigns).where(eq(campaigns.id, id));
     revalidatePath("/admin/marketing");
     return { success: true };
@@ -183,6 +203,9 @@ export async function deleteCampaignAction(id: string) {
 
 export async function sendEmailCampaignAction(campaignId: string, recipients?: string[]) {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "marketing");
+
     const [campaign] = await db.select().from(campaigns).where(eq(campaigns.id, campaignId)).limit(1);
     if (!campaign || !campaign.emailSubject || !campaign.emailHtmlContent) {
       return { success: false, error: "Campaign email content is incomplete" };
@@ -218,6 +241,9 @@ export async function sendEmailCampaignAction(campaignId: string, recipients?: s
 
 export async function publishSocialPostAction(socialPostId: string) {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "marketing");
+
     const [postItem] = await db.select().from(socialPosts).where(eq(socialPosts.id, socialPostId)).limit(1);
     if (!postItem) {
       return { success: false, error: "Social post not found" };
@@ -272,6 +298,9 @@ export async function publishSocialPostAction(socialPostId: string) {
 }
 
 export async function getMarketingIntegrationsStatusAction() {
+  const session = await auth();
+  requireCan(session, "manage", "marketing");
+
   const isFacebookConfigured = isFacebookMetaConfigured();
   const isInstagramConfigured = isInstagramMetaConfigured();
   const isEmailConfigured = Boolean(

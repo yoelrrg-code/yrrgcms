@@ -1,12 +1,15 @@
 "use server";
 
+import { auth } from "@/lib/auth";
+import { requireCan } from "@/lib/permissions";
 import { db } from "@/lib/db";
 import { themes } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { cache } from "react";
 
-// Gets the currently active theme config
-export async function getActiveTheme() {
+// Gets the currently active theme config (deduplicated per request via React.cache)
+export const getActiveTheme = cache(async () => {
   try {
     const [theme] = await db
       .select()
@@ -19,7 +22,7 @@ export async function getActiveTheme() {
     console.error("getActiveTheme error:", error);
     return null;
   }
-}
+});
 
 export async function getThemes() {
   return await db.select().from(themes).orderBy(desc(themes.createdAt));
@@ -31,6 +34,9 @@ export async function getThemeById(id: string) {
 }
 
 export async function createTheme(data: { name: string; slug: string; config: Record<string, unknown> }) {
+  const session = await auth();
+  requireCan(session, "manage", "themes");
+
   const [newTheme] = await db
     .insert(themes)
     .values({
@@ -45,6 +51,9 @@ export async function createTheme(data: { name: string; slug: string; config: Re
 }
 
 export async function updateTheme(id: string, data: { name: string; config: Record<string, unknown> }) {
+  const session = await auth();
+  requireCan(session, "manage", "themes");
+
   const [updatedTheme] = await db
     .update(themes)
     .set({
@@ -61,12 +70,18 @@ export async function updateTheme(id: string, data: { name: string; config: Reco
 }
 
 export async function deleteTheme(id: string) {
+  const session = await auth();
+  requireCan(session, "manage", "themes");
+
   // Prevent deleting the active theme if possible, but for now just delete
   await db.delete(themes).where(eq(themes.id, id));
   revalidatePath("/admin/themes");
 }
 
 export async function setActiveTheme(id: string) {
+  const session = await auth();
+  requireCan(session, "manage", "themes");
+
   // First, set all themes to inactive
   await db.update(themes).set({ isActive: false });
   // Then set the selected theme to active

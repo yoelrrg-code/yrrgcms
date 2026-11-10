@@ -70,12 +70,18 @@ export default async function PublicLayout({
     };
   } | undefined;
 
+  function safeCss(val: unknown, fallback = ""): string {
+    if (typeof val !== "string" && typeof val !== "number") return fallback;
+    const str = String(val).replace(/[<>{};"'\\]/g, "").trim();
+    return str || fallback;
+  }
+
   const btnStyle = themeConfig?.layout?.buttonStyle || "primary";
-  const btnBg = themeConfig?.button?.background || themeConfig?.colors?.[btnStyle as keyof typeof themeConfig.colors];
-  const btnText = themeConfig?.button?.text;
-  const btnHover = themeConfig?.button?.hover;
-  const btnPadding = themeConfig?.button?.padding;
-  const btnRadius = themeConfig?.button?.radius;
+  const btnBg = safeCss(themeConfig?.button?.background || themeConfig?.colors?.[btnStyle as keyof typeof themeConfig.colors]);
+  const btnText = safeCss(themeConfig?.button?.text);
+  const btnHover = safeCss(themeConfig?.button?.hover);
+  const btnPadding = safeCss(themeConfig?.button?.padding);
+  const btnRadius = safeCss(themeConfig?.button?.radius);
 
   return (
     <div className="public-layout-root min-h-screen flex flex-col flex-1">
@@ -87,15 +93,15 @@ export default async function PublicLayout({
         dangerouslySetInnerHTML={{
           __html: `
             :root {
-              --theme-text: ${themeConfig?.typography?.paragraphColor || themeConfig?.colors?.text || "#0f172a"};
-              --theme-primary: ${themeConfig?.colors?.primary || "#4f46e5"};
-              --theme-link: ${themeConfig?.colors?.link || themeConfig?.colors?.primary || "#4f46e5"};
-              ${themeConfig?.colors?.secondary ? `--theme-secondary: ${themeConfig.colors.secondary};` : ""}
-              ${themeConfig?.colors?.background ? `--theme-background: ${themeConfig.colors.background};` : ""}
-              ${themeConfig?.colors?.menuLink ? `--theme-menu-link: ${themeConfig.colors.menuLink};` : ""}
-              ${themeConfig?.colors?.cardBg ? `--theme-card-bg: ${themeConfig.colors.cardBg};` : ""}
-              ${themeConfig?.colors?.cardBorder ? `--theme-card-border: ${themeConfig.colors.cardBorder};` : ""}
-              ${themeConfig?.colors?.shadowGlow ? `--theme-shadow-glow: ${themeConfig.colors.shadowGlow};` : ""}
+              --theme-text: ${safeCss(themeConfig?.typography?.paragraphColor || themeConfig?.colors?.text, "#0f172a")};
+              --theme-primary: ${safeCss(themeConfig?.colors?.primary, "#4f46e5")};
+              --theme-link: ${safeCss(themeConfig?.colors?.link || themeConfig?.colors?.primary, "#4f46e5")};
+              ${themeConfig?.colors?.secondary ? `--theme-secondary: ${safeCss(themeConfig.colors.secondary)};` : ""}
+              ${themeConfig?.colors?.background ? `--theme-background: ${safeCss(themeConfig.colors.background)};` : ""}
+              ${themeConfig?.colors?.menuLink ? `--theme-menu-link: ${safeCss(themeConfig.colors.menuLink)};` : ""}
+              ${themeConfig?.colors?.cardBg ? `--theme-card-bg: ${safeCss(themeConfig.colors.cardBg)};` : ""}
+              ${themeConfig?.colors?.cardBorder ? `--theme-card-border: ${safeCss(themeConfig.colors.cardBorder)};` : ""}
+              ${themeConfig?.colors?.shadowGlow ? `--theme-shadow-glow: ${safeCss(themeConfig.colors.shadowGlow)};` : ""}
               
               ${btnBg ? `--theme-button-bg: ${btnBg};` : ""}
               ${btnText ? `--theme-button-text: ${btnText};` : ""}
@@ -103,37 +109,37 @@ export default async function PublicLayout({
               ${btnPadding ? `--theme-button-padding: ${btnPadding};` : ""}
               ${btnRadius ? `--theme-button-radius: ${btnRadius};` : ""}
 
-              ${themeConfig?.typography?.fontSans ? `--font-sans: ${themeConfig.typography.fontSans};` : ""}
-              ${themeConfig?.typography?.fontHeading ? `--font-heading: ${themeConfig.typography.fontHeading};` : ""}
+              ${themeConfig?.typography?.fontSans ? `--font-sans: ${safeCss(themeConfig.typography.fontSans)};` : ""}
+              ${themeConfig?.typography?.fontHeading ? `--font-heading: ${safeCss(themeConfig.typography.fontHeading)};` : ""}
 
-              --theme-p-color: ${themeConfig?.typography?.paragraphColor || themeConfig?.colors?.text || "currentColor"};
-              ${themeConfig?.typography?.paragraphPadding ? `--theme-p-padding: ${themeConfig.typography.paragraphPadding};` : ""}
+              --theme-p-color: ${safeCss(themeConfig?.typography?.paragraphColor || themeConfig?.colors?.text, "currentColor")};
+              ${themeConfig?.typography?.paragraphPadding ? `--theme-p-padding: ${safeCss(themeConfig.typography.paragraphPadding)};` : ""}
               
-              --theme-h1-color: ${themeConfig?.typography?.h1?.color || "var(--theme-p-color)"};
-              ${themeConfig?.typography?.h1?.padding ? `--theme-h1-padding: ${themeConfig.typography.h1.padding};` : ""}
-              --theme-h2-color: ${themeConfig?.typography?.h2?.color || "var(--theme-p-color)"};
-              ${themeConfig?.typography?.h2?.padding ? `--theme-h2-padding: ${themeConfig.typography.h2.padding};` : ""}
-              --theme-h3-color: ${themeConfig?.typography?.h3?.color || "var(--theme-p-color)"};
-              ${themeConfig?.typography?.h3?.padding ? `--theme-h3-padding: ${themeConfig.typography.h3.padding};` : ""}
-              --theme-h4-color: ${themeConfig?.typography?.h4?.color || "var(--theme-p-color)"};
-              ${themeConfig?.typography?.h4?.padding ? `--theme-h4-padding: ${themeConfig.typography.h4.padding};` : ""}
-              --theme-h5-color: ${themeConfig?.typography?.h5?.color || "var(--theme-p-color)"};
-              ${themeConfig?.typography?.h5?.padding ? `--theme-h5-padding: ${themeConfig.typography.h5.padding};` : ""}
-              --theme-h6-color: ${themeConfig?.typography?.h6?.color || "var(--theme-p-color)"};
-              ${themeConfig?.typography?.h6?.padding ? `--theme-h6-padding: ${themeConfig.typography.h6.padding};` : ""}
+              --theme-h1-color: ${safeCss(themeConfig?.typography?.h1?.color, "var(--theme-p-color)")};
+              ${themeConfig?.typography?.h1?.padding ? `--theme-h1-padding: ${safeCss(themeConfig.typography.h1.padding)};` : ""}
+              --theme-h2-color: ${safeCss(themeConfig?.typography?.h2?.color, "var(--theme-p-color)")};
+              ${themeConfig?.typography?.h2?.padding ? `--theme-h2-padding: ${safeCss(themeConfig.typography.h2.padding)};` : ""}
+              --theme-h3-color: ${safeCss(themeConfig?.typography?.h3?.color, "var(--theme-p-color)")};
+              ${themeConfig?.typography?.h3?.padding ? `--theme-h3-padding: ${safeCss(themeConfig.typography.h3.padding)};` : ""}
+              --theme-h4-color: ${safeCss(themeConfig?.typography?.h4?.color, "var(--theme-p-color)")};
+              ${themeConfig?.typography?.h4?.padding ? `--theme-h4-padding: ${safeCss(themeConfig.typography.h4.padding)};` : ""}
+              --theme-h5-color: ${safeCss(themeConfig?.typography?.h5?.color, "var(--theme-p-color)")};
+              ${themeConfig?.typography?.h5?.padding ? `--theme-h5-padding: ${safeCss(themeConfig.typography.h5.padding)};` : ""}
+              --theme-h6-color: ${safeCss(themeConfig?.typography?.h6?.color, "var(--theme-p-color)")};
+              ${themeConfig?.typography?.h6?.padding ? `--theme-h6-padding: ${safeCss(themeConfig.typography.h6.padding)};` : ""}
 
-              ${themeConfig?.header?.background ? `--theme-header-bg: ${themeConfig.header.background};` : ""}
-              ${themeConfig?.header?.blur !== undefined ? `--theme-header-blur: ${themeConfig.header.blur}px;` : ""}
-              ${themeConfig?.header?.padding ? `--theme-header-padding: ${themeConfig.header.padding};` : ""}
+              ${themeConfig?.header?.background ? `--theme-header-bg: ${safeCss(themeConfig.header.background)};` : ""}
+              ${themeConfig?.header?.blur !== undefined ? `--theme-header-blur: ${safeCss(themeConfig.header.blur)}px;` : ""}
+              ${themeConfig?.header?.padding ? `--theme-header-padding: ${safeCss(themeConfig.header.padding)};` : ""}
               
-              ${themeConfig?.footer?.background ? `--theme-footer-bg: ${themeConfig.footer.background};` : ""}
-              ${themeConfig?.footer?.textColor ? `--theme-footer-text: ${themeConfig.footer.textColor};` : ""}
-              ${themeConfig?.footer?.padding ? `--theme-footer-padding: ${themeConfig.footer.padding};` : ""}
-              ${themeConfig?.footer?.linkColor ? `--theme-footer-link: ${themeConfig.footer.linkColor};` : ""}
-              ${themeConfig?.footer?.headingColor ? `--theme-footer-heading: ${themeConfig.footer.headingColor};` : ""}
-              ${themeConfig?.footer?.socialIconColor ? `--theme-footer-social: ${themeConfig.footer.socialIconColor};` : ""}
+              ${themeConfig?.footer?.background ? `--theme-footer-bg: ${safeCss(themeConfig.footer.background)};` : ""}
+              ${themeConfig?.footer?.textColor ? `--theme-footer-text: ${safeCss(themeConfig.footer.textColor)};` : ""}
+              ${themeConfig?.footer?.padding ? `--theme-footer-padding: ${safeCss(themeConfig.footer.padding)};` : ""}
+              ${themeConfig?.footer?.linkColor ? `--theme-footer-link: ${safeCss(themeConfig.footer.linkColor)};` : ""}
+              ${themeConfig?.footer?.headingColor ? `--theme-footer-heading: ${safeCss(themeConfig.footer.headingColor)};` : ""}
+              ${themeConfig?.footer?.socialIconColor ? `--theme-footer-social: ${safeCss(themeConfig.footer.socialIconColor)};` : ""}
               
-              ${themeConfig?.layout?.contentPadding ? `--theme-content-padding: ${themeConfig.layout.contentPadding};` : ""}
+              ${themeConfig?.layout?.contentPadding ? `--theme-content-padding: ${safeCss(themeConfig.layout.contentPadding)};` : ""}
             }
 
             .public-layout-root [data-slot="button"]:not(.size-icon) {

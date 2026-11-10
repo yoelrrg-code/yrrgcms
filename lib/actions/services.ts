@@ -1,5 +1,7 @@
 "use server";
 
+import { auth } from "@/lib/auth";
+import { requireCan } from "@/lib/permissions";
 import { db } from "@/lib/db";
 import { services, availabilitySettings, appointments, NewService, NewAppointment } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
@@ -30,6 +32,9 @@ export async function getServiceBySlug(slug: string) {
 
 export async function createService(data: NewService) {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "services");
+
     const [created] = await db.insert(services).values(data).returning();
     revalidatePath("/admin/services");
     return { success: true, data: created };
@@ -41,6 +46,9 @@ export async function createService(data: NewService) {
 
 export async function updateService(id: string, data: Partial<NewService>) {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "services");
+
     const [updated] = await db
       .update(services)
       .set({ ...data, updatedAt: new Date() })
@@ -56,6 +64,9 @@ export async function updateService(id: string, data: Partial<NewService>) {
 
 export async function deleteService(id: string) {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "services");
+
     await db.delete(services).where(eq(services.id, id));
     revalidatePath("/admin/services");
     return { success: true };
@@ -71,8 +82,12 @@ export async function deleteService(id: string) {
 
 export async function getAppointments() {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "services");
+
     return await db.select().from(appointments).orderBy(desc(appointments.createdAt));
   } catch (error) {
+    if ((error as { digest?: string })?.digest === "DYNAMIC_SERVER_USAGE") throw error;
     console.error("Error fetching appointments:", error);
     return [];
   }
@@ -91,6 +106,9 @@ export async function createAppointment(data: NewAppointment) {
 
 export async function updateAppointmentStatus(id: string, status: "confirmed" | "completed" | "cancelled" | "no_show", paymentStatus?: "pending_onsite" | "paid") {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "services");
+
     const updateData: { status: "confirmed" | "completed" | "cancelled" | "no_show"; updatedAt: Date; paymentStatus?: "pending_onsite" | "paid" } = { status, updatedAt: new Date() };
     if (paymentStatus) {
       updateData.paymentStatus = paymentStatus;
@@ -110,6 +128,9 @@ export async function updateAppointmentStatus(id: string, status: "confirmed" | 
 
 export async function deleteAppointment(id: string) {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "services");
+
     await db.delete(appointments).where(eq(appointments.id, id));
     revalidatePath("/admin/schedule");
     return { success: true };
@@ -140,6 +161,9 @@ export async function getAvailabilitySettings(serviceId?: string) {
 
 export async function saveAvailabilitySettings(data: Record<string, unknown>) {
   try {
+    const session = await auth();
+    requireCan(session, "manage", "services");
+
     if (data.id && typeof data.id === "string") {
       const [updated] = await db
         .update(availabilitySettings)

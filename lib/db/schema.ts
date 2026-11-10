@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, jsonb, integer, uuid, pgEnum, boolean } from "drizzle-orm/pg-core";
+import { pgTable, index, text, timestamp, jsonb, integer, uuid, pgEnum, boolean } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 // ============================================================
@@ -50,7 +50,10 @@ export const pages = pgTable("pages", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   publishedAt: timestamp("published_at"),
-});
+}, (t) => [
+  index("pages_author_id_idx").on(t.authorId),
+  index("pages_status_idx").on(t.status),
+]);
 
 // ============================================================
 // CATEGORIES
@@ -97,7 +100,10 @@ export const posts = pgTable("posts", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   publishedAt: timestamp("published_at"),
-});
+}, (t) => [
+  index("posts_author_id_idx").on(t.authorId),
+  index("posts_status_idx").on(t.status),
+]);
 
 // ============================================================
 // PIVOT TABLES: Post ↔ Categories / Tags
@@ -558,14 +564,20 @@ export const orders = pgTable("orders", {
   notes: text("notes"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
+}, (t) => [
+  index("orders_user_id_idx").on(t.userId),
+  index("orders_status_idx").on(t.status),
+]);
 
 export const orderItems = pgTable("order_items", {
   id: uuid("id").primaryKey().defaultRandom(),
   orderId: uuid("order_id").notNull().references(() => orders.id, { onDelete: "cascade" }),
   productId: uuid("product_id").notNull().references(() => products.id, { onDelete: "cascade" }),
   priceAtPurchase: integer("price_at_purchase").notNull(),
-});
+}, (t) => [
+  index("order_items_order_id_idx").on(t.orderId),
+  index("order_items_product_id_idx").on(t.productId),
+]);
 
 export const enrollments = pgTable("enrollments", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -574,7 +586,10 @@ export const enrollments = pgTable("enrollments", {
   orderId: uuid("order_id").references(() => orders.id, { onDelete: "set null" }),
   grantedAt: timestamp("granted_at").notNull().defaultNow(),
   isActive: boolean("is_active").notNull().default(true),
-});
+}, (t) => [
+  index("enrollments_user_id_idx").on(t.userId),
+  index("enrollments_course_id_idx").on(t.courseId),
+]);
 
 // RELATIONS
 export const productsRelations = relations(products, ({ one, many }) => ({

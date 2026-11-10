@@ -6,6 +6,7 @@ import { posts, users, postCategories, postTags, categories, tags } from "@/lib/
 import { requireCan } from "@/lib/permissions";
 import { eq, desc } from "drizzle-orm";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { cache } from "react";
 
 // Returns all posts (optionally filtered by authorId). Authors see only their own posts.
 export async function getPosts(options?: { authorId?: string }) {
@@ -44,8 +45,8 @@ export async function getPosts(options?: { authorId?: string }) {
   return query;
 }
 
-// For the public frontend — fetches a post by slug
-export async function getPostBySlug(slug: string) {
+// For the public frontend — fetches a post by slug (deduplicated per request via React.cache)
+export const getPostBySlug = cache(async (slug: string) => {
   const [post] = await db
     .select({
       id: posts.id,
@@ -90,7 +91,7 @@ export async function getPostBySlug(slug: string) {
     .where(eq(postTags.postId, post.id));
 
   return { ...post, categories: postCategoriesList, tags: postTagsList };
-}
+});
 
 // For the admin editor — fetches a post by id with full data
 export async function getPostById(id: string) {

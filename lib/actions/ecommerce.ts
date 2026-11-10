@@ -8,11 +8,11 @@ import { auth } from "@/lib/auth";
 
 export async function createOrderAction(formData: FormData) {
   try {
+    const session = await auth();
     const productId = formData.get("productId") as string;
     const customerName = formData.get("customerName") as string;
     const customerEmail = formData.get("customerEmail") as string;
     const proofOfPaymentUrl = (formData.get("proofOfPaymentUrl") as string) || null;
-    const userId = (formData.get("userId") as string) || null;
 
     if (!productId || !customerName || !customerEmail) {
       return { success: false, error: "Missing required fields" };
@@ -27,31 +27,38 @@ export async function createOrderAction(formData: FormData) {
     const normalizedName = customerName.trim();
     const password = (formData.get("password") as string) || null;
 
-    let finalUserId = userId;
+    // Use session userId if authenticated to prevent IDOR
+    let finalUserId: string | null = session?.user?.id || null;
 
     if (!finalUserId) {
-      const bcrypt = (await import("bcryptjs")).default;
-      const passwordHash = await bcrypt.hash(password || "TempPass123!", 10);
-
-      // Atomic upsert: insert if not exists, do nothing on conflict
-      await db
-        .insert(users)
-        .values({
-          name: normalizedName,
-          email: normalizedEmail,
-          passwordHash,
-          role: "customer",
-        })
-        .onConflictDoNothing({ target: users.email });
-
-      // Always fetch the user after upsert (new or existing)
-      const [resolvedUser] = await db
+      // Check if user already exists with this email
+      const [existingUser] = await db
         .select()
         .from(users)
-        .where(ilike(users.email, normalizedEmail));
+        .where(ilike(users.email, normalizedEmail))
+        .limit(1);
 
-      if (resolvedUser) {
-        finalUserId = resolvedUser.id;
+      if (existingUser) {
+        finalUserId = existingUser.id;
+      } else {
+        const bcrypt = (await import("bcryptjs")).default;
+        const crypto = await import("crypto");
+        const secureRandomPass = crypto.randomBytes(16).toString("hex") + "Aa1!";
+        const passwordHash = await bcrypt.hash(password || secureRandomPass, 10);
+
+        const [newUser] = await db
+          .insert(users)
+          .values({
+            name: normalizedName,
+            email: normalizedEmail,
+            passwordHash,
+            role: "customer",
+          })
+          .returning();
+
+        if (newUser) {
+          finalUserId = newUser.id;
+        }
       }
     }
 
@@ -116,7 +123,9 @@ export async function approveOrderAction(orderId: string) {
       } else if (!targetUserId) {
         // Create new user with customer role if no user exists with this email
         const bcrypt = (await import("bcryptjs")).default;
-        const tempPasswordHash = await bcrypt.hash(Math.random().toString(36).slice(-8) + "Aa1!", 10);
+        const crypto = await import("crypto");
+        const secureRandomPass = crypto.randomBytes(16).toString("hex") + "Aa1!";
+        const tempPasswordHash = await bcrypt.hash(secureRandomPass, 10);
         
         const [newUser] = await db
           .insert(users)
